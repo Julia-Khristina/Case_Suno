@@ -1,0 +1,14 @@
+paleta:
+  - vermelha
+  - branca
+slides:
+  largura_px: 1080
+  altura_px: 1350
+  proporcao: "4:5"
+reels:
+  proporcao: "9:16"
+linha_por_nivel:
+  iniciante: "em cima"
+  intermediario: "duas laterais"
+  avancado: "embaixo"
+fundo_vermelho_linha: "branca"

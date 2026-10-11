@@ -1,0 +1,13 @@
+secoes:
+  - nome: introducao
+    papel: "contextualizacao"
+    proporcao: 0.15
+  - nome: desenvolvimento
+    papel: "evidencias"
+    proporcao: 0.35
+  - nome: analise
+    papel: "implicacoes"
+    proporcao: 0.30
+  - nome: conclusao
+    papel: "sintese"
+    proporcao: 0.20

@@ -1,0 +1,19 @@
+# Pastas e arquivos locais de skills/ferramentas de IA
+.agents/
+.aider-desk/
+.claude/
+skills/
+skills-lock.json
+
+# Ambiente e cache
+.env
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Dados e exportacoes gerados localmente
+data/exports/
+*.sqlite
+*.db

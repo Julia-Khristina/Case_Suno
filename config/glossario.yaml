@@ -1,0 +1,3 @@
+# Configuracao versionada do glossario. Versao inicial.
+versao: "0.0.1"
+termos: []  # Preenchido na curadoria a partir do glossario do BCB e do B3.
