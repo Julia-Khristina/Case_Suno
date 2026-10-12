@@ -4,5 +4,6 @@ streamlit>=1.57
 langgraph>=1.2
 langgraph-checkpoint-postgres>=3.0
 psycopg[binary]>=3.2
+psycopg-pool>=3.2
 playwright>=1.49
 pytest>=9.1
