@@ -1,0 +1,14 @@
+Texto de origem:
+{chunk_text}
+
+Glossário de termos disponíveis:
+{glossary_terms}
+
+Apelidos de entidades/eventos:
+{aliases}
+
+Retorne um objeto JSON com os campos main_points, assertions, numeric_data, entities, events, detected_terms e source_complexity.
+Cada assertion deve conter id, text, type, role, source_span.text e variation_declared.
+Cada numeric_data deve conter indicator, value, unit, reference_period e source_span.text.
+Cada entity deve conter name e canonical_name.
+Cada event deve conter name, canonical_name e reference_date quando existir.

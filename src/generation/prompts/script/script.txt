@@ -1,0 +1,7 @@
+Gere um roteiro de Reels em JSON para o nivel {level} com exatamente 5 cenas: gancho, 3 pontos centrais e conclusao. Duracao total ate 60 segundos. Campos de cada cena: order, role, start_sec, end_sec, spoken, screen_text, visual, framing, direction_note. Vocabulario de framing restrito a close, plano_medio ou plano_aberto. Nao inventar numeros.
+
+Pontos centrais:
+{main_points}
+
+Numeros da fonte:
+{numeric_data}

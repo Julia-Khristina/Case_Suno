@@ -1,0 +1,13 @@
+Gere um carrossel em JSON para o nivel {level} com exatamente 5 slides: gancho, tres de corpo um ponto central por slide, e conclusao. Inclua legenda com abertura, contexto curto, fonte, CTA com verbo da lista e hashtags de entidades. Gancho apoia-se em fato ou numero da fonte sem exagero.
+
+Pontos centrais:
+{main_points}
+
+Numeros da fonte:
+{numeric_data}
+
+Termos:
+{glossary_terms}
+
+Termos proibidos:
+{forbidden_terms}

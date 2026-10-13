@@ -23,6 +23,19 @@ def load_glossary_terms(path: str | Path = "config/glossario.yaml") -> list[str]
     return result
 
 
+def load_aliases(path: str | Path = "config/apelidos.yaml") -> dict[str, list[str]]:
+    file_path = Path(path)
+    if not file_path.exists():
+        return {}
+    with file_path.open("r", encoding="utf-8") as file:
+        data = yaml.safe_load(file) or {}
+    result: dict[str, list[str]] = {}
+    for item in data.get("apelidos", []) or []:
+        if isinstance(item, dict) and item.get("nome_canonico"):
+            result[str(item["nome_canonico"])] = list(item.get("apelidos", []) or [])
+    return result
+
+
 def count_distinct_terms(text: str, terms: Iterable[str]) -> int:
     lowered = text.lower()
     matches = {term for term in terms if term and term.lower() in lowered}
