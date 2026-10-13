@@ -16,6 +16,7 @@ class LLMClient:
         self.mode = mode or os.getenv("LLM_MODE", "simulated")
         self.response_dir = Path(response_dir)
         self.cache = VersionedCache()
+        self.last_usage: dict[str, int] = {}
 
     def _cache_key(self, prompt: str, model_id: Optional[str], schema_name: str, extra: Dict[str, Any]) -> str:
         return self.cache.build_key(prompt, model_id, schema_name, extra)
@@ -33,15 +34,33 @@ class LLMClient:
         cached = self.cache.get(key)
         if cached is not None:
             logger.info("LLM cache hit: %s", key[:12])
+            self.last_usage = {
+                "prompt_tokens": max(1, len(prompt.split())),
+                "completion_tokens": max(1, len(str(cached).split())),
+            }
             return cached
 
         if self.mode == "simulated":
-            result = self._load_simulated_response(key)
+            raw = self._load_simulated_response(key)
+            if isinstance(raw, dict) and "response" in raw:
+                self.last_usage = dict(raw.get("usage", {}))
+                result = raw["response"]
+            elif isinstance(raw, dict) and "usage" in raw:
+                self.last_usage = dict(raw.get("usage", {}))
+                result = {key: value for key, value in raw.items() if key != "usage"}
+            else:
+                self.last_usage = {}
+                result = raw
         elif self.mode == "live":
             raise RuntimeError("Live mode is not implemented in Block 0; configure provider in later blocks.")
         else:
             raise ValueError(f"Unsupported LLM mode: {self.mode}")
 
+        if not self.last_usage:
+            self.last_usage = {
+                "prompt_tokens": max(1, len(prompt.split())),
+                "completion_tokens": max(1, len(str(result).split())),
+            }
         self.cache.set(key, result)
         return result
 

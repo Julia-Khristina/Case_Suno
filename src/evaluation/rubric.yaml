@@ -1,0 +1,9 @@
+versao: "0.1"
+criterios:
+  - coerencia
+  - fidelidade
+  - adequacao_nivel
+  - concisao
+prompt: >
+  Avalie o texto gerado conforme a rubrica. Retorne JSON com rubric_version,
+  judge_model_id, scores, justification, text_length e evidence. Use notas de 0 a 10.
