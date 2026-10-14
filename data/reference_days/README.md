@@ -1,1 +1,1 @@
-Place 12-15 reference days here, as defined in Block 10.
+12 dias de referência (mínimo) para calibração e validação da suíte offline.

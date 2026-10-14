@@ -1,0 +1,29 @@
+﻿limite_cards_diario_padrao: 8
+fontes:
+  - nome: Banco Central, notas à imprensa
+    tipo: primaria
+    prioridade: 1
+    ativa: false
+    url: https://www.bcb.gov.br/api/feed/sitebcb/sitefeeds/notasImprensa?ano=2026
+    adapter: rss
+
+  - nome: Banco Central, notícias
+    tipo: primaria
+    prioridade: 2
+    ativa: false
+    url: https://www.bcb.gov.br/api/feed/sitebcb/sitefeeds/noticias?ano=2026
+    adapter: rss
+
+  - nome: Agência Brasil, economia
+    tipo: secundaria
+    prioridade: 4
+    ativa: false
+    url: https://agenciabrasil.ebc.com.br/rss/economia/feed.xml
+    adapter: rss
+
+  - nome: InfoMoney
+    tipo: secundaria
+    prioridade: 5
+    ativa: true
+    url: https://www.infomoney.com.br/feed/
+    adapter: rss

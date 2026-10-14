@@ -25,3 +25,4 @@ include = ["src*"]
 pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "-q"
+markers = ["offline: offline evaluation and acceptance tests"]

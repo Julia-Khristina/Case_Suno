@@ -1,0 +1,42 @@
+:root {
+  --suno-red: #C8102E;
+  --suno-red-dark: #A31B27;
+  --suno-red-hover: #8F1722;
+  --suno-red-soft: #F9E1E3;
+  --suno-red-text: #A30D1C;
+  --sidebar-bg: #0E0F10;
+  --sidebar-surface: #171819;
+  --sidebar-active: #42191E;
+  --sidebar-hover: #252628;
+  --page-bg: #F5F3F2;
+  --card-bg: #FFFFFF;
+  --border: #E0E2E5;
+  --text-primary: #171B24;
+  --text-secondary: #58667C;
+  --text-muted: #8994A5;
+  --text-on-dark: #FFFFFF;
+  --font-family: "Inter", sans-serif;
+  --radius-card: 8px;
+  --radius-banner: 10px;
+  --radius-button: 8px;
+  --sidebar-width: 174px;
+  --header-height: 64px;
+  --content-padding: 24px;
+  --gap-small: 8px;
+  --gap-medium: 16px;
+  --gap-large: 24px;
+  --section-gap: 28px;
+}
+
+* { box-sizing: border-box; }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body, .stApp {
+  margin: 0;
+  font-family: var(--font-family);
+  background: var(--page-bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

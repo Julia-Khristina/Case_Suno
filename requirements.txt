@@ -7,3 +7,4 @@ psycopg[binary]>=3.2
 psycopg-pool>=3.2
 playwright>=1.49
 pytest>=9.1
+pymupdf>=1.25
