@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perspecta · Apresentação técnica</title>
+<style>
+@font-face { font-family: "Jakarta"; font-weight: 400; src: url("../asset/fonts/PlusJakartaSans-400.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 500; src: url("../asset/fonts/PlusJakartaSans-500.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 600; src: url("../asset/fonts/PlusJakartaSans-600.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 700; src: url("../asset/fonts/PlusJakartaSans-700.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 800; src: url("../asset/fonts/PlusJakartaSans-800.ttf"); }
+
+:root {
+  --red: #B3141F; --red-strong: #A4172A; --red-soft: #FBE6E6; --red-dark: #6E1B25;
+  --ink: #16161A; --muted: #6B6B70; --line: #ECE9E7; --bg: #F6F5F4; --side: #0E0E10; --card: #FFFFFF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #000; overflow: hidden; }
+body { font-family: "Jakarta", "Segoe UI", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* palco 1920×1080 escalado para caber na janela */
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center; }
+.slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .45s ease; overflow: hidden; }
+.slide.active { opacity: 1; pointer-events: auto; }
+
+/* ---------- elementos comuns ---------- */
+.dark { background: var(--side); color: #fff; }
+.light { background: var(--bg); }
+.arcs { position: absolute; width: 1400px; height: 1400px; left: -520px; bottom: -620px; border-radius: 50%;
+  background: repeating-radial-gradient(circle at 50% 50%, transparent 0 34px, rgba(196,22,42,.45) 34px 35.5px);
+  -webkit-mask: radial-gradient(circle, #000 0 45%, transparent 70%); mask: radial-gradient(circle, #000 0 45%, transparent 70%); }
+.glow { position: absolute; width: 1100px; height: 1100px; right: -300px; top: -380px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,22,42,.30) 0%, transparent 65%); }
+.logo-top { position: absolute; left: 120px; top: 96px; height: 46px; }
+.kicker { font-size: 22px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+.dark .kicker { color: #FF5A63; }
+.slide-head { position: absolute; left: 120px; right: 120px; top: 72px; display: flex; align-items: flex-end; justify-content: space-between; }
+.slide-head h2 { font-size: 60px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; margin-top: 10px; }
+.slide-head .hint { font-size: 20px; color: var(--muted); font-weight: 500; text-align: right; line-height: 1.5; }
+kbd { font-family: inherit; font-size: 16px; font-weight: 700; border: 1.5px solid #CFCAC6; border-bottom-width: 3px; border-radius: 7px;
+  padding: 1px 8px; background: #fff; color: var(--ink); }
+
+/* ---------- capa ---------- */
+#s-capa .content { position: absolute; left: 120px; top: 330px; width: 1380px; }
+#s-capa h1 { font-size: 168px; font-weight: 800; letter-spacing: -.035em; line-height: 1; }
+#s-capa h1 .dot { color: var(--red); }
+#s-capa .tag { margin-top: 40px; font-size: 44px; font-weight: 500; line-height: 1.32; color: #E9E6E4; max-width: 1240px; }
+#s-capa .tag b { color: #fff; font-weight: 700; }
+#s-capa .levels { margin-top: 44px; display: flex; gap: 16px; }
+#s-capa .levels span { font-size: 22px; font-weight: 600; padding: 10px 22px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,.22); color: #F2F0EE; }
+#s-capa .levels span:nth-child(2) { background: rgba(179,20,31,.35); border-color: rgba(255,90,99,.6); }
+#s-capa .levels span:nth-child(3) { background: var(--red); border-color: var(--red); }
+#s-capa .author { position: absolute; left: 120px; bottom: 100px; display: flex; align-items: center; gap: 22px; }
+#s-capa .author .bar { width: 6px; height: 64px; background: var(--red); border-radius: 3px; }
+#s-capa .author .name { font-size: 36px; font-weight: 700; }
+#s-capa .author .role { font-size: 22px; color: #A9A6A4; margin-top: 4px; }
+
+/* ---------- fluxo ---------- */
+#flow { position: absolute; left: 80px; top: 220px; width: 1760px; height: 450px; }
+#flow > svg { position: absolute; inset: 0; overflow: visible; }
+#flow path.edge { fill: none; stroke: #BDB7B3; stroke-width: 2.5; }
+#flow path.edge.loop { stroke: var(--red); stroke-dasharray: 7 7; opacity: .7; }
+#flow path.edge.hot { stroke: var(--red); stroke-width: 3.5; opacity: 1; }
+#flow .elabel { font-size: 15px; font-weight: 700; fill: var(--muted); letter-spacing: .02em; }
+#flow .elabel.red { fill: var(--red); }
+.band { position: absolute; font-size: 15px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #A9A39F; }
+.node { position: absolute; width: 230px; height: 100px; background: var(--card); border: 2px solid var(--line); border-radius: 18px;
+  padding: 14px 16px 12px 16px; cursor: pointer; transition: transform .18s, border-color .18s, box-shadow .18s, background .18s;
+  box-shadow: 0 2px 0 rgba(0,0,0,.02); display: flex; flex-direction: column; justify-content: space-between; user-select: none; }
+.node:hover { transform: translateY(-3px); border-color: #E2B9BC; box-shadow: 0 10px 24px rgba(179,20,31,.10); }
+.node .top { display: flex; align-items: center; justify-content: space-between; }
+.node .num { width: 30px; height: 30px; border-radius: 50%; background: var(--red-soft); color: var(--red); font-weight: 800; font-size: 16px;
+  display: grid; place-items: center; }
+.node .kind { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.node .kind svg { width: 16px; height: 16px; }
+.node .kind.video { color: var(--red); }
+.node .title { font-size: 21px; font-weight: 700; line-height: 1.15; letter-spacing: -.01em; }
+.node.seen { border-color: #E9CFD1; }
+.node.next { border-color: var(--red); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(179,20,31,.38); } 50% { box-shadow: 0 0 0 14px rgba(179,20,31,0); } }
+.node.active { background: var(--red); border-color: var(--red); color: #fff; transform: translateY(-3px); box-shadow: 0 14px 30px rgba(179,20,31,.28); }
+.node.active .num { background: #fff; color: var(--red); }
+.node.active .kind, .node.active .kind.video { color: #FFD9DB; }
+
+#panel { position: absolute; left: 80px; right: 80px; top: 720px; height: 300px; background: var(--card); border: 2px solid var(--line);
+  border-radius: 24px; display: flex; overflow: hidden; align-items: center; justify-content: center; }
+
+/* modal de etapa: cobre o slide inteiro */
+#modal { position: absolute; inset: 0; z-index: 20; background: var(--bg); display: none; }
+#modal.open { display: block; animation: mIn .28s ease; cursor: pointer; }
+@keyframes mIn { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+#modal .mhead { position: absolute; left: 80px; right: 80px; top: 56px; display: flex; align-items: center; justify-content: space-between; }
+#modal .mtitle { display: flex; align-items: center; gap: 24px; }
+#modal .mtitle .num { width: 76px; height: 76px; border-radius: 50%; background: var(--red); color: #fff; font-weight: 800; font-size: 36px; display: grid; place-items: center; flex: none; }
+#modal .mtitle .kicker { font-size: 19px; }
+#modal .mtitle h3 { font-size: 58px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; margin-top: 4px; }
+#modal .mnav { display: flex; align-items: center; gap: 22px; }
+#modal .steps-mini { display: flex; gap: 8px; }
+#modal .steps-mini button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #DAD5D1; background: #fff; color: var(--muted);
+  font: 700 14px "Jakarta", sans-serif; cursor: pointer; }
+#modal .steps-mini button.seen { border-color: #E2B9BC; color: var(--red); }
+#modal .steps-mini button.on { background: var(--red); border-color: var(--red); color: #fff; }
+#modal .close { font: 700 18px "Jakarta", sans-serif; color: var(--ink); background: #fff; border: 2px solid var(--line); border-radius: 999px;
+  padding: 12px 22px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+#modal .close:hover { border-color: var(--red); color: var(--red); }
+#modal .mbody { position: absolute; left: 80px; right: 80px; top: 200px; bottom: 70px; display: flex; gap: 48px; }
+#modal .mmedia { flex: 0 0 1232px; height: 770px; border-radius: 24px; overflow: hidden; background: #111; position: relative;
+  box-shadow: 0 24px 60px rgba(22,22,26,.16); }
+#modal .mmedia video { width: 100%; height: 100%; object-fit: contain; display: block; background: #111; }
+#modal .mmedia.backend { background: var(--side); display: flex; flex-direction: column; justify-content: center; padding: 0 90px; color: #fff; }
+#modal .mmedia.backend .arcs { left: -500px; bottom: -760px; }
+#modal .mmedia.backend .glow { right: -420px; top: -520px; }
+#modal .mmedia.backend .bk { position: relative; display: flex; align-items: center; gap: 18px; font-size: 20px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: #CFCAC6; }
+#modal .mmedia.backend .bk svg { width: 54px; height: 54px; color: #FF5A63; }
+#modal .mmedia.backend ul { position: relative; list-style: none; margin-top: 44px; display: flex; flex-direction: column; gap: 22px; }
+#modal .mmedia.backend li { font-size: 40px; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: center; gap: 22px; }
+#modal .mmedia.backend li::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--red); flex: none; }
+#modal .minfo { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+#modal .minfo .sub { font-size: 30px; font-weight: 600; line-height: 1.35; letter-spacing: -.005em; }
+#modal .minfo .lbl { margin-top: 34px; font-size: 16px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+#modal .minfo .chips { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+#modal .minfo .chips span { font-size: 22px; font-weight: 600; padding: 11px 18px; border-radius: 14px; background: #fff; border: 1.5px solid var(--line); }
+#modal .minfo .stat { margin-top: auto; background: var(--red-soft); border-radius: 20px; padding: 24px 26px; }
+#modal .minfo .stat b { display: block; font-size: 46px; font-weight: 800; color: var(--red); letter-spacing: -.02em; line-height: 1.05; }
+#modal .minfo .stat span { display: block; margin-top: 10px; font-size: 19px; color: var(--red-dark); font-weight: 600; line-height: 1.4; }
+#modal .mfoot { position: absolute; left: 80px; right: 80px; bottom: 22px; font-size: 16px; color: var(--muted); font-weight: 600; }
+#panel .intro { display: flex; gap: 70px; align-items: center; padding: 0 60px; }
+#panel .intro .big { font-size: 30px; font-weight: 700; line-height: 1.35; max-width: 760px; }
+#panel .intro .big em { font-style: normal; color: var(--red); }
+#panel .legend { display: flex; flex-direction: column; gap: 14px; font-size: 19px; font-weight: 600; color: var(--muted); }
+#panel .legend div { display: flex; align-items: center; gap: 12px; }
+#panel .legend svg { width: 22px; height: 22px; }
+
+
+/* ---------- aprendizados ---------- */
+.grid4 { position: absolute; left: 120px; right: 120px; top: 270px; bottom: 110px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.lcard { background: var(--card); border: 2px solid var(--line); border-radius: 24px; padding: 36px 40px; display: flex; flex-direction: column; }
+.lcard .n { font-size: 18px; font-weight: 800; color: var(--red); letter-spacing: .12em; }
+.lcard h4 { margin-top: 10px; font-size: 34px; font-weight: 800; letter-spacing: -.015em; line-height: 1.15; }
+.lcard .ev { margin-top: 14px; font-size: 21px; color: var(--muted); line-height: 1.45; font-weight: 500; }
+.lcard .ev b { color: var(--ink); }
+.lcard .fix { margin-top: auto; padding-top: 18px; display: flex; gap: 14px; font-size: 21px; font-weight: 600; line-height: 1.4; border-top: 1.5px solid var(--line); }
+.lcard .fix svg { flex: none; width: 26px; height: 26px; color: var(--red); margin-top: 1px; }
+
+/* ---------- próximos passos ---------- */
+.steps { position: absolute; left: 120px; right: 120px; top: 270px; bottom: 110px; display: flex; flex-direction: column; gap: 24px; }
+.step { flex: 1; display: grid; grid-template-columns: 92px 1fr 380px; align-items: center; gap: 28px; background: var(--card); border: 2px solid var(--line);
+  border-radius: 22px; padding: 22px 34px; }
+.step .i { font-size: 52px; font-weight: 800; color: var(--red); letter-spacing: -.03em; }
+.step h4 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; }
+.step p { margin-top: 6px; font-size: 20px; color: var(--muted); font-weight: 500; line-height: 1.4; }
+.step .why { font-size: 18px; font-weight: 600; color: var(--red-dark); background: var(--red-soft); border-radius: 14px; padding: 12px 18px; line-height: 1.4; }
+
+/* ---------- encerramento ---------- */
+#s-fim .content { position: absolute; left: 120px; top: 300px; }
+#s-fim h2 { font-size: 120px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+#s-fim h2 .dot { color: var(--red); }
+#s-fim .name { margin-top: 44px; font-size: 44px; font-weight: 700; }
+#s-fim .proj { margin-top: 10px; font-size: 26px; color: #A9A6A4; font-weight: 500; }
+#s-fim .qrs { position: absolute; right: 120px; top: 50%; transform: translateY(-50%); display: flex; gap: 48px; }
+.qr { background: #fff; border-radius: 26px; padding: 26px 26px 20px; text-align: center; color: var(--ink); width: 330px; }
+.qr img { width: 278px; height: 278px; display: block; }
+.qr .l { margin-top: 16px; font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.qr .l svg { width: 26px; height: 26px; color: var(--red); }
+.qr .u { margin-top: 4px; font-size: 16px; color: var(--muted); font-weight: 600; }
+
+/* ---------- rodapé / navegação ---------- */
+#hud { position: fixed; left: 0; right: 0; bottom: 0; height: 0; z-index: 40; }
+#dots { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 10px; }
+#dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; background: rgba(128,128,128,.45); cursor: pointer; }
+#dots button.on { background: var(--red); width: 28px; border-radius: 5px; }
+#timer { position: fixed; right: 18px; bottom: 12px; font-size: 14px; font-weight: 700; color: rgba(128,128,128,.85); cursor: pointer; font-variant-numeric: tabular-nums; }
+#timer.warn { color: var(--red); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1 · capa -->
+  <section class="slide dark active" id="s-capa">
+    <div class="glow"></div><div class="arcs"></div>
+    <img class="logo-top" src="img/logo_escuro.png" alt="Suno Asset">
+    <div class="content">
+      <div class="kicker">Apresentação técnica · Case Suno</div>
+      <h1 style="margin-top:22px">Perspecta<span class="dot">.</span></h1>
+      <p class="tag">Pipeline de IA que transforma informações do mundo financeiro em <b>conteúdo para cada nível de entendimento</b>.</p>
+      <div class="levels"><span>Iniciante</span><span>Intermediário</span><span>Avançado</span></div>
+    </div>
+    <div class="author"><div class="bar"></div><div><div class="name">Julia Khristina</div><div class="role">Outubro de 2026</div></div></div>
+  </section>
+
+  <!-- 2 · fluxo -->
+  <section class="slide light" id="s-fluxo">
+    <div class="slide-head">
+      <div><div class="kicker">Arquitetura</div><h2>Fluxo do sistema</h2></div>
+      <div class="hint">Clique no nó destacado para abrir a etapa<br>Clique na etapa para voltar ao fluxo · <kbd>→</kbd> pula direto</div>
+    </div>
+    <div id="flow">
+      <div class="band" style="left:0;top:-30px">Entrada</div>
+      <div class="band" style="left:600px;top:-30px">Preparação e geração</div>
+      <div class="band" style="left:300px;top:445px">Avaliação e saída</div>
+      <svg viewBox="0 0 1760 450" width="1760" height="450" aria-hidden="true">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#BDB7B3"/></marker>
+          <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B3141F"/></marker>
+        </defs>
+        <path class="edge" data-e="1-2" d="M230,60 H296" marker-end="url(#ah)"/>
+        <path class="edge" data-e="2-4" d="M530,60 H596" marker-end="url(#ah)"/>
+        <path class="edge" data-e="3-4" d="M530,215 H640 Q715,215 715,170 V114" marker-end="url(#ah)"/>
+        <path class="edge" data-e="4-5" d="M830,60 H896" marker-end="url(#ah)"/>
+        <path class="edge" data-e="5-6" d="M1130,60 H1196" marker-end="url(#ah)"/>
+        <path class="edge" data-e="6-7" d="M1315,110 V326" marker-end="url(#ah)"/>
+        <path class="edge" data-e="7-9" d="M1200,380 H1134" marker-end="url(#ah)"/>
+        <path class="edge" data-e="9-10" d="M900,380 H834" marker-end="url(#ah)"/>
+        <path class="edge" data-e="10-11" d="M600,380 H534" marker-end="url(#ah)"/>
+        <path class="edge loop" data-e="7-8" d="M1430,380 H1560 Q1615,380 1615,330 V274" marker-end="url(#ahr)"/>
+        <path class="edge loop" data-e="9-8" d="M1015,330 V300 Q1015,250 1065,250 H1496" marker-end="url(#ahr)"/>
+        <path class="edge loop" data-e="8-6" d="M1615,170 V115 Q1615,60 1560,60 H1434" marker-end="url(#ahr)"/>
+        <text class="elabel" x="1328" y="225">avalia cada tentativa</text>
+        <text class="elabel" x="1140" y="368">passa</text>
+        <text class="elabel" x="842" y="368">aprova</text>
+        <text class="elabel" x="540" y="368">aprova</text>
+        <text class="elabel red" x="1440" y="405">reprova</text>
+        <text class="elabel red" x="1080" y="240">reprova</text>
+        <text class="elabel red" x="1450" y="48">feedback numérico</text>
+      </svg>
+    </div>
+    <div id="panel"></div>
+    <div id="modal" role="dialog" aria-modal="true"></div>
+  </section>
+
+  <!-- 3 · aprendizados -->
+  <section class="slide light" id="s-aprend">
+    <div class="slide-head"><div><div class="kicker">Aprendizados e desafios</div><h2>O que a execução real ensinou</h2></div></div>
+    <div class="grid4">
+      <div class="lcard">
+        <div class="n">01 · NÍVEL</div>
+        <h4>Adaptar o nível não é só trocar palavras</h4>
+        <p class="ev">Na execução real, <b>20 de 27 tentativas</b> ficaram "indistintas": o gerador não diferenciou Intermediário de Avançado (acerto de 11%).</p>
+        <div class="fix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Medir o nível com legibilidade + densidade de termos; o classificador nunca confirma um nível errado.</div>
+      </div>
+      <div class="lcard">
+        <div class="n">02 · FIDELIDADE</div>
+        <h4>O LLM inventa números</h4>
+        <p class="ev"><b>13 ocorrências</b> de número ou data sem origem na fonte nas 27 tentativas medidas.</p>
+        <div class="fix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Extração ancorada no trecho da fonte e checagem por código; divergências entre fontes calculadas por função, nunca pelo modelo.</div>
+      </div>
+      <div class="lcard">
+        <div class="n">03 · AVALIAÇÃO</div>
+        <h4>O modelo não aprova o próprio texto</h4>
+        <p class="ev">Um juiz LLM é o passo mais caro e, se for o mesmo modelo do gerador, traz viés de autoavaliação.</p>
+        <div class="fix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Métricas determinísticas primeiro; juiz de outro modelo depois; aprovação calculada pelo código.</div>
+      </div>
+      <div class="lcard">
+        <div class="n">04 · CUSTO</div>
+        <h4>Cota de tokens é um requisito de projeto</h4>
+        <p class="ev">Um documento nos 3 níveis × 3 formatos consumiu <b>107 mil tokens</b>, mais da metade da cota diária gratuita.</p>
+        <div class="fix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Cache por prompt, modos simulated/record, limites de taxa e ≈350 testes com cliente falso, sem rede.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · próximos passos -->
+  <section class="slide light" id="s-prox">
+    <div class="slide-head"><div><div class="kicker">Próximos passos</div><h2>Do protótipo para a produção</h2></div></div>
+    <div class="steps">
+      <div class="step"><div class="i">01</div><div><h4>Calibrar os níveis</h4><p>Rodar mais documentos em modo live, recalibrar as faixas de Flesch e densidade e reforçar os prompts de cada nível.</p></div><div class="why">Hoje a matriz de confusão vem de 1 documento real.</div></div>
+      <div class="step"><div class="i">02</div><div><h4>Medir o juiz LLM</h4><p>Gravar notas reais e medir a concordância entre juiz e revisão humana (concordance.py já está pronto).</p></div><div class="why">Na execução medida, nada passou das métricas: o juiz não rodou.</div></div>
+      <div class="step"><div class="i">03</div><div><h4>Fechar os limiares provisórios</h4><p>Faixas de nível em limiares.yaml e limiar de agrupamento de pautas (0,40) em coleta_fontes.yaml.</p></div><div class="why">Calibrados em amostras pequenas (47 notícias).</div></div>
+      <div class="step"><div class="i">04</div><div><h4>Fontes e glossário</h4><p>Investigar o HTTP 400 dos feeds do BCB, confirmar os termos de uso de cada site e aprovar os 204 termos do glossário.</p></div><div class="why">Só termos aprovados entram nas explicações.</div></div>
+    </div>
+  </section>
+
+  <!-- 5 · encerramento -->
+  <section class="slide dark" id="s-fim">
+    <div class="glow"></div><div class="arcs"></div>
+    <img class="logo-top" src="img/logo_escuro.png" alt="Suno Asset">
+    <div class="content">
+      <div class="kicker">Perspecta</div>
+      <h2 style="margin-top:22px">Agradeço a<br>atenção<span class="dot">.</span></h2>
+      <div class="name">Julia Khristina</div>
+      <div class="proj">Perguntas são bem-vindas.</div>
+    </div>
+    <div class="qrs">
+      <div class="qr"><img src="img/qr_linkedin.svg" alt="QR code do LinkedIn">
+        <div class="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.6h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1v5.35h-4v-4.75c0-1.13-.02-2.6-1.58-2.6-1.6 0-1.84 1.24-1.84 2.52v4.83h-4z"/></svg>LinkedIn</div>
+        <div class="u">in/julia-khristina</div></div>
+      <div class="qr"><img src="img/qr_github.svg" alt="QR code do repositório no GitHub">
+        <div class="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>GitHub</div>
+        <div class="u">Julia-Khristina/Case_Suno</div></div>
+    </div>
+  </section>
+</div>
+
+<div id="dots"></div>
+<div id="timer" title="Clique para zerar o cronômetro">0:00</div>
+
+<script>
+const ICON_VIDEO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="M16 10l6-3.5v11L16 14"/></svg>';
+const ICON_GEAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+
+// Ordem de apresentação = número do nó. clip: vídeo do sistema; sem clip: processo de backend (palavras-chave).
+const NODES = [
+  { n: 1, x: 0, y: 10, t: "Coleta RSS/Atom", clip: "coleta",
+    sub: "Lê os feeds financeiros e guarda só notícia gerável, com texto completo.",
+    chips: ["7 feeds · 6 fontes", "a cada 3 h (07–22 h)", "só tema financeiro", "texto completo", "sem LLM"],
+    stat: ["0 tokens", "seleção, admissão e agrupamento são determinísticos"] },
+  { n: 2, x: 300, y: 10, t: "Acervo 72 h + pautas", clip: "pautas",
+    sub: "A mesma notícia em fontes diferentes vira uma pauta comparável, base do relatório triangulado.",
+    chips: ["TF-IDF + entidade em comum", "mesma origem = 1 fonte", "2 a 5 fontes", "matriz de convergência/divergência", "sem veredito"],
+    stat: ["0,66 vs 0,37", "similaridade do menor par verdadeiro vs maior par falso; limiar provisório em 0,40 (47 notícias)"] },
+  { n: 3, x: 300, y: 165, t: "Entrada manual", clip: "manual",
+    sub: "Texto colado, link ou PDF, com escolha dos níveis a gerar.",
+    chips: ["texto", "link", "PDF", "níveis selecionáveis", "mesma admissão da coleta"],
+    stat: ["1 porta", "coleta e entrada manual passam pela mesma admissão"] },
+  { n: 4, x: 600, y: 10, t: "Admissão", backend: "Backend",
+    sub: "Barra o documento antes de gastar qualquer token.",
+    chips: ["recusa paywall / texto cortado", "só português", "≥ 200 palavras", "≥ 5 termos do glossário", "documento por hash"],
+    stat: ["Gate 1", "um card só aparece na interface se for gerável"] },
+  { n: 5, x: 900, y: 10, t: "Extração ancorada", clip: "extracao",
+    sub: "Pontos centrais, afirmações, números e entidades — cada um preso ao trecho da fonte.",
+    chips: ["pontos centrais", "afirmações + trecho", "números e datas", "entidades", "grafo em tabelas"],
+    stat: ["1× por doc", "≈10,9 mil tokens divididos pelas 9 combinações nível × formato"] },
+  { n: 6, x: 1200, y: 10, t: "Geração por nível e formato", clip: "geracao",
+    sub: "Grafo LangGraph com estado Pydantic: 3 níveis × 3 formatos.",
+    chips: ["texto 350–500 palavras", "carrossel 5 slides", "roteiro ≤ 60 s", "gpt-oss-20b", "partes montadas por regra"],
+    stat: ["≈3,6 mil tokens", "e ≈1,6 s por chamada de geração (execução real medida)"] },
+  { n: 7, x: 1200, y: 330, t: "Métricas determinísticas", clip: "metricas",
+    sub: "Avalia cada tentativa sem LLM; limiares em config/limiares.yaml.",
+    chips: ["Flesch PT-BR (Martins)", "densidade de termos", "número fora da fonte", "recomendação / emoji", "regras de formato"],
+    stat: ["15 de 15", "saídas ruins do benchmark adversarial reprovam pelo motivo esperado"] },
+  { n: 8, x: 1500, y: 170, t: "Ciclo de reescrita", clip: "reescrita",
+    sub: "Cada falha volta para o gerador como feedback numérico: métrica = valor, limiar = faixa.",
+    chips: ["até 2 reescritas", "feedback numérico", "para se 97% igual", "esgotou → revisão com aviso"],
+    stat: ["≤ 3 tentativas", "por nível e formato; nunca sai como aprovado sem passar"] },
+  { n: 9, x: 900, y: 330, t: "Juiz LLM", backend: "Backend",
+    sub: "Outro modelo, maior, só depois das métricas. A aprovação é calculada pelo código.",
+    chips: ["gpt-oss-120b · temp. 0", "rubrica 2.0 · 6 critérios", "fidelidade peso 1,5", "nota + evidência", "média ≥ 7 e nenhum < 5"],
+    stat: ["27 chamadas evitadas", "na execução medida nada passou das métricas, então o juiz não precisou rodar"] },
+  { n: 10, x: 600, y: 330, t: "Revisão humana", clip: "revisao",
+    sub: "Nada é exportado sem uma pessoa aprovar.",
+    chips: ["aprovar libera exportação", "editar exige observação", "rejeitar exige motivo", "nova versão usa o motivo", "auditoria em decisoes_humanas"],
+    stat: ["100%", "dos materiais passam por revisão humana antes de sair"] },
+  { n: 11, x: 300, y: 330, t: "Exportações", clip: "exportacao",
+    sub: "Saídas prontas na identidade visual, só depois de aprovadas.",
+    chips: ["Markdown", "HTML com gráficos", "PNG 1080×1350 (Playwright)", "roteiro + prompt de vídeo"],
+    stat: ["3 formatos", "texto analítico, carrossel para Instagram e roteiro de vídeo"] },
+];
+// arestas destacadas ao selecionar cada nó
+const EDGES = { 1:["1-2"], 2:["1-2","2-4"], 3:["3-4"], 4:["2-4","3-4","4-5"], 5:["4-5","5-6"], 6:["5-6","6-7","8-6"],
+  7:["6-7","7-9","7-8"], 8:["7-8","9-8","8-6"], 9:["7-9","9-10","9-8"], 10:["9-10","10-11"], 11:["10-11"] };
+
+const flow = document.getElementById("flow");
+const panel = document.getElementById("panel");
+const modal = document.getElementById("modal");
+const seen = new Set();
+let current = 0;          // último nó aberto (0 = nenhum)
+
+NODES.forEach(d => {
+  const el = document.createElement("div");
+  el.className = "node"; el.style.left = d.x + "px"; el.style.top = d.y + "px"; el.dataset.n = d.n;
+  el.innerHTML = `<div class="top"><span class="num">${d.n}</span><span class="kind ${d.clip ? "video" : ""}">${d.clip ? ICON_VIDEO + "Vídeo" : ICON_GEAR + "Backend"}</span></div><div class="title">${d.t}</div>`;
+  el.addEventListener("click", () => openNode(d.n));
+  flow.appendChild(el);
+});
+
+function introPanel() {
+  panel.innerHTML = `<div class="intro"><div class="big">Do feed ao material aprovado: <em>5 camadas de avaliação</em>, cada uma só roda se a anterior deixar, e nenhum material sai sem revisão humana.</div>
+    <div class="legend"><div><span style="color:var(--red)">${ICON_VIDEO}</span>Vídeo do sistema</div><div>${ICON_GEAR}Processo de backend</div>
+    <div><svg viewBox="0 0 40 10"><path d="M0 5h40" stroke="#B3141F" stroke-width="2.5" stroke-dasharray="6 5"/></svg>Ciclo de reescrita</div></div></div>`;
+}
+
+// destaque no fluxo: o último nó aberto e as setas dele (visível ao fechar o modal)
+function markFlow(n) {
+  document.querySelectorAll(".node").forEach(el => {
+    const k = +el.dataset.n;
+    el.classList.toggle("active", k === n);
+    el.classList.toggle("seen", seen.has(k));
+    el.classList.toggle("next", k === n + 1);   // próximo nó a clicar pulsa de leve
+  });
+  document.querySelectorAll("#flow path.edge").forEach(p => p.classList.toggle("hot", (EDGES[n] || []).includes(p.dataset.e)));
+}
+
+function openNode(n) {
+  current = n; seen.add(n); markFlow(n);
+  const d = NODES[n - 1];
+  const media = d.clip
+    ? `<div class="mmedia"><video src="clips/${d.clip}.mp4" poster="clips/${d.clip}.jpg" autoplay muted loop playsinline></video></div>`
+    : `<div class="mmedia backend"><div class="glow"></div><div class="arcs"></div><div class="bk">${ICON_GEAR}Processo de backend</div>
+       <ul>${d.chips.map(c => `<li>${c}</li>`).join("")}</ul></div>`;
+  const mini = NODES.map(x => `<button class="${x.n === n ? "on" : seen.has(x.n) ? "seen" : ""}" data-n="${x.n}" title="${x.t}">${x.n}</button>`).join("");
+  modal.innerHTML = `
+    <div class="mhead">
+      <div class="mtitle"><span class="num">${d.n}</span><div><div class="kicker">Fluxo do sistema · etapa ${d.n} de ${NODES.length} · ${d.clip ? "vídeo do sistema" : "backend"}</div><h3>${d.t}</h3></div></div>
+      <div class="mnav"><div class="steps-mini">${mini}</div><button class="close">← Voltar ao fluxo</button></div>
+    </div>
+    <div class="mbody">${media}
+      <div class="minfo"><p class="sub">${d.sub}</p>
+        ${d.clip ? `<div class="lbl">Palavras-chave</div><div class="chips">${d.chips.map(c => `<span>${c}</span>`).join("")}</div>` : ""}
+        <div class="stat"><b>${d.stat[0]}</b><span>${d.stat[1]}</span></div></div>
+    </div>
+    <div class="mfoot">Clique em qualquer lugar para voltar ao fluxo · <kbd>→</kbd> próxima etapa · <kbd>←</kbd> anterior · <kbd>Esc</kbd> fluxo</div>`;
+  modal.querySelectorAll(".steps-mini button").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); openNode(+b.dataset.n); }));
+  modal.classList.add("open");
+}
+
+function closeNode() {
+  modal.querySelectorAll("video").forEach(v => v.pause());
+  modal.classList.remove("open");
+  modal.innerHTML = "";
+}
+const modalOpen = () => modal.classList.contains("open");
+modal.addEventListener("click", closeNode);   // clique em qualquer lugar da etapa (exceto a barra 1–11) volta ao fluxo
+markFlow(0);                                  // o nó 1 começa pulsando
+
+// ---------- slides ----------
+const slides = [...document.querySelectorAll(".slide")];
+const FLOW = slides.findIndex(s => s.id === "s-fluxo");
+let idx = 0;
+const dots = document.getElementById("dots");
+slides.forEach((_, i) => { const b = document.createElement("button"); b.addEventListener("click", () => go(i)); dots.appendChild(b); });
+
+function go(i) {
+  idx = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, k) => s.classList.toggle("active", k === idx));
+  [...dots.children].forEach((b, k) => b.classList.toggle("on", k === idx));
+  if (idx !== FLOW && modalOpen()) closeNode();
+}
+// No fluxo: → abre a próxima etapa; depois da última, volta ao fluxo; com o fluxo à vista e tudo visto, segue para o próximo slide.
+function next() {
+  if (idx === FLOW) {
+    if (modalOpen()) { current < NODES.length ? openNode(current + 1) : closeNode(); return; }
+    if (current < NODES.length) { openNode(current + 1); return; }
+  }
+  go(idx + 1);
+}
+function prev() {
+  if (idx === FLOW && modalOpen()) { current > 1 ? openNode(current - 1) : closeNode(); return; }
+  go(idx - 1);
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && modalOpen()) { closeNode(); e.preventDefault(); return; }
+  if (["ArrowRight", "PageDown", " "].includes(e.key)) { next(); e.preventDefault(); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { prev(); e.preventDefault(); }
+  else if (e.key === "Home") go(0);
+  else if (e.key === "End") go(slides.length - 1);
+  else if (e.key.toLowerCase() === "f") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+});
+
+function fit() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  document.getElementById("stage").style.transform = `translate(-50%, -50%) scale(${s})`;
+}
+addEventListener("resize", fit); fit();
+
+// cronômetro de 5 min (fica vermelho a partir de 4:30); começa ao sair da capa
+const timer = document.getElementById("timer");
+let t0 = null;
+setInterval(() => {
+  if (t0 === null && idx > 0) t0 = Date.now();
+  const s = t0 === null ? 0 : Math.floor((Date.now() - t0) / 1000);
+  timer.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  timer.classList.toggle("warn", s >= 270);
+}, 500);
+timer.addEventListener("click", () => { t0 = idx > 0 ? Date.now() : null; });
+
+introPanel();
+go(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perspecta · Apresentação técnica</title>
+<style>
+@font-face { font-family: "Jakarta"; font-weight: 400; src: url("../asset/fonts/PlusJakartaSans-400.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 500; src: url("../asset/fonts/PlusJakartaSans-500.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 600; src: url("../asset/fonts/PlusJakartaSans-600.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 700; src: url("../asset/fonts/PlusJakartaSans-700.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 800; src: url("../asset/fonts/PlusJakartaSans-800.ttf"); }
+
+:root {
+  --red: #B3141F; --red-2: #D4202C; --red-soft: #FBE6E6; --red-mid: #F2B8BC; --red-dark: #6E1B25;
+  --ink: #16161A; --ink-2: #34343A; --muted: #6B6B70; --faint: #A9A39F; --line: #E9E4E0; --bg: #F7F5F3; --card: #FFFFFF;
+  --ok: #1E7A4C; --ok-soft: #E3F3EA; --llm: #5B4BD6; --llm-soft: #ECE9FC; --hum: #1E7A4C; --code: #6B6B70; --code-soft: #EFEDEB;
+  --ease: cubic-bezier(.22,.8,.24,1); --shadow: 0 24px 60px rgba(22,22,26,.08), 0 2px 6px rgba(22,22,26,.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); overflow: hidden; }
+body { font-family: "Jakarta", "Segoe UI", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; }
+kbd { font: 700 14px "Jakarta", sans-serif; border: 1.5px solid #CFCAC6; border-bottom-width: 3px; border-radius: 7px; padding: 0 7px; background: #fff; color: var(--ink); }
+
+body { background: radial-gradient(circle at 1px 1px, rgba(22,22,26,.07) 1px, transparent 0) 0 0 / 22px 22px, var(--bg); }
+body::before { content: ""; position: fixed; width: 70vw; height: 70vw; right: -24vw; top: -30vw; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,32,44,.10), transparent 62%); pointer-events: none; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center; overflow: visible; background: transparent; }
+html, body { overflow: hidden; }
+
+/* ---------- cenas ---------- */
+.scene { position: absolute; inset: 0; opacity: 0; pointer-events: none; transform: translateX(60px) scale(.995);
+  transition: opacity .6s var(--ease), transform .85s var(--ease); }
+.scene.past { transform: translateX(-60px) scale(.995); }
+.scene.active { opacity: 1; pointer-events: auto; transform: none; }
+.rise { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .8s var(--ease); }
+.scene.active .rise { opacity: 1; transform: none; transition-delay: calc(var(--d, 0) * 100ms + 120ms); }
+.kicker { font-size: 19px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
+.head { position: absolute; left: 120px; right: 120px; top: 96px; }
+.head h2 { font-size: 60px; font-weight: 800; letter-spacing: -.03em; line-height: 1.04; margin-top: 10px; }
+.head h2 em { font-style: normal; color: var(--red); }
+.card { background: var(--card); border: 1.5px solid var(--line); border-radius: 26px; box-shadow: var(--shadow); }
+.honest { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--muted);
+  background: #fff; border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 14px; white-space: nowrap; }
+.honest i { width: 8px; height: 8px; border-radius: 50%; background: #D9A400; display: inline-block; }
+.honest.ok i { background: var(--ok); }
+.tag-code, .tag-llm, .tag-hum { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  border-radius: 999px; padding: 4px 10px; }
+.tag-code { background: var(--code-soft); color: var(--code); }
+.tag-llm { background: var(--llm-soft); color: var(--llm); }
+.tag-hum { background: var(--ok-soft); color: var(--hum); }
+.big-num { font-size: 76px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--red); font-variant-numeric: tabular-nums; }
+.lbl { font-size: 14px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+/* progresso */
+#progress { position: absolute; left: 120px; right: 120px; top: 36px; display: flex; gap: 10px; z-index: 30; transition: opacity .4s; }
+#progress.hide { opacity: 0; pointer-events: none; }
+#progress button { flex: 1; border: 0; background: none; cursor: pointer; text-align: left; }
+#progress .bar { height: 4px; border-radius: 2px; background: rgba(22,22,26,.10); overflow: hidden; }
+#progress .bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .6s var(--ease); }
+#progress .t { margin-top: 7px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+#progress button.done .bar span, #progress button.on .bar span { width: 100%; }
+#progress button.on .t { color: var(--red); }
+
+/* ---------- capa ---------- */
+#s-capa .rings { position: absolute; right: -260px; top: 50%; width: 1100px; height: 1100px; transform: translateY(-50%); border-radius: 50%;
+  background: repeating-radial-gradient(circle, transparent 0 38px, rgba(179,20,31,.16) 38px 39.5px);
+  -webkit-mask: radial-gradient(circle, #000 0 40%, transparent 70%); mask: radial-gradient(circle, #000 0 40%, transparent 70%); animation: breathe 10s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-50%) scale(1.05); } }
+#s-capa .orb { position: absolute; right: 270px; top: 50%; width: 120px; height: 120px; margin-top: -60px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #F0444F, var(--red) 60%, var(--red-dark)); box-shadow: 0 30px 80px rgba(179,20,31,.45); }
+#s-capa .logo { position: absolute; left: 120px; top: 96px; height: 44px; }
+#s-capa .content { position: absolute; left: 120px; top: 300px; width: 1180px; }
+#s-capa h1 { font-size: 180px; font-weight: 800; letter-spacing: -.045em; line-height: .95; }
+#s-capa h1 span { color: var(--red); }
+#s-capa .tag { margin-top: 40px; font-size: 42px; font-weight: 500; line-height: 1.32; color: var(--ink-2); }
+#s-capa .tag b { color: var(--ink); font-weight: 800; }
+#s-capa .levels { margin-top: 40px; display: flex; gap: 14px; }
+#s-capa .levels span { font-size: 21px; font-weight: 700; padding: 10px 22px; border-radius: 999px; background: #fff; border: 1.5px solid var(--line); }
+#s-capa .levels span:nth-child(2) { background: var(--red-soft); border-color: var(--red-mid); color: var(--red-dark); }
+#s-capa .levels span:nth-child(3) { background: var(--red); border-color: var(--red); color: #fff; }
+#s-capa .author { position: absolute; left: 120px; bottom: 96px; display: flex; align-items: center; gap: 20px; }
+#s-capa .author .bar { width: 6px; height: 62px; background: var(--red); border-radius: 3px; }
+#s-capa .author .name { font-size: 34px; font-weight: 800; }
+#s-capa .author .role { font-size: 21px; color: var(--muted); margin-top: 4px; }
+
+/* ---------- problema ---------- */
+#s-prob .paper { position: absolute; left: 120px; top: 262px; width: 1080px; padding: 44px 52px; }
+#s-prob .src { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; color: var(--muted); }
+#s-prob .src .av { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 13px; }
+#s-prob h3 { margin-top: 18px; font-size: 33px; font-weight: 800; line-height: 1.2; }
+#s-prob p { margin-top: 18px; font-size: 23px; line-height: 1.55; color: var(--ink-2); }
+#s-prob .j { border-radius: 6px; transition: all .5s; }
+#s-prob[data-step="1"] .j { background: var(--red-soft); color: var(--red-dark); box-shadow: 0 0 0 3px var(--red-soft); font-weight: 700; }
+#s-prob .ask { position: absolute; left: 1290px; top: 300px; width: 510px; opacity: 0; transform: translateY(20px); transition: all .7s var(--ease); }
+#s-prob[data-step="1"] .ask { opacity: 1; transform: none; }
+#s-prob .ask .q { font-size: 70px; font-weight: 800; line-height: 1.02; letter-spacing: -.03em; }
+#s-prob .ask .q em { font-style: normal; color: var(--red); }
+#s-prob .ask .n { margin-top: 30px; display: flex; align-items: baseline; gap: 16px; }
+#s-prob .ask .n .big-num { font-size: 130px; }
+#s-prob .ask .n span:not(.big-num) { font-size: 24px; font-weight: 600; color: var(--muted); line-height: 1.3; }
+#s-prob .ask p { margin-top: 26px; font-size: 24px; line-height: 1.45; font-weight: 500; color: var(--ink-2); }
+
+/* ---------- pipeline ---------- */
+#map { position: absolute; left: 120px; right: 120px; top: 206px; height: 132px; }
+#map svg { position: absolute; inset: 0; overflow: visible; }
+#map .rail { stroke: #DDD6D1; stroke-width: 3; fill: none; }
+#map .rail-done { stroke: var(--red); stroke-width: 3; fill: none; transition: stroke-dashoffset .9s var(--ease); }
+#map .loop { stroke: var(--red-mid); stroke-width: 2.5; fill: none; stroke-dasharray: 6 6; }
+#map .particle { fill: var(--red); filter: drop-shadow(0 0 10px rgba(212,32,44,.8)); transition: transform .9s var(--ease); }
+.mnode { position: absolute; top: 38px; width: 168px; transform: translateX(-50%); text-align: center; cursor: pointer; }
+.mnode .dot { width: 52px; height: 52px; margin: 0 auto; border-radius: 16px; background: #fff; border: 2px solid var(--line); display: grid; place-items: center;
+  font-size: 19px; font-weight: 800; color: var(--faint); transition: all .5s var(--ease); box-shadow: 0 6px 16px rgba(22,22,26,.05); }
+.mnode .nm { margin-top: 10px; font-size: 18px; font-weight: 800; color: var(--faint); transition: color .4s; }
+.mnode .kd { margin-top: 6px; transition: opacity .4s; opacity: .55; }
+.mnode.done .dot { border-color: var(--red-mid); color: var(--red); }
+.mnode.done .nm { color: var(--ink-2); }
+.mnode.on .dot { background: var(--red); border-color: var(--red); color: #fff; transform: scale(1.18); box-shadow: 0 14px 30px rgba(179,20,31,.35), 0 0 0 10px var(--red-soft); }
+.mnode.on .nm { color: var(--ink); }
+.mnode.on .kd, .mnode.done .kd { opacity: 1; }
+#detail { position: absolute; left: 120px; right: 120px; top: 380px; bottom: 64px; }
+.pane { position: absolute; inset: 0; opacity: 0; pointer-events: none; transform: translateY(18px); transition: opacity .5s var(--ease), transform .7s var(--ease); }
+.pane.on { opacity: 1; pointer-events: auto; transform: none; transition-delay: .15s; }
+.pane .ph { display: flex; align-items: baseline; gap: 18px; }
+.pane .ph h3 { font-size: 44px; font-weight: 800; letter-spacing: -.025em; }
+.pane .ph p { font-size: 22px; color: var(--muted); font-weight: 500; }
+.pane .grid { margin-top: 26px; display: grid; gap: 26px; height: 520px; }
+.pane .box { padding: 28px 32px; position: relative; overflow: hidden; }
+.pane .box h4 { font-size: 14px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.stat { display: flex; flex-direction: column; justify-content: center; }
+.stat .s { font-size: 21px; font-weight: 600; color: var(--ink-2); line-height: 1.4; margin-top: 10px; }
+.stat .s b { color: var(--ink); }
+.stat .sep { height: 1.5px; background: var(--line); margin: 22px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+.chips span { font-size: 16px; font-weight: 700; padding: 7px 14px; border-radius: 999px; background: var(--bg); border: 1.5px solid var(--line); }
+svg text { font-family: "Jakarta", sans-serif; }
+.draw { stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.4s var(--ease) .35s; }
+.pane.on .draw { stroke-dashoffset: 0; }
+.grow { transform-origin: left center; transform: scaleX(0); transition: transform 1.1s var(--ease) .35s; }
+.pane.on .grow { transform: scaleX(1); }
+.growy { transform-box: fill-box; transform-origin: center bottom; transform: scaleY(0); transition: transform 1s var(--ease) .35s; }
+.pane.on .growy { transform: scaleY(1); }
+.pop { opacity: 0; transform: scale(.6); transform-box: fill-box; transform-origin: center; transition: all .6s var(--ease); }
+.pane.on .pop { opacity: 1; transform: none; transition-delay: calc(var(--d, 0) * 120ms + 500ms); }
+.gaterow { display: grid; grid-template-columns: 220px 1fr 120px; gap: 20px; align-items: center; padding: 16px 0; border-top: 1.5px solid var(--line); }
+.gaterow:first-of-type { border-top: 0; }
+.gaterow .gn { font-size: 21px; font-weight: 700; }
+.gaterow .gn small { display: block; font-size: 15px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+.gaterow .track { height: 14px; border-radius: 7px; background: var(--bg); position: relative; }
+.gaterow .track .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; background: var(--ok); }
+.gaterow .track .min { position: absolute; top: -8px; bottom: -8px; width: 3px; background: var(--ink); border-radius: 2px; }
+.gaterow .v { font-size: 26px; font-weight: 800; color: var(--ok); text-align: right; }
+.anchor { display: grid; grid-template-columns: 1fr 70px 1fr; align-items: center; margin-top: 18px; }
+.anchor .a, .anchor .t { border-radius: 18px; padding: 18px 20px; font-size: 18px; line-height: 1.45; }
+.anchor .a { background: var(--llm-soft); color: #2E2580; }
+.anchor .t { background: var(--bg); border: 1.5px dashed #CFC8C3; color: var(--ink-2); font-style: italic; }
+.anchor .lnk { text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .08em; color: var(--muted); }
+.anchor small { display: block; font-style: normal; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; opacity: .7; }
+.matrix { display: grid; grid-template-columns: 300px repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.matrix .h { font-size: 15px; font-weight: 800; color: var(--muted); padding: 6px 8px; line-height: 1.35; }
+.matrix .h b { display: block; font-size: 19px; color: var(--ink); }
+.matrix .r { padding: 14px 16px; border-radius: 16px; font-size: 15px; font-weight: 600; color: var(--ink-2); line-height: 1.4; background: var(--bg); }
+.matrix .r b { display: block; font-size: 19px; color: var(--ink); margin-bottom: 4px; }
+.matrix .c { border-radius: 16px; display: grid; place-items: center; font-size: 15px; font-weight: 800; color: var(--red-dark); background: var(--red-soft); }
+.matrix .c i { font-style: normal; display: block; font-size: 30px; color: var(--red); }
+.states { position: relative; height: 420px; margin-top: 10px; }
+.st { position: absolute; padding: 14px 20px; border-radius: 16px; font-size: 19px; font-weight: 800; background: #fff; border: 2px solid var(--line); box-shadow: 0 8px 20px rgba(22,22,26,.06); white-space: nowrap; }
+.st.wait { border-color: #E8C966; } .st.ed { border-color: var(--llm); color: var(--llm); } .st.ap { border-color: var(--ok); color: var(--ok); }
+.st.rj { border-color: var(--red); color: var(--red); } .st.ex { background: var(--ok); color: #fff; border-color: var(--ok); }
+.audit { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.audit div { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; font-size: 19px; line-height: 1.4; font-weight: 600; color: var(--ink-2); }
+.audit div b { color: var(--ink); }
+.audit i { width: 44px; height: 44px; border-radius: 14px; background: var(--red-soft); color: var(--red); display: grid; place-items: center; font-style: normal; font-size: 20px; font-weight: 800; }
+
+/* ---------- a aplicação (vídeo com capítulos) ---------- */
+#s-app .player { position: absolute; left: 120px; top: 250px; width: 1136px; height: 710px; padding: 14px; border-radius: 30px; }
+#s-app .player .bar { display: flex; gap: 8px; padding: 4px 6px 12px; }
+#s-app .player .bar i { width: 12px; height: 12px; border-radius: 50%; background: #E4DFDB; }
+#s-app .player .bar span { margin-left: 10px; font-size: 13px; font-weight: 700; color: var(--faint); }
+#s-app video { width: 1108px; height: 664px; border-radius: 18px; display: block; background: #111; object-fit: cover; object-position: top left; }
+#s-app .speed { position: absolute; right: 30px; top: 12px; font-size: 13px; font-weight: 800; letter-spacing: .08em; color: var(--muted); }
+#s-app .chap { position: absolute; left: 1296px; right: 120px; top: 250px; display: flex; flex-direction: column; gap: 10px; }
+#s-app .ch { padding: 14px 20px; border-radius: 18px; background: #fff; border: 1.5px solid var(--line); cursor: pointer; transition: all .4s var(--ease); position: relative; overflow: hidden; }
+#s-app .ch .top { display: flex; align-items: center; gap: 12px; }
+#s-app .ch .n { width: 30px; height: 30px; border-radius: 10px; background: var(--bg); color: var(--faint); display: grid; place-items: center; font-size: 14px; font-weight: 800; transition: all .4s; }
+#s-app .ch b { font-size: 19px; font-weight: 800; color: var(--muted); transition: color .4s; }
+#s-app .ch p { max-height: 0; opacity: 0; overflow: hidden; font-size: 16px; line-height: 1.45; color: var(--ink-2); font-weight: 500; transition: all .5s var(--ease); }
+#s-app .ch p b { font-size: 16px; color: var(--ink); }
+#s-app .ch .pg { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--red); width: 0; }
+#s-app .ch.on { border-color: var(--red-mid); box-shadow: 0 14px 30px rgba(179,20,31,.10); }
+#s-app .ch.on .n { background: var(--red); color: #fff; }
+#s-app .ch.on b { color: var(--ink); }
+#s-app .ch.on p { max-height: 200px; opacity: 1; margin-top: 10px; }
+#s-app .ch.done .n { background: var(--red-soft); color: var(--red); }
+#s-app .ch.done b { color: var(--ink-2); }
+#s-app .ch.cfg.on { border-color: var(--llm); }
+#s-app .ch.cfg.on .n { background: var(--llm); }
+#s-app .glos { display: flex; gap: 8px; margin-top: 10px; }
+#s-app .glos span { flex: 1; text-align: center; border-radius: 12px; padding: 8px 4px; background: var(--bg); font-size: 12px; font-weight: 700; color: var(--muted); }
+#s-app .glos span i { display: block; font-style: normal; font-size: 22px; font-weight: 800; color: var(--ink); }
+
+/* ---------- controle deslizante ---------- */
+#s-nivel .left { position: absolute; left: 120px; top: 262px; width: 560px; }
+.slider-wrap { padding: 28px 30px 24px; }
+.range { position: relative; margin: 28px 10px 6px; height: 44px; }
+.range .track { position: absolute; left: 0; right: 0; top: 18px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--red-mid), var(--red) 55%, var(--red-dark)); }
+.range input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: grab; }
+.range .knob { position: absolute; top: 4px; width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; background: #fff; border: 4px solid var(--red);
+  box-shadow: 0 6px 18px rgba(179,20,31,.35); pointer-events: none; transition: left .35s var(--ease); }
+.range.drag .knob { transition: none; }
+.stops { display: flex; justify-content: space-between; margin-top: 8px; }
+.stops button { border: 0; background: none; font-size: 20px; font-weight: 700; color: var(--faint); cursor: pointer; padding: 4px 2px; }
+.stops button.on { color: var(--red); }
+.gauges { margin-top: 18px; display: flex; flex-direction: column; gap: 16px; }
+.gauge { padding: 18px 22px; }
+.gauge .top { display: flex; justify-content: space-between; align-items: baseline; }
+.gauge .name { font-size: 16px; font-weight: 700; color: var(--muted); }
+.gauge .val { font-size: 32px; font-weight: 800; letter-spacing: -.02em; }
+.gauge .scale { position: relative; height: 14px; margin-top: 12px; display: flex; }
+.gauge .scale i { display: block; height: 100%; }
+.gauge .scale i:first-child { border-radius: 7px 0 0 7px; } .gauge .scale i:nth-child(3) { border-radius: 0 7px 7px 0; }
+.gauge .scale i.on { box-shadow: inset 0 0 0 3px rgba(22,22,26,.55); }
+.gauge .pin { position: absolute; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; background: #fff; border: 5px solid var(--ink); border-radius: 50%; transition: left .5s var(--ease); }
+.gauge .legend { display: flex; margin-top: 8px; font-size: 13px; font-weight: 700; color: var(--faint); }
+.verdict { display: flex; align-items: center; gap: 12px; font-size: 19px; font-weight: 700; }
+.verdict .b { padding: 8px 16px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); }
+.verdict .b.bad { background: var(--red-soft); color: var(--red); }
+.toggle { margin-top: 18px; display: flex; padding: 5px; border-radius: 999px; }
+.toggle button { flex: 1; border: 0; background: none; border-radius: 999px; padding: 12px 10px; font-size: 17px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .3s; }
+.toggle button.on { background: var(--ink); color: #fff; }
+#s-nivel .doc { position: absolute; left: 740px; top: 262px; width: 1060px; height: 740px; padding: 44px 54px; overflow: hidden; }
+#s-nivel .doc .meta { display: flex; justify-content: space-between; align-items: center; }
+#s-nivel .doc .lv { font-size: 15px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
+#s-nivel .doc .body { transition: opacity .28s, transform .35s var(--ease); }
+#s-nivel .doc .body.out { opacity: 0; transform: translateY(12px); }
+#s-nivel .doc h3 { margin-top: 20px; font-size: 40px; font-weight: 800; line-height: 1.15; letter-spacing: -.015em; }
+#s-nivel .doc p { margin-top: 22px; font-size: 24px; line-height: 1.6; color: var(--ink-2); }
+#s-nivel .doc .t { background: var(--red-soft); color: var(--red-dark); border-radius: 5px; padding: 0 3px; font-weight: 600; }
+#s-nivel .doc .x { background: var(--ok-soft); color: #14563A; border-radius: 5px; padding: 0 3px; }
+#s-nivel .doc .fails { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+#s-nivel .doc .fails span { font-size: 16px; font-weight: 700; color: var(--red); background: var(--red-soft); border-radius: 999px; padding: 7px 14px; }
+#s-nivel .doc .key { position: absolute; left: 54px; right: 54px; bottom: 30px; display: flex; gap: 22px; font-size: 15px; font-weight: 600; color: var(--muted); }
+#s-nivel .doc .key i { display: inline-block; width: 26px; height: 14px; border-radius: 4px; vertical-align: -1px; margin-right: 8px; }
+
+/* ---------- formatos ---------- */
+#s-fmt .tabs { position: absolute; right: 120px; top: 136px; display: flex; gap: 6px; padding: 5px; border-radius: 999px; }
+#s-fmt .tabs button { border: 0; background: none; border-radius: 999px; padding: 11px 22px; font-size: 17px; font-weight: 700; color: var(--muted); cursor: pointer; }
+#s-fmt .tabs button.on { background: var(--red); color: #fff; }
+.fcol { position: absolute; top: 240px; }
+.fcol .ft { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; height: 74px; margin-bottom: 12px; }
+.fcol .ft .lbl { color: var(--ink-2); }
+.tilt-l { transform: perspective(1600px) rotateY(9deg); } .tilt-r { transform: perspective(1600px) rotateY(-9deg); }
+.phone, .reel { width: 470px; height: 740px; border-radius: 52px; background: #111; padding: 16px; box-shadow: 0 40px 80px rgba(22,22,26,.25); }
+.phone .screen, .reel .screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden; position: relative; }
+.phone .screen { background: #fff; }
+.ig-top { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 18px; font-size: 16px; font-weight: 700; border-bottom: 1px solid #eee; }
+.ig-top .av { width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1.5px solid #eee; display: grid; place-items: center; overflow: hidden; }
+.ig-top .av img { width: 28px; }
+.ig-slides { position: relative; width: 438px; height: 547px; overflow: hidden; }
+.ig-slides .rail { display: flex; height: 100%; transition: transform .7s var(--ease); }
+.ig-slides img { width: 438px; height: 547px; flex: none; display: block; }
+.ig-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+.ig-dots i { width: 7px; height: 7px; border-radius: 50%; background: #D6D2CF; }
+.ig-dots i.on { background: #2E7CF6; }
+.ig-cap { padding: 12px 18px; font-size: 15px; line-height: 1.4; color: #333; }
+.reel .screen { background: radial-gradient(circle at 70% 20%, rgba(212,32,44,.55), transparent 55%), linear-gradient(160deg, #1B1B20, #0B0B0D); color: #fff; }
+.reel .onscreen { position: absolute; left: 32px; right: 32px; top: 190px; font-size: 40px; font-weight: 800; line-height: 1.15; transition: opacity .35s; }
+.reel .speech { position: absolute; left: 32px; right: 32px; bottom: 120px; font-size: 20px; line-height: 1.45; font-weight: 500; color: #E9E6E4; transition: opacity .35s; }
+.reel .time { position: absolute; left: 32px; top: 34px; font-size: 16px; font-weight: 700; letter-spacing: .1em; color: #FF8A90; }
+.reel .role { position: absolute; left: 32px; top: 120px; font-size: 15px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #FF8A90; }
+.reel .seg { position: absolute; left: 32px; right: 32px; bottom: 50px; display: flex; gap: 6px; }
+.reel .seg i { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,.25); overflow: hidden; }
+.reel .seg i b { display: block; height: 100%; width: 0; background: #fff; }
+.reel .seg i.done b { width: 100%; }
+.reel .seg i.on b { animation: fill var(--dur, 3s) linear forwards; }
+@keyframes fill { to { width: 100%; } }
+.txtcard { width: 600px; height: 740px; padding: 40px 44px; overflow: hidden; position: relative; }
+.txtcard h3 { font-size: 31px; font-weight: 800; line-height: 1.18; }
+.txtcard p { margin-top: 18px; font-size: 19px; line-height: 1.6; color: var(--ink-2); }
+.txtcard::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; background: linear-gradient(transparent, #fff); }
+
+/* ---------- aprendizados + próximos ---------- */
+#s-fecho .cols { position: absolute; left: 120px; right: 120px; top: 262px; bottom: 80px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 30px; }
+#s-fecho .col { padding: 30px 34px; display: flex; flex-direction: column; }
+#s-fecho .item { display: grid; grid-template-columns: 54px 1fr; gap: 18px; padding: 18px 0; border-top: 1.5px solid var(--line); }
+#s-fecho .item:first-of-type { border-top: 0; }
+#s-fecho .item .i { font-size: 30px; font-weight: 800; color: var(--red); letter-spacing: -.02em; }
+#s-fecho .item h4 { font-size: 24px; font-weight: 800; letter-spacing: -.01em; line-height: 1.2; }
+#s-fecho .item p { margin-top: 6px; font-size: 18px; line-height: 1.45; color: var(--muted); font-weight: 500; }
+#s-fecho .item p b { color: var(--ink); }
+#s-fecho .item .dec { margin-top: 8px; font-size: 18px; font-weight: 700; color: var(--ink-2); }
+#s-fecho .item .dec span { font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #fff; background: var(--red); border-radius: 999px; padding: 4px 9px; margin-right: 8px; vertical-align: 2px; }
+#s-fecho .next .item .i { color: var(--ink); }
+#s-fecho .nextgrid { position: absolute; left: 120px; right: 120px; top: 270px; bottom: 90px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 28px; }
+#s-fecho .ns { padding: 34px 40px; display: flex; flex-direction: column; }
+#s-fecho .ns .i { font-size: 54px; font-weight: 800; color: var(--red); letter-spacing: -.03em; line-height: 1; }
+#s-fecho .ns h4 { margin-top: 18px; font-size: 32px; font-weight: 800; letter-spacing: -.015em; line-height: 1.15; }
+#s-fecho .ns p { margin-top: 10px; font-size: 21px; line-height: 1.45; color: var(--muted); font-weight: 500; }
+#s-fecho .ns .why { margin-top: auto; align-self: flex-start; font-size: 17px; font-weight: 700; color: var(--red-dark); background: var(--red-soft); border-radius: 12px; padding: 9px 14px; }
+
+/* ---------- fim ---------- */
+#s-fim .content { position: absolute; left: 120px; top: 300px; }
+#s-fim h2 { font-size: 120px; font-weight: 800; letter-spacing: -.035em; line-height: 1; }
+#s-fim h2 span { color: var(--red); }
+#s-fim .name { margin-top: 42px; font-size: 42px; font-weight: 800; }
+#s-fim .proj { margin-top: 10px; font-size: 25px; color: var(--muted); font-weight: 500; }
+#s-fim .logo { position: absolute; left: 120px; top: 96px; height: 44px; }
+#s-fim .qrs { position: absolute; right: 120px; top: 50%; transform: translateY(-50%); display: flex; gap: 40px; }
+.qr { padding: 26px 26px 20px; text-align: center; width: 330px; }
+.qr img { width: 278px; height: 278px; display: block; }
+.qr .l { margin-top: 16px; font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.qr .l svg { width: 26px; height: 26px; color: var(--red); }
+.qr .u { margin-top: 4px; font-size: 16px; color: var(--muted); font-weight: 600; }
+
+#timer { position: fixed; right: 18px; bottom: 12px; font-size: 14px; font-weight: 700; color: rgba(22,22,26,.45); cursor: pointer; font-variant-numeric: tabular-nums; z-index: 40; }
+#timer.warn { color: var(--red); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="progress" class="hide"></div>
+
+  <!-- ===== capa ===== -->
+  <section class="scene" id="s-capa">
+    <div class="rings"></div><div class="orb rise" style="--d:3"></div>
+    <img class="logo rise" src="img/logo.png" alt="Suno Asset">
+    <div class="content">
+      <div class="kicker rise" style="--d:1">Apresentação técnica · Case Suno</div>
+      <h1 class="rise" style="--d:2;margin-top:22px">Perspecta<span>.</span></h1>
+      <p class="tag rise" style="--d:3">Pipeline de IA que transforma informações do mundo financeiro em <b>conteúdo para cada nível de entendimento</b>.</p>
+      <div class="levels rise" style="--d:4"><span>Iniciante</span><span>Intermediário</span><span>Avançado</span></div>
+    </div>
+    <div class="author rise" style="--d:5"><div class="bar"></div><div><div class="name">Julia Khristina</div><div class="role">Outubro de 2026</div></div></div>
+  </section>
+
+  <!-- ===== problema ===== -->
+  <section class="scene" id="s-prob" data-label="Problema" data-steps="2">
+    <div class="head rise"><div class="kicker">Uma notícia real, coletada pelo sistema</div><h2>É assim que ela chega.</h2></div>
+    <div class="paper card rise" style="--d:1">
+      <div class="src"><span class="av">SD</span>Seu Dinheiro · 17/10/2026 · também na Money Times</div>
+      <h3>Tem ações da Braskem? Nova oferta da controladora permite venda dos papéis, mas nem todo acionista pode participar</h3>
+      <p>Após concluir a <span class="j">Oferta Pública de Aquisição de ações (OPA)</span> relacionada à compra da <span class="j">petroquímica</span> pelo <span class="j">FIP Shine</span>, a companhia anunciou […] que alguns acionistas terão mais uma chance de vender seus papéis nas mesmas condições oferecidas na operação.</p>
+      <p>O novo prazo foi aberto apenas para os detentores de <span class="j">ações ordinárias</span> (<span class="j">BRKM3</span>) que não participaram do <span class="j">leilão</span> da OPA. […] Quem possui <span class="j">ações preferenciais</span> […] ficou de fora.</p>
+      <p>A <span class="j">contraprestação</span> será feita por meio de <span class="j">debêntures</span> da NSP Investimentos […]. Após a OPA, o fundo Shine passará a deter […] o equivalente a 50,11% do <span class="j">capital votante</span>.</p>
+    </div>
+    <div class="ask">
+      <div class="q">Quem entende <em>isso</em>?</div>
+      <div class="n"><span class="big-num">10</span><span>termos técnicos<br>em três parágrafos</span></div>
+      <p>O mesmo fato precisa chegar a quem está começando e a quem já opera — <b>sem perder a precisão</b>.</p>
+    </div>
+  </section>
+
+  <!-- ===== pipeline ===== -->
+  <section class="scene" id="s-pipe" data-label="Pipeline" data-steps="8">
+    <div class="head rise"><div class="kicker">Por dentro do pipeline · notícia da Braskem</div><h2>Oito etapas, <em>três tipos de decisão</em>.</h2></div>
+    <div id="map" class="rise" style="--d:1"></div>
+    <div id="detail" class="rise" style="--d:2">
+
+      <!-- 1 coletar -->
+      <div class="pane" data-i="0">
+        <div class="ph"><h3>Coletar e agrupar</h3><p>A mesma notícia, de fontes diferentes, vira uma pauta.</p></div>
+        <div class="grid" style="grid-template-columns: 1.55fr 1fr">
+          <div class="card box"><h4>Quão parecida cada notícia de outra fonte é com a matéria da Seu Dinheiro (Braskem)</h4>
+            <svg viewBox="0 0 900 400" width="100%" height="410">
+              <g font-size="19" font-weight="700" fill="#34343A">
+                <text x="0" y="70">Money Times · Braskem</text><text x="0" y="190">Ag. Brasil · crédito a empresas</text><text x="0" y="310">E-Investidor · mercados globais</text></g>
+              <g font-size="15" font-weight="800">
+                <text x="0" y="96" fill="#B3141F">✓ entrou na pauta</text><text x="0" y="216" fill="#A9A39F">✕ ficou de fora</text><text x="0" y="336" fill="#A9A39F">✕ ficou de fora</text></g>
+              <g transform="translate(310,0)">
+                <rect x="0" y="50" width="540" height="40" rx="10" fill="#F7F5F3"/><rect class="grow" x="0" y="50" width="362" height="40" rx="10" fill="#B3141F"/>
+                <rect x="0" y="170" width="540" height="40" rx="10" fill="#F7F5F3"/><rect class="grow" x="0" y="170" width="58" height="40" rx="10" fill="#C9C1BC"/>
+                <rect x="0" y="290" width="540" height="40" rx="10" fill="#F7F5F3"/><rect class="grow" x="0" y="290" width="47" height="40" rx="10" fill="#C9C1BC"/>
+                <g font-size="24" font-weight="800"><text x="378" y="80" fill="#B3141F" class="pop">0,67</text><text x="72" y="200" fill="#6B6B70" class="pop">0,11</text><text x="61" y="320" fill="#6B6B70" class="pop">0,09</text></g>
+                <line x1="216" y1="20" x2="216" y2="360" stroke="#16161A" stroke-width="3" stroke-dasharray="7 6"/>
+                <text x="224" y="22" font-size="16" font-weight="800" fill="#16161A">limiar 0,40 · só acima dele vira pauta</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card box stat"><div class="lbl">Pauta formada</div><div class="big-num">2 fontes</div>
+            <div class="s">Seu Dinheiro + Money Times, com <b>3 entidades em comum</b>:</div>
+            <div class="chips"><span>Braskem</span><span>BRKM</span><span>BRKM5</span></div>
+            <div class="sep"></div>
+            <div class="s"><b>7 feeds</b> lidos a cada 3 h · acervo de 72 h · <b>0 tokens</b>: seleção e agrupamento são só código.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 admitir -->
+      <div class="pane" data-i="1">
+        <div class="ph"><h3>Admitir</h3><p>O documento é barrado antes de gastar qualquer token.</p></div>
+        <div class="grid" style="grid-template-columns: 1.55fr 1fr">
+          <div class="card box"><h4>Critérios de admissão · matéria da Braskem</h4>
+            <div style="margin-top:16px">
+              <div class="gaterow"><div class="gn">Tamanho<small>mínimo 200 palavras</small></div><div class="track"><div class="fill grow" style="width:100%"></div><div class="min" style="left:32%"></div></div><div class="v">615</div></div>
+              <div class="gaterow"><div class="gn">Termos do glossário<small>mínimo 5 distintos</small></div><div class="track"><div class="fill grow" style="width:100%"></div><div class="min" style="left:71%"></div></div><div class="v">7</div></div>
+              <div class="gaterow"><div class="gn">Idioma<small>português</small></div><div class="track"><div class="fill grow" style="width:100%"></div></div><div class="v">pt</div></div>
+              <div class="gaterow"><div class="gn">Texto completo<small>sem paywall ou corte</small></div><div class="track"><div class="fill grow" style="width:100%"></div></div><div class="v">sim</div></div>
+              <div class="gaterow"><div class="gn">Tema financeiro</div><div class="track"><div class="fill grow" style="width:100%"></div></div><div class="v">sim</div></div>
+            </div>
+          </div>
+          <div class="card box stat"><div class="lbl">Resultado</div><div class="big-num" style="color:var(--ok)">Admitido</div>
+            <div class="s">A coleta usa a <b>mesma admissão</b>: um card só aparece na interface se a notícia puder virar material.</div>
+            <div class="sep"></div>
+            <div class="s">Entrada manual (texto, link ou PDF) passa pelo <b>mesmo portão</b>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 extrair -->
+      <div class="pane" data-i="2">
+        <div class="ph"><h3>Extrair, ancorado na fonte</h3><p>Antes de escrever, a IA monta um grafo dos fatos.</p></div>
+        <div class="grid" style="grid-template-columns: 1.55fr 1fr">
+          <div class="card box"><h4>Grafo extraído da notícia</h4>
+            <svg viewBox="0 0 900 230" width="100%" height="230">
+              <g stroke="#E0D9D4" stroke-width="2.5" fill="none" class="draw">
+                <path d="M120,115 C220,115 230,45 330,45"/><path d="M120,115 L330,115"/><path d="M120,115 C220,115 230,185 330,185"/>
+                <path d="M450,45 C540,45 540,80 620,80"/><path d="M450,115 L620,115"/><path d="M450,185 C540,185 540,150 620,150"/>
+                <path d="M740,115 L800,60"/><path d="M740,115 L800,170"/></g>
+              <g class="pop" style="--d:0"><circle cx="70" cy="115" r="52" fill="#16161A"/><text x="70" y="110" fill="#fff" font-size="15" font-weight="800" text-anchor="middle">matéria</text><text x="70" y="130" fill="#A9A39F" font-size="13" font-weight="700" text-anchor="middle">615 pal.</text></g>
+              <g class="pop" style="--d:1"><rect x="330" y="20" width="120" height="50" rx="14" fill="#FBE6E6"/><rect x="330" y="90" width="120" height="50" rx="14" fill="#FBE6E6"/><rect x="330" y="160" width="120" height="50" rx="14" fill="#FBE6E6"/>
+                <text x="390" y="52" font-size="16" font-weight="800" fill="#6E1B25" text-anchor="middle">ponto 1</text><text x="390" y="122" font-size="16" font-weight="800" fill="#6E1B25" text-anchor="middle">ponto 2</text><text x="390" y="192" font-size="16" font-weight="800" fill="#6E1B25" text-anchor="middle">ponto 3</text></g>
+              <g class="pop" style="--d:2"><rect x="620" y="55" width="120" height="120" rx="18" fill="#ECE9FC"/><text x="680" y="110" font-size="40" font-weight="800" fill="#5B4BD6" text-anchor="middle">6</text><text x="680" y="138" font-size="15" font-weight="800" fill="#5B4BD6" text-anchor="middle">afirmações</text></g>
+              <g class="pop" style="--d:3"><rect x="800" y="25" width="100" height="70" rx="14" fill="#F7F5F3" stroke="#E0D9D4"/><text x="850" y="57" font-size="26" font-weight="800" fill="#16161A" text-anchor="middle">8</text><text x="850" y="80" font-size="13" font-weight="800" fill="#6B6B70" text-anchor="middle">dados</text>
+                <rect x="800" y="135" width="100" height="70" rx="14" fill="#F7F5F3" stroke="#E0D9D4"/><text x="850" y="167" font-size="26" font-weight="800" fill="#16161A" text-anchor="middle">9</text><text x="850" y="190" font-size="13" font-weight="800" fill="#6B6B70" text-anchor="middle">entidades</text></g>
+            </svg>
+            <div class="anchor">
+              <div class="a"><small>afirmação extraída</small>A nova etapa da OPA afeta apenas os acionistas que possuem papéis BRKM3</div>
+              <div class="lnk">⟷<br>trecho</div>
+              <div class="t"><small>trecho da fonte</small>“Na prática, o anúncio afeta apenas a parcela dos acionistas que possuem os papéis BRKM3”</div>
+            </div>
+          </div>
+          <div class="card box stat"><div class="lbl">Rastreabilidade</div><div class="big-num"><span class="count" data-to="81">0</span>%</div>
+            <div class="s"><b>70 de 86 frases geradas</b> ficaram ligadas a uma afirmação da fonte no grafo.</div>
+            <div class="sep"></div>
+            <div class="s">Extração feita <b>1 vez por notícia</b> e reaproveitada pelas 9 combinações nível × formato.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 gerar -->
+      <div class="pane" data-i="3">
+        <div class="ph"><h3>Gerar por nível e formato</h3><p>Grafo LangGraph com estado Pydantic: 9 combinações por notícia.</p></div>
+        <div class="grid" style="grid-template-columns: 1.55fr 1fr">
+          <div class="card box"><h4>Regras de cada nível × restrições de cada formato</h4>
+            <div class="matrix">
+              <div></div>
+              <div class="h"><b>Texto analítico</b>350–500 palavras · 4 seções</div>
+              <div class="h"><b>Carrossel</b>5 slides 1080×1350 · legenda</div>
+              <div class="h"><b>Roteiro</b>≤ 60 s · 5 cenas · 2–3 palavras/s</div>
+              <div class="r"><b>Iniciante</b>Frases curtas; todo termo técnico explicado logo após o uso</div>
+              <div class="c pop" style="--d:0"><span><i>3</i>tentativas</span></div><div class="c pop" style="--d:1"><span><i>3</i>tentativas</span></div><div class="c pop" style="--d:2"><span><i>3</i>tentativas</span></div>
+              <div class="r"><b>Intermediário</b>Vocabulário de mercado sem rodeios; tendências declaradas pela fonte</div>
+              <div class="c pop" style="--d:3"><span><i>3</i>tentativas</span></div><div class="c pop" style="--d:4"><span><i>3</i>tentativas</span></div><div class="c pop" style="--d:5"><span><i>3</i>tentativas</span></div>
+              <div class="r"><b>Avançado</b>Jargão pleno; mecanismos, condicionantes e riscos</div>
+              <div class="c pop" style="--d:6"><span><i>3</i>tentativas</span></div><div class="c pop" style="--d:7"><span><i>3</i>tentativas</span></div><div class="c pop" style="--d:8"><span><i>3</i>tentativas</span></div>
+            </div>
+          </div>
+          <div class="card box stat"><div class="lbl">Custo medido · Braskem</div><div class="big-num"><span class="count" data-to="88481" data-fmt="int">0</span></div>
+            <div class="s">tokens em <b>27 tentativas</b> de geração</div>
+            <div class="sep"></div>
+            <div class="s"><b>1,57 s</b> por chamada em média · <b>42 s</b> de modelo somados</div>
+            <div class="sep"></div>
+            <div class="s">Gerador <b>gpt-oss-20b</b>. Fonte, legenda e “Entenda os termos” são <b>montados por código</b>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 medir -->
+      <div class="pane" data-i="4">
+        <div class="ph"><h3>Medir, sem IA</h3><p>O classificador só confirma um nível quando legibilidade e densidade concordam.</p></div>
+        <div class="grid" style="grid-template-columns: 1.55fr 1fr">
+          <div class="card box"><h4>Legibilidade × densidade de termos · texto analítico da Braskem</h4>
+            <svg id="scatter" viewBox="0 0 900 430" width="100%" height="440"></svg>
+          </div>
+          <div class="card box stat"><div class="lbl">O que o avaliador mede</div>
+            <div class="s"><b>Nível</b> — Flesch PT-BR e termos técnicos por 100 palavras</div>
+            <div class="s"><b>Fidelidade</b> — número ou data fora da fonte, frase sem respaldo</div>
+            <div class="s"><b>Segurança</b> — recomendação, termo proibido, emoji</div>
+            <div class="s"><b>Formato e texto</b> — tamanho, seções, repetição</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 reescrever -->
+      <div class="pane" data-i="5">
+        <div class="ph"><h3>Reescrever com feedback numérico</h3><p>Cada falha volta para a IA como métrica, valor e faixa — nunca como frase vaga.</p></div>
+        <div class="grid" style="grid-template-columns: 760px; justify-content: center">
+          <div class="card box"><h4>O ciclo</h4>
+            <svg viewBox="0 0 440 400" width="100%" height="420">
+              <circle cx="220" cy="200" r="130" fill="none" stroke="#F2B8BC" stroke-width="3" stroke-dasharray="8 8" class="draw"/>
+              <g class="pop" style="--d:0"><rect x="140" y="40" width="160" height="56" rx="16" fill="#ECE9FC"/><text x="220" y="75" text-anchor="middle" font-size="18" font-weight="800" fill="#5B4BD6">tentativa</text></g>
+              <g class="pop" style="--d:1"><rect x="300" y="172" width="140" height="56" rx="16" fill="#EFEDEB"/><text x="370" y="207" text-anchor="middle" font-size="18" font-weight="800" fill="#34343A">métricas</text></g>
+              <g class="pop" style="--d:2"><rect x="120" y="304" width="200" height="56" rx="16" fill="#FBE6E6"/><text x="220" y="339" text-anchor="middle" font-size="18" font-weight="800" fill="#6E1B25">feedback numérico</text></g>
+              <g class="pop" style="--d:3"><rect x="0" y="172" width="140" height="56" rx="16" fill="#ECE9FC"/><text x="70" y="207" text-anchor="middle" font-size="18" font-weight="800" fill="#5B4BD6">reescrita</text></g>
+              <text x="220" y="196" text-anchor="middle" font-size="44" font-weight="800" fill="#B3141F">≤ 2</text><text x="220" y="224" text-anchor="middle" font-size="15" font-weight="800" fill="#6B6B70">reescritas</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 julgar -->
+      <div class="pane" data-i="6">
+        <div class="ph"><h3>Julgar com outro modelo</h3><p>O juiz dá notas por critério. Quem aprova é o código.</p></div>
+        <div class="grid" style="grid-template-columns: 1.2fr 1fr">
+          <div class="card box"><h4>Rubrica 2.0 · peso de cada critério</h4>
+            <svg id="rubric" viewBox="0 0 560 400" width="100%" height="420"></svg>
+          </div>
+          <div class="card box"><h4>Regra de aprovação (calculada em código)</h4>
+            <svg viewBox="0 0 460 400" width="100%" height="420">
+              <g class="pop" style="--d:0"><rect x="20" y="40" width="420" height="80" rx="18" fill="#F7F5F3" stroke="#E0D9D4"/><text x="230" y="76" text-anchor="middle" font-size="16" font-weight="800" fill="#6B6B70">MÉDIA PONDERADA</text><text x="230" y="104" text-anchor="middle" font-size="28" font-weight="800" fill="#16161A">≥ 7,0</text></g>
+              <text x="230" y="160" text-anchor="middle" font-size="22" font-weight="800" fill="#B3141F" class="pop" style="--d:1">E</text>
+              <g class="pop" style="--d:2"><rect x="20" y="180" width="420" height="80" rx="18" fill="#F7F5F3" stroke="#E0D9D4"/><text x="230" y="216" text-anchor="middle" font-size="16" font-weight="800" fill="#6B6B70">NENHUM CRITÉRIO</text><text x="230" y="244" text-anchor="middle" font-size="28" font-weight="800" fill="#16161A">abaixo de 5,0</text></g>
+              <path d="M230,268 L230,300" stroke="#1E7A4C" stroke-width="3" class="draw"/>
+              <g class="pop" style="--d:3"><rect x="110" y="304" width="240" height="64" rx="18" fill="#1E7A4C"/><text x="230" y="344" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">aprovado</text></g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 revisar -->
+      <div class="pane" data-i="7">
+        <div class="ph"><h3>Revisar e auditar</h3><p>Nada sai sem uma pessoa aprovar — e tudo fica registrado.</p></div>
+        <div class="grid" style="grid-template-columns: 1.4fr 1fr">
+          <div class="card box"><h4>Estados de um material</h4>
+            <svg viewBox="0 0 900 420" width="100%" height="430" style="margin-top:6px">
+              <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#A9A39F"/></marker></defs>
+              <g stroke="#B8B0AA" stroke-width="2.5" fill="none" marker-end="url(#ar)" class="draw">
+                <path d="M240,140 H318"/><path d="M560,140 H648"/><path d="M745,168 L760,248"/>
+                <path d="M120,170 V290"/><path d="M230,318 H318"/><path d="M440,290 C440,236 250,236 170,172"/>
+                <path d="M120,110 C120,40 700,40 700,108"/></g>
+              <g font-size="15" font-weight="800" fill="#6B6B70">
+                <text x="410" y="38" text-anchor="middle">aprovar direto</text>
+                <text x="279" y="128" text-anchor="middle">editar</text><text x="604" y="128" text-anchor="middle">aprovar</text>
+                <text x="132" y="236">rejeitar + motivo</text><text x="274" y="306" text-anchor="middle">gerar</text>
+                <text x="330" y="226">nova versão volta à revisão</text></g>
+              <g font-size="18" font-weight="800">
+                <g class="pop" style="--d:0"><rect x="10" y="112" width="230" height="58" rx="16" fill="#fff" stroke="#E8C966" stroke-width="2.5"/><text x="125" y="147" text-anchor="middle" fill="#16161A">aguardando revisão</text></g>
+                <g class="pop" style="--d:1"><rect x="320" y="112" width="240" height="58" rx="16" fill="#fff" stroke="#5B4BD6" stroke-width="2.5"/><text x="440" y="147" text-anchor="middle" fill="#5B4BD6">editado · reavaliado</text></g>
+                <g class="pop" style="--d:2"><rect x="650" y="112" width="160" height="58" rx="16" fill="#fff" stroke="#1E7A4C" stroke-width="2.5"/><text x="730" y="147" text-anchor="middle" fill="#1E7A4C">aprovado</text></g>
+                <g class="pop" style="--d:3"><rect x="660" y="250" width="200" height="58" rx="16" fill="#1E7A4C"/><text x="760" y="285" text-anchor="middle" fill="#fff">exportações</text></g>
+                <g class="pop" style="--d:4"><rect x="30" y="292" width="200" height="58" rx="16" fill="#fff" stroke="#B3141F" stroke-width="2.5"/><text x="130" y="327" text-anchor="middle" fill="#B3141F">rejeitado</text></g>
+                <g class="pop" style="--d:5"><rect x="320" y="292" width="240" height="58" rx="16" fill="#fff" stroke="#E8C966" stroke-width="2.5"/><text x="440" y="327" text-anchor="middle" fill="#16161A">nova versão (IA)</text></g>
+              </g>
+            </svg>
+          </div>
+          <div class="card box"><h4>O que fica gravado</h4>
+            <div class="audit">
+              <div><i>E</i><span><b>Execução</b> — versões do glossário, prompts, limiares, rubrica, guia de estilo e modelos</span></div>
+              <div><i>T</i><span><b>Tentativa</b> — conteúdo, métricas, falhas, feedback, tokens e latência</span></div>
+              <div><i>D</i><span><b>Decisão humana</b> — aprovar, editar ou rejeitar, sempre com a observação</span></div>
+              <div><i>G</i><span><b>Grafo</b> — cada frase gerada ligada à afirmação e ao trecho que a sustentam</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== a aplicação ===== -->
+  <section class="scene" id="s-app" data-label="Aplicação">
+    <div class="head rise"><div class="kicker">Na aplicação · notícia da Braskem</div><h2>O pipeline, <em>na tela de quem revisa</em>.</h2></div>
+    <div class="card player rise" style="--d:1">
+      <div class="bar"><i></i><i></i><i></i><span>localhost:8501 · Streamlit</span></div>
+      <div class="speed">gravação real · 2×</div>
+      <video id="appVideo" src="clips/aplicacao.mp4" poster="clips/aplicacao.jpg" muted playsinline preload="auto"></video>
+    </div>
+    <div class="chap rise" style="--d:2" id="chap">
+      <div class="ch" data-t="0"><div class="top"><span class="n">1</span><b>Notícias e pautas</b></div>
+        <p>A pauta da Braskem com <b>2 fontes</b> e o diálogo do relatório comparado.</p><div class="pg"></div></div>
+      <div class="ch" data-t="4.6"><div class="top"><span class="n">2</span><b>Materiais por nível e formato</b></div>
+        <p>Notícia → nível → formato. O texto Iniciante já editado, com o <b>histórico da decisão</b>.</p><div class="pg"></div></div>
+      <div class="ch" data-t="14.03"><div class="top"><span class="n">3</span><b>Qualidade e tentativas</b></div>
+        <p>As <b>3 tentativas</b> com Flesch, densidade, nível classificado e falhas — o mesmo dado dos diagramas.</p><div class="pg"></div></div>
+      <div class="ch" data-t="18.38"><div class="top"><span class="n">4</span><b>Revisão humana</b></div>
+        <p>Editor, observação obrigatória e os botões <b>aprovar · editar · rejeitar</b>.</p><div class="pg"></div></div>
+      <div class="ch" data-t="21.67"><div class="top"><span class="n">5</span><b>Carrossel renderizado</b></div>
+        <p>Slides <b>1080×1350</b> gerados por HTML + Playwright, com o aviso de texto que não coube.</p><div class="pg"></div></div>
+      <div class="ch cfg" data-t="33.63"><div class="top"><span class="n">6</span><b>Configurações · glossário</b></div>
+        <p>O glossário alimenta a <b>admissão</b> (≥ 5 termos), a <b>densidade</b> e a regra do <b>termo explicado</b>. Termo novo entra como pendente; só termo aprovado vira explicação.</p>
+        <div class="glos"><span><i>204</i>termos (BCB)</span><span><i>175</i>pendentes</span><span><i>29</i>sem definição</span><span><i>0</i>aprovados</span></div>
+        <div class="pg"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== output: controle deslizante ===== -->
+  <section class="scene" id="s-nivel" data-label="Output">
+    <div class="head rise"><div class="kicker">O output</div><h2>A mesma notícia, <em>no seu nível</em>.</h2></div>
+    <div class="left rise" style="--d:1">
+      <div class="card slider-wrap">
+        <div class="lbl">Nível de entendimento</div>
+        <div class="range" id="range"><div class="track"></div><div class="knob" id="knob"></div><input type="range" id="lvl" min="0" max="2" step="0.001" value="0" aria-label="Nível de entendimento"></div>
+        <div class="stops" id="stops"><button data-v="0">Iniciante</button><button data-v="1">Intermediário</button><button data-v="2">Avançado</button></div>
+      </div>
+      <div class="gauges">
+        <div class="card gauge"><div class="top"><span class="name">Legibilidade (Flesch PT-BR)</span><span class="val" id="gFlesch">—</span></div>
+          <div class="scale" id="sFlesch"></div><div class="legend"><span style="width:40%">Avançado ≤ 40</span><span style="width:15%;text-align:center">40–55</span><span style="width:45%;text-align:right">Iniciante ≥ 55</span></div></div>
+        <div class="card gauge"><div class="top"><span class="name">Termos técnicos a cada 100 palavras</span><span class="val" id="gDens">—</span></div>
+          <div class="scale" id="sDens"></div><div class="legend"><span style="width:25%">Iniciante ≤ 3</span><span style="width:41.7%;text-align:center">Intermediário 3–8</span><span style="width:33.3%;text-align:right">Avançado ≥ 8</span></div></div>
+        <div class="verdict"><span class="name" style="font-size:16px;color:var(--muted)">O avaliador classificou como</span><span class="b" id="gClass">—</span></div>
+      </div>
+      <div class="card toggle" id="ver"><button data-v="modelo">Saída do modelo</button><button data-v="revisao" class="on">Após revisão humana</button></div>
+    </div>
+    <div class="card doc rise" style="--d:2">
+      <div class="meta"><span class="lv" id="docLvl">Iniciante</span><span class="honest ok" id="docTag"><i></i>texto revisado</span></div>
+      <div class="body" id="docBody"></div>
+      <div class="key"><span><i style="background:var(--red-soft)"></i>termo técnico</span><span><i style="background:var(--ok-soft)"></i>explicação em linguagem simples</span></div>
+    </div>
+  </section>
+
+  <!-- ===== output: formatos ===== -->
+  <section class="scene" id="s-fmt" data-label="Formatos">
+    <div class="head rise"><div class="kicker">O output</div><h2>Três formatos, da mesma notícia.</h2></div>
+    <div class="card tabs rise" style="--d:1" id="ftabs"><button data-v="0">Iniciante</button><button data-v="1">Intermediário</button><button data-v="2">Avançado</button></div>
+    <div class="fcol rise" style="--d:2;left:130px">
+      <div class="ft"><span class="lbl">Carrossel · Instagram</span><span class="honest"><i></i>gerado · aguarda revisão</span></div>
+      <div class="phone tilt-l"><div class="screen">
+        <div class="ig-top"><span class="av"><img src="img/logo.png" alt=""></span>sunoasset</div>
+        <div class="ig-slides"><div class="rail" id="rail"></div></div>
+        <div class="ig-dots" id="igdots"></div>
+        <div class="ig-cap"><b>sunoasset</b> Braskem abre nova janela para acionistas de BRKM3…</div>
+      </div></div>
+    </div>
+    <div class="fcol rise" style="--d:3;left:715px">
+      <div class="ft"><span class="lbl">Roteiro · vídeo de até 60 s</span><span class="honest"><i></i>gerado · aguarda revisão</span></div>
+      <div class="reel"><div class="screen">
+        <div class="time" id="rtime">00:00</div><div class="role" id="rrole">Gancho</div>
+        <div class="onscreen" id="rtela"></div><div class="speech" id="rfala"></div><div class="seg" id="rseg"></div>
+      </div></div>
+    </div>
+    <div class="fcol rise" style="--d:4;left:1250px">
+      <div class="ft"><span class="lbl">Texto analítico</span><span class="honest ok"><i></i>revisado</span></div>
+      <div class="card txtcard tilt-r" id="ftxt"></div>
+    </div>
+  </section>
+
+  <!-- ===== aprendizados + próximos ===== -->
+  <section class="scene" id="s-fecho" data-label="Próximos passos">
+    <div class="head rise"><div class="kicker">Próximos passos</div><h2>Do protótipo para a produção.</h2></div>
+    <div class="nextgrid">
+      <div class="card ns rise" style="--d:1"><div class="i">01</div><h4>Calibrar os níveis com mais notícias</h4><p>Reforçar os prompts de cada nível e testar um modelo maior para gerar, medindo o custo.</p></div>
+      <div class="card ns rise" style="--d:2"><div class="i">02</div><h4>Glossário: aprovar e ampliar</h4><p>Aprovar os 175 termos pendentes, e incluir termos de mercado de capitais (OPA, capital votante).</p></div>
+      <div class="card ns rise" style="--d:3"><div class="i">03</div><h4>Medir o juiz LLM</h4><p>Gravar notas reais e medir a concordância entre o juiz e a revisão humana — o código já existe.</p></div>
+      <div class="card ns rise" style="--d:4"><div class="i">04</div><h4>Robustez da comparação de fontes</h4><p>Corrigir o JSON do alinhamento entre fontes e atualizar os selos depois da edição humana.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== fim ===== -->
+  <section class="scene" id="s-fim">
+    <img class="logo rise" src="img/logo.png" alt="Suno Asset">
+    <div class="content">
+      <div class="kicker rise" style="--d:1">Perspecta</div>
+      <h2 class="rise" style="--d:2;margin-top:22px">Agradeço a<br>atenção<span>.</span></h2>
+      <div class="name rise" style="--d:3">Julia Khristina</div>    </div>
+    <div class="qrs rise" style="--d:4">
+      <div class="card qr"><img src="img/qr_linkedin.svg" alt="QR code do LinkedIn">
+        <div class="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.6h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1v5.35h-4v-4.75c0-1.13-.02-2.6-1.58-2.6-1.6 0-1.84 1.24-1.84 2.52v4.83h-4z"/></svg>LinkedIn</div>
+        <div class="u">in/julia-khristina</div></div>
+      <div class="card qr"><img src="img/qr_github.svg" alt="QR code do repositório no GitHub">
+        <div class="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>GitHub</div>
+        <div class="u">Julia-Khristina/Case_Suno</div></div>
+    </div>
+  </section>
+</div>
+
+<script src="dados.js"></script>
+<script>
+const D = window.DADOS;
+const LV = ["iniciante", "intermediario", "avancado"];
+const LVL = { iniciante: "Iniciante", intermediario: "Intermediário", avancado: "Avançado", indistinto: "Indistinto" };
+const NS = "http://www.w3.org/2000/svg";
+
+/* ---------- mapa do pipeline ---------- */
+const STAGES = [["Coletar", "code"], ["Admitir", "code"], ["Extrair", "llm"], ["Gerar", "llm"], ["Medir", "code"], ["Reescrever", "llm"], ["Julgar", "llm"], ["Revisar", "hum"]];
+const KIND = { code: '<span class="tag-code">código</span>', llm: '<span class="tag-llm">LLM</span>', hum: '<span class="tag-hum">humano</span>' };
+const map = document.getElementById("map"), W = 1680, xs = STAGES.map((_, i) => 84 + i * (W - 168) / 7);
+map.innerHTML = `<svg viewBox="0 0 ${W} 132" width="${W}" height="132">
+  <path class="rail" d="M${xs[0]},64 H${xs[7]}"/><path id="railDone" class="rail-done" d="M${xs[0]},64 H${xs[7]}" stroke-dasharray="${xs[7] - xs[0]}" stroke-dashoffset="${xs[7] - xs[0]}"/>
+  <path class="loop" d="M${xs[5]},36 C${xs[5]},-6 ${xs[3]},-6 ${xs[3]},36"/><text x="${(xs[3] + xs[5]) / 2}" y="2" text-anchor="middle" font-size="13" font-weight="800" fill="#B3141F">reprova → reescreve</text>
+  <circle id="particle" class="particle" cx="0" cy="64" r="9"/></svg>` +
+  STAGES.map(([n, k], i) => `<div class="mnode" data-i="${i}" style="left:${xs[i]}px;top:38px"><div class="dot">${i + 1}</div><div class="nm">${n}</div><div class="kd">${KIND[k]}</div></div>`).join("");
+map.querySelectorAll(".mnode").forEach(el => el.addEventListener("click", () => { step[idx] = +el.dataset.i; applyStep(idx); }));
+function showStage(n) {
+  map.querySelectorAll(".mnode").forEach(el => { const j = +el.dataset.i; el.classList.toggle("on", j === n); el.classList.toggle("done", j < n); });
+  document.getElementById("particle").style.transform = `translateX(${xs[n]}px)`;
+  document.getElementById("railDone").style.strokeDashoffset = (xs[7] - xs[0]) - (xs[n] - xs[0]);
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", +p.dataset.i === n));
+  const pane = document.querySelector(`.pane[data-i="${n}"]`);
+  pane.querySelectorAll(".count").forEach(countUp);
+}
+function countUp(el) {
+  const to = +el.dataset.to, t0 = performance.now(), dur = 1100, int = el.dataset.fmt === "int";
+  const tick = t => { const k = Math.min(1, (t - t0) / dur), v = to * (1 - Math.pow(1 - k, 3));
+    el.textContent = int ? Math.round(v).toLocaleString("pt-BR") : Math.round(v); if (k < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+
+/* ---------- gráficos dos painéis ---------- */
+// dispersão: x = Flesch (20–80), y = densidade (0–10); faixas de config/limiares.yaml
+(function scatter() {
+  const s = document.getElementById("scatter"), L = 70, T = 16, PW = 800, PH = 360;
+  const X = f => L + (f - 20) / 60 * PW, Y = d => T + PH - d / 10 * PH;
+  const band = (x0, x1, y0, y1, c, t) => `<rect x="${X(x0)}" y="${Y(y1)}" width="${X(x1) - X(x0)}" height="${Y(y0) - Y(y1)}" rx="10" fill="${c}"/>
+    <text x="${X(x0) + 12}" y="${Y(y1) + 24}" font-size="15" font-weight="800" fill="#6E1B25">${t}</text>`;
+  const mod = { iniciante: [52.4, 6.6], intermediario: [36.1, 5.7], avancado: [37.3, 5.9] };
+  const rev = { iniciante: [69.9, 2.2], intermediario: [54.1, 3.7], avancado: [29.4, 8.2] };
+  const C = { iniciante: "#E36B73", intermediario: "#B3141F", avancado: "#6E1B25" };
+  let h = band(20, 40, 8, 10, "#F6D3D6", "Avançado") + band(40, 55, 3, 8, "#FBE6E6", "Intermediário") + band(55, 80, 0, 3, "#FDF0F1", "Iniciante");
+  h += `<line x1="${L}" y1="${T + PH}" x2="${L + PW}" y2="${T + PH}" stroke="#C9C1BC" stroke-width="2"/><line x1="${L}" y1="${T}" x2="${L}" y2="${T + PH}" stroke="#C9C1BC" stroke-width="2"/>`;
+  [20, 40, 55, 80].forEach(f => h += `<text x="${X(f)}" y="${T + PH + 26}" text-anchor="middle" font-size="14" font-weight="700" fill="#6B6B70">${f}</text>`);
+  [0, 3, 8, 10].forEach(d => h += `<text x="${L - 14}" y="${Y(d) + 5}" text-anchor="end" font-size="14" font-weight="700" fill="#6B6B70">${d}</text>`);
+  h += `<text x="${L + PW}" y="${T + PH + 50}" text-anchor="end" font-size="14" font-weight="800" fill="#6B6B70">LEGIBILIDADE (FLESCH) → mais fácil</text>
+        <text x="${L - 54}" y="${T + 6}" font-size="14" font-weight="800" fill="#6B6B70" transform="rotate(-90 ${L - 54} ${T + 6})" text-anchor="end">TERMOS / 100</text>`;
+  LV.forEach((lv, i) => {
+    const [mx, my] = mod[lv], [rx, ry] = rev[lv];
+    h += `<path class="draw" d="M${X(mx)},${Y(my)} L${X(rx)},${Y(ry)}" stroke="${C[lv]}" stroke-width="2.5" stroke-dasharray="6 6" fill="none"/>
+      <g class="pop" style="--d:${i}"><circle cx="${X(mx)}" cy="${Y(my)}" r="11" fill="#fff" stroke="${C[lv]}" stroke-width="4"/></g>
+      <g class="pop" style="--d:${i + 3}"><circle cx="${X(rx)}" cy="${Y(ry)}" r="13" fill="${C[lv]}"/>
+      <text x="${X(rx) + 18}" y="${Y(ry) + 6}" font-size="16" font-weight="800" fill="${C[lv]}">${LVL[lv]}</text></g>`;
+  });
+  h += `<text x="${X(36.7)}" y="${Y(5.8) + 40}" text-anchor="middle" font-size="15" font-weight="800" fill="#6B6B70" class="pop" style="--d:2">indistinto: fora de qualquer faixa</text>`;
+  h += `<g transform="translate(${L + 470},${T + 18})" font-size="14" font-weight="700" fill="#34343A">
+    <circle cx="8" cy="0" r="8" fill="#fff" stroke="#B3141F" stroke-width="3"/><text x="24" y="5">saída do modelo (tentativa 3)</text>
+    <circle cx="8" cy="28" r="9" fill="#B3141F"/><text x="24" y="33">após revisão humana</text></g>`;
+  s.innerHTML = h;
+})();
+// rubrica 2.0 (src/evaluation/rubric.yaml)
+(function rubric() {
+  const R = [["fidelidade semântica", 1.5], ["nuance e grau de certeza", 1.2], ["adequação ao nível", 1.0], ["profundidade sem trivializar", 1.0], ["tom e guia de estilo", 0.8], ["analogias e explicações", 0.8]];
+  const s = document.getElementById("rubric");
+  s.innerHTML = R.map(([n, w], i) => `<text x="0" y="${40 + i * 62}" font-size="18" font-weight="700" fill="#34343A">${n}</text>
+    <rect x="0" y="${50 + i * 62}" width="460" height="14" rx="7" fill="#F7F5F3"/>
+    <rect class="grow" x="0" y="${50 + i * 62}" width="${w / 1.5 * 460}" height="14" rx="7" fill="${i === 0 ? "#B3141F" : "#5B4BD6"}" style="transition-delay:${.3 + i * .08}s"/>
+    <text x="${w / 1.5 * 460 + 12}" y="${63 + i * 62}" font-size="18" font-weight="800" fill="${i === 0 ? "#B3141F" : "#5B4BD6"}">${String(w).replace(".", ",")}</text>`).join("");
+})();
+
+/* ---------- controle deslizante (mesmos trechos literais da v2) ---------- */
+const TXT = {
+  revisao: {
+    iniciante: { t: "Braskem dá mais um prazo a parte dos seus sócios", p: [
+      "A troca de controle da Braskem ganhou um novo capítulo para os investidores. A Braskem é uma petroquímica, {{ou seja, uma empresa que faz produtos químicos}}. O novo controlador é o fundo Shine. Na sexta-feira (16), a companhia anunciou que alguns acionistas terão mais uma chance de vender seus papéis nas mesmas condições oferecidas na operação.",
+      "Mas atenção, porque há um detalhe. Quem optar pela venda de seus papéis não receberá dinheiro. Vai receber [[debêntures]], {{que são títulos de dívida, como um empréstimo que a pessoa faz a uma empresa}}." ] },
+    intermediario: { t: "Braskem abre nova janela para acionistas de BRKM3", p: [
+      "A troca de controle da Braskem ganhou um novo capítulo. Após concluir a Oferta Pública de Aquisição de [[ações]] (OPA) ligada à compra da petroquímica pelo FIP Shine, a companhia anunciou na sexta-feira (16) que alguns acionistas terão mais uma chance de vender seus papéis nas mesmas condições da operação.",
+      "O pagamento não será feito em dinheiro. Em troca de cada [[ação]] ordinária vendida, o investidor receberá duas [[debêntures]] da série OSPI12 e uma [[debênture]] da série OSPI22. As [[debêntures]] são títulos de dívida emitidos pela NSP Investimentos, empresa que participou da transferência de controle ao lado da Novonor." ] },
+    avancado: { t: "Braskem: OPA troca ações ordinárias por debêntures da NSP", p: [
+      "Concluído o leilão da Oferta Pública de Aquisição de [[ações]] (OPA) lançada pelo Shine I [[Fundo de Investimento]] em Participações, ligado à IG4 e novo controlador da petroquímica, a Braskem comunicou que os detentores de [[ações]] ordinárias que não aderiram ao leilão poderão trocar essas [[ações]] por [[debêntures]] nas mesmas condições da operação original.",
+      "Na prática, quem troca [[ações]] por [[debêntures]] deixa de ser acionista da Braskem e passa a ser credor da NSP Investimentos, substituindo a exposição às [[ações]] da petroquímica pelo risco de crédito do emissor dessas [[debêntures]]." ] },
+  },
+  modelo: {
+    iniciante: { t: "Braskem abre nova janela de venda de ações", p: [
+      "A Braskem abriu uma nova janela de adesão para acionistas que não participaram da OPA. A janela permite vender [[ações]] ordinárias BRKM3 e receber [[debêntures]] em vez de dinheiro. Isso acontece depois da conclusão da OPA do Shine I [[Fundo de Investimento]] em Participações.",
+      "Os acionistas que aderirem receberão duas [[debêntures]] OSPI12 e uma [[debênture]] OSPI22 por [[ação]] vendida. As [[debêntures]] são títulos de dívida que pagam juros ao investidor." ] },
+    intermediario: { t: "Braskem: nova janela de adesão e debêntures", p: [
+      "A Braskem concluiu recentemente o leilão da OPA lançada pelo Shine I [[Fundo de Investimento]] em Participações, que resultou em uma nova janela de adesão para acionistas ordinários BRKM3 que não participaram do leilão.",
+      "A abertura dessa janela permite que esses acionistas vendam suas [[ações]] sob as mesmas condições da operação original, mas em troca de [[debêntures]] em vez de dinheiro. Essa medida altera a composição de ativos dos investidores e a liquidez das [[ações]]." ] },
+    avancado: { t: "Oferta de venda de ações BRKM3 por debêntures", p: [
+      "A Braskem abriu uma nova janela de adesão para acionistas ordinários BRKM3 que não participaram do leilão da OPA, permitindo a venda de suas [[ações]] em condições equivalentes à operação original. Essa medida visa garantir a liquidez e a continuidade da negociação das [[ações]] da companhia.",
+      "Os acionistas que aderirem receberão duas [[debêntures]] OSPI12 e uma [[debênture]] OSPI22 em vez de dinheiro." ] },
+  },
+};
+const MET = {
+  revisao: { iniciante: [69.9, 2.2, "iniciante", []], intermediario: [54.1, 3.7, "intermediario", []], avancado: [29.4, 8.2, "avancado", []] },
+  modelo: Object.fromEntries(LV.map(l => { const t = D.tentativas[l][D.tentativas[l].length - 1]; return [l, [t.flesch, t.dens, t.nivel, t.falhas]]; })),
+};
+const FAIL = { legibilidade_fora_da_faixa: "legibilidade fora da faixa", densidade_fora_da_faixa: "termos técnicos fora da faixa",
+  tamanho_fora_do_intervalo: "tamanho fora da faixa", termo_tecnico_sem_explicacao: "termo sem explicação",
+  numero_ou_data_sem_origem: "número sem origem na fonte", frases_sem_respaldo_na_fonte: "frase sem respaldo na fonte",
+  linguagem_de_recomendacao: "linguagem de recomendação", trigramas_repetidos: "repetição", proporcao_de_secoes_fora_do_padrao: "seções desproporcionais" };
+let level = 0, version = "revisao";
+const fmt = s => s.replace(/\[\[(.+?)\]\]/g, '<span class="t">$1</span>').replace(/\{\{(.+?)\}\}/g, '<span class="x">$1</span>');
+function bands(el, segs) { el.innerHTML = segs.map(([w, c, on]) => `<i style="width:${w}%;background:${c}" class="${on ? "on" : ""}"></i>`).join("") + '<span class="pin"></span>'; }
+function renderLevel(animate = true) {
+  const lv = LV[level], txt = TXT[version][lv], [fl, de, cl, fails] = MET[version][lv];
+  document.querySelectorAll("#stops button, #ftabs button").forEach(b => b.classList.toggle("on", +b.dataset.v === level));
+  document.getElementById("knob").style.left = (level / 2 * 100) + "%";
+  document.getElementById("lvl").value = level;
+  bands(document.getElementById("sFlesch"), [[40, "#7E1C26", lv === "avancado"], [15, "#D4202C", lv === "intermediario"], [45, "#F2B8BC", lv === "iniciante"]]);
+  bands(document.getElementById("sDens"), [[25, "#F2B8BC", lv === "iniciante"], [41.7, "#D4202C", lv === "intermediario"], [33.3, "#7E1C26", lv === "avancado"]]);
+  document.querySelector("#sFlesch .pin").style.left = Math.min(99, fl) + "%";
+  document.querySelector("#sDens .pin").style.left = Math.min(99, de / 12 * 100) + "%";
+  const ok = cl === lv;
+  document.getElementById("gFlesch").textContent = fl.toFixed(1).replace(".", ",");
+  document.getElementById("gDens").textContent = de.toFixed(1).replace(".", ",");
+  const gc = document.getElementById("gClass"); gc.textContent = LVL[cl] + (ok ? " ✓" : " ✕"); gc.classList.toggle("bad", !ok);
+  document.getElementById("docLvl").textContent = "Nível " + LVL[lv];
+  const tag = document.getElementById("docTag");
+  tag.className = "honest" + (version === "revisao" ? " ok" : ""); tag.innerHTML = `<i></i>${version === "revisao" ? "texto revisado" : "saída do modelo · tentativa 3"}`;
+  const body = document.getElementById("docBody");
+  const html = `<h3>${txt.t}</h3>${txt.p.map(p => `<p>${fmt(p)}</p>`).join("")}` +
+    (fails.length ? `<div class="fails">${[...new Set(fails.map(f => FAIL[f] || f))].map(f => `<span>✕ ${f}</span>`).join("")}</div>` : "");
+  renderFormats();
+  if (!animate) { body.innerHTML = html; return; }
+  body.classList.add("out"); setTimeout(() => { body.innerHTML = html; body.classList.remove("out"); }, 230);
+}
+const range = document.getElementById("range"), input = document.getElementById("lvl");
+input.addEventListener("input", () => { range.classList.add("drag"); document.getElementById("knob").style.left = (input.value / 2 * 100) + "%";
+  const near = Math.round(+input.value); if (near !== level) { level = near; renderLevel(); } });
+input.addEventListener("change", () => { range.classList.remove("drag"); level = Math.round(+input.value); document.getElementById("knob").style.left = (level / 2 * 100) + "%"; });
+document.querySelectorAll("#stops button, #ftabs button").forEach(b => b.addEventListener("click", () => { level = +b.dataset.v; renderLevel(); }));
+document.querySelectorAll("#ver button").forEach(b => b.addEventListener("click", () => setVersion(b.dataset.v)));
+function setVersion(v) { version = v; document.querySelectorAll("#ver button").forEach(x => x.classList.toggle("on", x.dataset.v === v)); renderLevel(); }
+
+/* ---------- formatos ---------- */
+let slideIx = 0, sceneIx = 0, reelTimer = null;
+function renderFormats() {
+  const lv = LV[level];
+  document.getElementById("rail").innerHTML = D.carrossel[lv].map(p => `<img src="${p}" alt="">`).join("");
+  document.getElementById("igdots").innerHTML = D.carrossel[lv].map(() => "<i></i>").join("");
+  slideIx = 0; showSlide();
+  const full = D.revisado[lv];
+  document.getElementById("ftxt").innerHTML = `<h3>${full.titulo}</h3>${full.paragrafos.slice(0, 4).map(p => `<p>${p}</p>`).join("")}`;
+  sceneIx = 0; if (scenes && scenes[idx] && scenes[idx].id === "s-fmt") startReel();
+}
+function showSlide() {
+  document.getElementById("rail").style.transform = `translateX(${-slideIx * 438}px)`;
+  [...document.getElementById("igdots").children].forEach((d, i) => d.classList.toggle("on", i === slideIx));
+}
+function startReel() {
+  const sc = D.roteiro[LV[level]], seg = document.getElementById("rseg");
+  seg.innerHTML = sc.map(() => "<i><b></b></i>").join(""); clearTimeout(reelTimer);
+  const play = () => {
+    const s = sc[sceneIx], dur = 3600;
+    [...seg.children].forEach((el, i) => { el.className = i < sceneIx ? "done" : i === sceneIx ? "on" : ""; el.style.setProperty("--dur", dur + "ms"); });
+    const tela = document.getElementById("rtela"), fala = document.getElementById("rfala");
+    tela.style.opacity = fala.style.opacity = 0;
+    setTimeout(() => { tela.textContent = s.tela; fala.textContent = "“" + s.fala + "”"; tela.style.opacity = fala.style.opacity = 1; }, 220);
+    document.getElementById("rrole").textContent = { gancho: "Gancho", corpo: "Corpo", conclusao: "Conclusão" }[s.papel] || s.papel;
+    document.getElementById("rtime").textContent = `00:${String(Math.round(s.ini)).padStart(2, "0")} – 00:${String(Math.round(s.fim)).padStart(2, "0")}`;
+    reelTimer = setTimeout(() => { sceneIx = (sceneIx + 1) % sc.length; play(); }, dur);
+  };
+  play();
+}
+
+/* ---------- vídeo da aplicação: capítulos sincronizados ---------- */
+const appVideo = document.getElementById("appVideo");
+const chaps = [...document.querySelectorAll("#chap .ch")];
+const starts = chaps.map(c => +c.dataset.t);
+function syncChapters() {
+  const t = appVideo.currentTime, dur = appVideo.duration || 44.3;
+  chaps.forEach((c, i) => {
+    const a = starts[i], b = i + 1 < starts.length ? starts[i + 1] : dur;
+    c.classList.toggle("on", t >= a && t < b); c.classList.toggle("done", t >= b);
+    c.querySelector(".pg").style.width = Math.max(0, Math.min(1, (t - a) / (b - a))) * 100 + "%";
+  });
+}
+appVideo.addEventListener("timeupdate", syncChapters);
+appVideo.addEventListener("ended", () => { chaps.forEach(c => { c.classList.remove("on"); c.classList.add("done"); }); chaps[chaps.length - 1].classList.add("on"); });
+chaps.forEach(c => c.addEventListener("click", () => { appVideo.currentTime = +c.dataset.t + 0.05; appVideo.play(); syncChapters(); }));
+document.querySelector("#s-app .player").addEventListener("click", () => appVideo.paused ? appVideo.play() : appVideo.pause());
+
+/* ---------- cenas e navegação ---------- */
+const scenes = [...document.querySelectorAll(".scene")];
+let idx = 0; const step = scenes.map(() => 0);
+setInterval(() => { if (scenes[idx].id === "s-fmt") { slideIx = (slideIx + 1) % 5; showSlide(); } }, 2600);
+const progress = document.getElementById("progress");
+const labeled = scenes.map((s, i) => [s, i]).filter(([s]) => s.dataset.label);
+progress.innerHTML = labeled.map(([s, i]) => `<button data-i="${i}"><div class="bar"><span></span></div><div class="t">${s.dataset.label}</div></button>`).join("");
+progress.querySelectorAll("button").forEach(b => b.addEventListener("click", () => go(+b.dataset.i)));
+function applyStep(i) {
+  const s = scenes[i]; s.dataset.step = step[i];
+  if (s.id === "s-pipe" && i === idx) showStage(step[i]);
+}
+function go(i, fromBack = false) {
+  idx = Math.max(0, Math.min(scenes.length - 1, i));
+  scenes.forEach((s, k) => { s.classList.toggle("active", k === idx); s.classList.toggle("past", k < idx); });
+  if (fromBack) step[idx] = Math.max(0, (+scenes[idx].dataset.steps || 1) - 1);
+  applyStep(idx);
+  progress.classList.toggle("hide", !scenes[idx].dataset.label);
+  progress.querySelectorAll("button").forEach(b => { const j = +b.dataset.i; b.classList.toggle("on", j === idx); b.classList.toggle("done", j < idx); });
+  if (scenes[idx].id === "s-fmt") startReel(); else clearTimeout(reelTimer);
+  if (scenes[idx].id === "s-app") { appVideo.currentTime = 0; syncChapters(); setTimeout(() => appVideo.play().catch(() => {}), 700); }
+  else appVideo.pause();
+}
+function next() { const n = +scenes[idx].dataset.steps || 1; if (step[idx] < n - 1) { step[idx]++; applyStep(idx); return; } go(idx + 1); }
+function prev() { if (step[idx] > 0) { step[idx]--; applyStep(idx); return; } go(idx - 1, true); }
+document.addEventListener("keydown", e => {
+  const k = e.key;
+  if (["ArrowRight", "PageDown", " "].includes(k)) { next(); e.preventDefault(); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(k)) { prev(); e.preventDefault(); }
+  else if (["1", "2", "3"].includes(k)) { level = +k - 1; renderLevel(); }
+  else if (k.toLowerCase() === "v") setVersion(version === "revisao" ? "modelo" : "revisao");
+  else if (k === "Home") go(0);
+  else if (k === "End") go(scenes.length - 1);
+  else if (k.toLowerCase() === "f") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+});
+function fit() { const s = Math.min(innerWidth / 1920, innerHeight / 1080); document.getElementById("stage").style.transform = `translate(-50%, -50%) scale(${s})`; }
+addEventListener("resize", fit); fit();
+
+renderLevel(false); go(0);
+</script>
+</body>
+</html>

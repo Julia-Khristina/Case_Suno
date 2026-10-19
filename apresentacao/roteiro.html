@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perspecta · Roteiro</title>
+<style>
+@font-face { font-family: "Jakarta"; font-weight: 400; src: url("../asset/fonts/PlusJakartaSans-400.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 500; src: url("../asset/fonts/PlusJakartaSans-500.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 600; src: url("../asset/fonts/PlusJakartaSans-600.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 700; src: url("../asset/fonts/PlusJakartaSans-700.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 800; src: url("../asset/fonts/PlusJakartaSans-800.ttf"); }
+:root { --red: #B3141F; --red-soft: #FBE6E6; --red-mid: #F2B8BC; --ink: #16161A; --ink-2: #34343A; --muted: #6B6B70; --line: #E9E4E0;
+  --bg: #F7F5F3; --card: #fff; --llm: #5B4BD6; --llm-soft: #ECE9FC; --ok: #1E7A4C; --ok-soft: #E3F3EA; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Jakarta", "Segoe UI", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased;
+  background: radial-gradient(circle at 1px 1px, rgba(22,22,26,.06) 1px, transparent 0) 0 0 / 22px 22px, var(--bg); line-height: 1.55; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 56px 24px 96px; }
+.logo { height: 30px; }
+.kicker { font-size: 13px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
+h1 { margin-top: 36px; font-size: 52px; font-weight: 800; letter-spacing: -.035em; line-height: 1.02; }
+h1 span { color: var(--red); }
+.lead { margin-top: 14px; font-size: 19px; color: var(--muted); font-weight: 500; max-width: 680px; }
+
+/* linha do tempo */
+.timeline { margin-top: 34px; background: var(--card); border: 1.5px solid var(--line); border-radius: 22px; padding: 22px 24px; box-shadow: 0 18px 40px rgba(22,22,26,.05); }
+.timeline .top { display: flex; justify-content: space-between; align-items: baseline; }
+.timeline .top b { font-size: 15px; font-weight: 800; }
+.timeline .top span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; margin-top: 14px; gap: 2px; }
+.bar i { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.legend a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.legend a:hover { color: var(--red); }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* teclas */
+.keys { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; color: var(--muted); font-weight: 600; }
+kbd { font: 700 13px "Jakarta", sans-serif; border: 1.5px solid #CFCAC6; border-bottom-width: 3px; border-radius: 6px; padding: 0 7px; background: #fff; color: var(--ink); }
+
+/* cenas */
+.scene { margin-top: 26px; background: var(--card); border: 1.5px solid var(--line); border-radius: 24px; padding: 26px 30px 24px;
+  box-shadow: 0 18px 40px rgba(22,22,26,.05); scroll-margin-top: 20px; }
+.scene header { display: flex; align-items: center; gap: 14px; }
+.scene .num { width: 38px; height: 38px; flex: none; border-radius: 12px; background: var(--red); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 16px; }
+.scene h2 { font-size: 24px; font-weight: 800; letter-spacing: -.015em; line-height: 1.2; }
+.scene .time { margin-left: auto; font-size: 13px; font-weight: 800; color: var(--red); background: var(--red-soft); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+.scene .goal { margin-top: 8px; font-size: 15px; color: var(--muted); font-weight: 600; padding-left: 52px; }
+.say { margin-top: 16px; font-size: 18px; line-height: 1.62; color: var(--ink-2); border-left: 4px solid var(--red-mid); padding: 2px 0 2px 18px; }
+.say + .say { margin-top: 12px; }
+.say b { color: var(--ink); }
+.cue { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--llm); background: var(--llm-soft); border-radius: 999px; padding: 6px 12px; }
+.cue kbd { text-transform: none; letter-spacing: 0; }
+.steps { margin-top: 10px; }
+.step { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: start; padding: 14px 0; border-top: 1.5px solid var(--line); }
+.step:first-child { border-top: 0; }
+.step .n { width: 28px; height: 28px; border-radius: 9px; background: var(--bg); color: var(--red); display: grid; place-items: center; font-size: 13px; font-weight: 800; margin-top: 2px; }
+.step h3 { font-size: 17px; font-weight: 800; }
+.step h3 small { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; margin-left: 8px; vertical-align: 2px; }
+.code { background: #EFEDEB; color: var(--muted); } .llm { background: var(--llm-soft); color: var(--llm); } .hum { background: var(--ok-soft); color: var(--ok); }
+.step p { margin-top: 4px; font-size: 16.5px; line-height: 1.58; color: var(--ink-2); }
+.step p b { color: var(--ink); }
+.step .t { font-size: 12px; font-weight: 800; color: var(--muted); white-space: nowrap; margin-top: 4px; }
+.tip { margin-top: 14px; font-size: 14.5px; color: var(--muted); font-weight: 600; background: var(--bg); border-radius: 14px; padding: 10px 14px; }
+.tip b { color: var(--ink-2); }
+
+/* extras */
+.extra { margin-top: 38px; }
+.extra h2 { font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+.qa { margin-top: 14px; display: grid; gap: 12px; }
+.qa div { background: var(--card); border: 1.5px solid var(--line); border-radius: 18px; padding: 16px 20px; }
+.qa b { display: block; font-size: 16px; font-weight: 800; }
+.qa p { margin-top: 6px; font-size: 15.5px; color: var(--ink-2); line-height: 1.55; }
+.check { margin-top: 14px; display: grid; gap: 8px; }
+.check label { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; font-weight: 600; color: var(--ink-2); background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 16px; cursor: pointer; }
+.check input { margin-top: 4px; accent-color: var(--red); width: 16px; height: 16px; }
+.check input:checked + span { color: var(--muted); text-decoration: line-through; }
+footer { margin-top: 40px; font-size: 13px; color: var(--muted); font-weight: 600; text-align: center; }
+
+@media (max-width: 640px) {
+  h1 { font-size: 38px; } .scene { padding: 20px 18px; } .scene .goal { padding-left: 0; }
+  .scene header { flex-wrap: wrap; } .scene .time { margin-left: 52px; } .step { grid-template-columns: 30px 1fr; } .step .t { grid-column: 2; }
+}
+@media print {
+  body { background: #fff; } .wrap { padding: 0; max-width: none; } .scene, .timeline, .qa div { box-shadow: none; break-inside: avoid; }
+  .keys, .check { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <img class="logo" src="img/logo.png" alt="Suno Asset">
+  <h1>Roteiro da<br>apresentação<span>.</span></h1>
+  <p class="lead">Perspecta · apresentação técnica de 5 minutos. Fala sugerida para cada cena, com as ações no teclado e o tempo de cada parte.</p>
+
+  <div class="timeline">
+    <div class="top"><b>Tempo total: ~4 min 45 s</b><span>limite: 5 min</span></div>
+    <div class="bar">
+      <i style="flex:10;background:#E36B73"></i><i style="flex:20;background:#D4202C"></i><i style="flex:120;background:#B3141F"></i>
+      <i style="flex:45;background:#5B4BD6"></i><i style="flex:45;background:#8F1722"></i><i style="flex:15;background:#C9C1BC"></i>
+      <i style="flex:30;background:#6E1B25"></i><i style="flex:5;background:#16161A"></i>
+    </div>
+    <div class="legend">
+      <a href="#c1"><i style="background:#E36B73"></i>Capa 10 s</a><a href="#c2"><i style="background:#D4202C"></i>Problema 20 s</a>
+      <a href="#c3"><i style="background:#B3141F"></i>Pipeline 2 min</a><a href="#c4"><i style="background:#5B4BD6"></i>Aplicação 45 s</a>
+      <a href="#c5"><i style="background:#8F1722"></i>Output 45 s</a><a href="#c6"><i style="background:#C9C1BC"></i>Formatos 15 s</a>
+      <a href="#c7"><i style="background:#6E1B25"></i>Próximos passos 25 s</a><a href="#c8"><i style="background:#16161A"></i>Fim 5 s</a>
+    </div>
+  </div>
+
+  <div class="keys">
+    <span><kbd>→</kbd> / <kbd>espaço</kbd> avança</span><span><kbd>←</kbd> volta</span><span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> muda o nível</span>
+    <span><kbd>V</kbd> modelo ↔ revisão</span><span><kbd>F</kbd> tela cheia</span>
+  </div>
+
+  <!-- 1 -->
+  <section class="scene" id="c1">
+    <header><span class="num">1</span><h2>Capa</h2><span class="time">10 s</span></header>
+    <p class="goal">Apresentar-se e dizer em uma frase o que o projeto faz.</p>
+    <p class="say">Boa tarde. Eu sou a Julia Khristina, e este é o <b>Perspecta</b>: um pipeline de IA que transforma notícias do mercado financeiro em conteúdo para três níveis de entendimento — iniciante, intermediário e avançado.</p>
+    <span class="cue">Avançar <kbd>→</kbd></span>
+  </section>
+
+  <!-- 2 -->
+  <section class="scene" id="c2">
+    <header><span class="num">2</span><h2>Problema · “É assim que ela chega”</h2><span class="time">20 s</span></header>
+    <p class="goal">Mostrar o problema com um exemplo real, antes de qualquer arquitetura.</p>
+    <p class="say">Esta é uma notícia real que o sistema coletou na semana passada, sobre a Braskem.</p>
+    <span class="cue">Acender os termos <kbd>→</kbd></span>
+    <p class="say">Em três parágrafos, <b>dez termos técnicos</b>: OPA, ações ordinárias, debêntures, capital votante… Quem já investe lê em segundos. Quem está começando trava na primeira linha. O desafio é fazer o mesmo fato chegar aos dois <b>sem perder a precisão</b>.</p>
+    <span class="cue">Avançar <kbd>→</kbd></span>
+  </section>
+
+  <!-- 3 -->
+  <section class="scene" id="c3">
+    <header><span class="num">3</span><h2>Pipeline · oito etapas</h2><span class="time">2 min · ~15 s por etapa</span></header>
+    <p class="goal">A parte técnica central: cada etapa com o número real da Braskem.</p>
+    <p class="say">Vou seguir essa notícia por dentro do pipeline. São oito etapas, e cada uma é decidida de um jeito: por <b>código</b>, por um <b>modelo de linguagem</b> ou por uma <b>pessoa</b>.</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div><h3>Coletar <small class="code">código</small></h3>
+        <p>A cada três horas o sistema lê sete feeds financeiros e junta a mesma notícia de fontes diferentes numa pauta. A Seu Dinheiro e a Money Times tiveram similaridade de <b>0,67</b>, com três entidades em comum — acima do limiar de 0,40, então viraram uma pauta. As outras notícias ficaram em 0,11 ou menos e ficaram de fora. Tudo isso é código: nenhum token gasto.</p></div><span class="t">15 s</span></div>
+      <div class="step"><span class="n">2</span><div><h3>Admitir <small class="code">código</small></h3>
+        <p>Antes de gastar qualquer token, um portão: tamanho, idioma, texto completo e termos do glossário. A Braskem teve <b>615 palavras e 7 termos</b> — admitida. Coleta e entrada manual passam pelo mesmo portão.</p></div><span class="t">12 s</span></div>
+      <div class="step"><span class="n">3</span><div><h3>Extrair <small class="llm">LLM</small></h3>
+        <p>Antes de escrever, a IA monta um grafo dos fatos: três pontos centrais, seis afirmações, oito dados — cada um preso ao trecho exato da fonte. <b>81% das frases geradas</b> ficaram ligadas a uma afirmação. E uma falha real: o alinhamento entre as duas fontes devolveu JSON inválido, e o sistema seguiu com fonte única, registrando o aviso.</p></div><span class="t">20 s</span></div>
+      <div class="step"><span class="n">4</span><div><h3>Gerar <small class="llm">LLM</small></h3>
+        <p>Um grafo LangGraph gera três níveis vezes três formatos — texto, carrossel e roteiro —, cada um com suas regras. Essa notícia custou <b>88 mil tokens em 27 tentativas</b>, com 1,6 segundo por chamada.</p></div><span class="t">15 s</span></div>
+      <div class="step"><span class="n">5</span><div><h3>Medir <small class="code">código</small></h3>
+        <p>Cada tentativa é medida sem IA: legibilidade, densidade de termos técnicos, números fora da fonte, linguagem de recomendação. O gráfico mostra o essencial: as saídas do modelo — os círculos vazios — caíram <b>fora das faixas de nível</b>. O sistema só confirma um nível quando os dois eixos concordam.</p></div><span class="t">20 s</span></div>
+      <div class="step"><span class="n">6</span><div><h3>Reescrever <small class="llm">LLM</small></h3>
+        <p>Cada falha volta para a IA como número: métrica, valor e faixa. Três tentativas por material, e as <b>27 continuaram reprovadas</b>. O sistema parou e mandou para revisão com o motivo — nunca marcou como aprovado.</p></div><span class="t">15 s</span></div>
+      <div class="step"><span class="n">7</span><div><h3>Julgar <small class="llm">LLM</small></h3>
+        <p>Se passasse nas métricas, um segundo modelo, maior e diferente do gerador, daria notas por critério — mas <b>quem aprova é o código</b>: média mínima de 7 e nenhum critério abaixo de 5. Como nada passou, o juiz não foi chamado: 27 chamadas do modelo mais caro economizadas.</p></div><span class="t">13 s</span></div>
+      <div class="step"><span class="n">8</span><div><h3>Revisar <small class="hum">humano</small></h3>
+        <p>E nada sai sem uma pessoa aprovar. O material pode ser aprovado, editado — e aí é reavaliado — ou rejeitado com motivo. <b>Tudo fica gravado</b>: versões dos prompts e limiares, cada tentativa e cada decisão.</p></div><span class="t">10 s</span></div>
+    </div>
+    <span class="cue">Cada etapa: <kbd>→</kbd></span>
+    <p class="tip"><b>Se o tempo apertar:</b> reduza Admitir e Julgar a uma frase. As etapas que mais mostram o diferencial técnico são Extrair, Medir e Reescrever.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="scene" id="c4">
+    <header><span class="num">4</span><h2>Aplicação · vídeo</h2><span class="time">45 s</span></header>
+    <p class="goal">O vídeo começa sozinho. Fale por cima, sem esperar cada capítulo terminar.</p>
+    <p class="say">Isso é o que a pessoa que revisa vê. A pauta da Braskem com as duas fontes… Em Materiais, escolho notícia, nível e formato. Este é o texto Iniciante, já com a minha edição registrada no histórico. Logo abaixo, as três tentativas da IA com as métricas de cada uma, e o painel de revisão.</p>
+    <p class="say">O carrossel é renderizado em imagens prontas para o Instagram.</p>
+    <p class="say">E por fim, <b>Configurações</b>: o glossário. Ele não é só uma tela de consulta — alimenta a admissão, a densidade de termos técnicos e a regra que obriga o Iniciante a explicar cada termo. Hoje são <b>204 termos do Banco Central</b>, nenhum aprovado ainda: só termo aprovado entra nas explicações.</p>
+    <p class="tip"><b>Atalho:</b> se a fala adiantar, clique em “Configurações” na lista à direita do vídeo para pular direto.</p>
+    <span class="cue">Avançar <kbd>→</kbd></span>
+  </section>
+
+  <!-- 5 -->
+  <section class="scene" id="c5">
+    <header><span class="num">5</span><h2>Output · “A mesma notícia, no seu nível”</h2><span class="time">45 s</span></header>
+    <p class="goal">O momento-chave para o RH. Arraste o controle devagar enquanto fala.</p>
+    <p class="say">E este é o resultado. A mesma notícia no nível Iniciante: frases curtas, cada termo explicado em linguagem simples.</p>
+    <span class="cue">Arrastar até Avançado · ou <kbd>3</kbd></span>
+    <p class="say">No Avançado, jargão pleno — estrutura acionária, risco de crédito do emissor. Os medidores acompanham: a legibilidade cai, a densidade de termos sobe, e o avaliador confirma o nível.</p>
+    <span class="cue">Mostrar a saída do modelo <kbd>V</kbd></span>
+    <p class="say">E para ser transparente: esta é a saída original do modelo. Ele não diferenciou os níveis, e o avaliador barrou. A versão final passou por <b>revisão humana</b> — que é exatamente o papel previsto para a pessoa no processo.</p>
+    <span class="cue">Voltar à revisão <kbd>V</kbd> · avançar <kbd>→</kbd></span>
+  </section>
+
+  <!-- 6 -->
+  <section class="scene" id="c6">
+    <header><span class="num">6</span><h2>Formatos</h2><span class="time">15 s</span></header>
+    <p class="goal">Passagem rápida — o carrossel já apareceu no vídeo.</p>
+    <p class="say">Os três formatos saem da mesma base: carrossel, roteiro de vídeo e texto. Carrossel e roteiro ainda aguardam revisão.</p>
+    <span class="cue">Avançar <kbd>→</kbd></span>
+  </section>
+
+  <!-- 7 -->
+  <section class="scene" id="c7">
+    <header><span class="num">7</span><h2>Próximos passos</h2><span class="time">25 s</span></header>
+    <p class="goal">Mostrar maturidade: cada próximo passo nasce de algo que a execução real revelou.</p>
+    <p class="say">Para levar do protótipo à produção, são quatro passos. Primeiro, <b>calibrar os níveis</b> com mais notícias reais — hoje são duas medidas. Segundo, <b>aprovar e ampliar o glossário</b>: nenhum dos 204 termos foi aprovado ainda, e faltam termos de mercado de capitais. Terceiro, <b>medir o juiz</b> com notas reais e comparar com a revisão humana. E quarto, deixar a <b>comparação de fontes</b> mais robusta, a partir das falhas que esta própria execução mostrou.</p>
+    <span class="cue">Avançar <kbd>→</kbd></span>
+  </section>
+
+  <!-- 8 -->
+  <section class="scene" id="c8">
+    <header><span class="num">8</span><h2>Encerramento</h2><span class="time">5 s</span></header>
+    <p class="say">Agradeço a atenção. Os QR codes levam ao meu LinkedIn e ao repositório do projeto. Fico à disposição para perguntas.</p>
+  </section>
+
+  <section class="extra">
+    <h2>Perguntas prováveis</h2>
+    <div class="qa">
+      <div><b>Por que não usar só o juiz LLM?</b><p>Custo e viés: o juiz é o modelo mais caro e, se fosse o mesmo do gerador, avaliaria o próprio texto. As métricas determinísticas filtram antes, e a aprovação é calculada por código — é auditável.</p></div>
+      <div><b>Por que os níveis falharam?</b><p>O gerador é um modelo pequeno (gpt-oss-20b), as faixas de Flesch e densidade ainda são provisórias e o glossário é quase todo de macroeconomia — em notícia de empresa, quase nenhum termo conta como técnico.</p></div>
+      <div><b>Quanto custa uma notícia?</b><p>Na Braskem, 88.481 tokens em 27 tentativas de geração, ~1,6 s por chamada. Coleta, admissão, métricas e gráficos são código e não gastam tokens.</p></div>
+      <div><b>Como vocês evitam número inventado?</b><p>Cada frase gerada é ligada a uma afirmação extraída, e todo número ou data do texto é conferido contra o texto da fonte — não contra a extração, que também pode errar.</p></div>
+      <div><b>O que acontece quando algo quebra?</b><p>Falha com segurança: se o alinhamento entre fontes falha, segue com fonte única e registra o aviso; se esgotam as reescritas, vai para revisão com o motivo — nunca como aprovado.</p></div>
+    </div>
+  </section>
+
+  <section class="extra">
+    <h2>Antes de apresentar</h2>
+    <div class="check">
+      <label><input type="checkbox"><span>Aprovar os 3 textos analíticos da Braskem na tela Materiais.</span></label>
+      <label><input type="checkbox"><span>Abrir a apresentação no Chrome ou Edge e testar o vídeo da cena “Aplicação”.</span></label>
+      <label><input type="checkbox"><span>Entrar em tela cheia com <kbd>F</kbd> e conferir o tamanho no projetor.</span></label>
+      <label><input type="checkbox"><span>Ensaiar o controle deslizante e a tecla <kbd>V</kbd> pelo menos uma vez.</span></label>
+      <label><input type="checkbox"><span>Ensaiar com cronômetro: a meta é ~4 min 45 s.</span></label>
+    </div>
+  </section>
+
+  <footer>Perspecta · Julia Khristina · roteiro de apoio, não exibido na apresentação</footer>
+</main>
+</body>
+</html>

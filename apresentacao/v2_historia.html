@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perspecta · Apresentação</title>
+<style>
+@font-face { font-family: "Jakarta"; font-weight: 400; src: url("../asset/fonts/PlusJakartaSans-400.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 500; src: url("../asset/fonts/PlusJakartaSans-500.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 600; src: url("../asset/fonts/PlusJakartaSans-600.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 700; src: url("../asset/fonts/PlusJakartaSans-700.ttf"); }
+@font-face { font-family: "Jakarta"; font-weight: 800; src: url("../asset/fonts/PlusJakartaSans-800.ttf"); }
+
+:root {
+  --red: #B3141F; --red-2: #D4202C; --red-soft: #FBE6E6; --red-dark: #6E1B25; --red-glow: rgba(196,22,42,.30);
+  --ink: #16161A; --muted: #6B6B70; --line: #ECE9E7; --bg: #F6F5F4; --side: #0E0E10; --card: #FFFFFF;
+  --ok: #1E7A4C; --ok-soft: #E3F3EA; --ease: cubic-bezier(.22,.8,.24,1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #000; overflow: hidden; }
+body { font-family: "Jakarta", "Segoe UI", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; }
+kbd { font: 700 15px "Jakarta", sans-serif; border: 1.5px solid #CFCAC6; border-bottom-width: 3px; border-radius: 7px; padding: 0 7px; background: #fff; color: var(--ink); }
+
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center; background: var(--bg); overflow: hidden; }
+
+/* ---------- cenas e transições ---------- */
+.scene { position: absolute; inset: 0; opacity: 0; pointer-events: none; transform: translateX(70px);
+  transition: opacity .6s var(--ease), transform .8s var(--ease); }
+.scene.past { transform: translateX(-70px); }
+.scene.active { opacity: 1; pointer-events: auto; transform: none; }
+.rise { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .8s var(--ease); transition-delay: 0s; }
+.scene.active .rise { opacity: 1; transform: none; transition-delay: calc(var(--d, 0) * 110ms + 150ms); }
+.dark { background: var(--side); color: #fff; }
+.arcs { position: absolute; width: 1400px; height: 1400px; left: -520px; bottom: -620px; border-radius: 50%; pointer-events: none;
+  background: repeating-radial-gradient(circle at 50% 50%, transparent 0 34px, rgba(196,22,42,.45) 34px 35.5px);
+  -webkit-mask: radial-gradient(circle, #000 0 45%, transparent 70%); mask: radial-gradient(circle, #000 0 45%, transparent 70%);
+  animation: breathe 9s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+.glow { position: absolute; width: 1100px; height: 1100px; right: -300px; top: -380px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, var(--red-glow) 0%, transparent 65%); }
+.logo-top { position: absolute; left: 120px; top: 92px; height: 44px; }
+.kicker { font-size: 21px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+.dark .kicker { color: #FF5A63; }
+.head { position: absolute; left: 120px; right: 120px; top: 92px; }
+.head h2 { font-size: 64px; font-weight: 800; letter-spacing: -.025em; line-height: 1.04; margin-top: 10px; }
+.head h2 em { font-style: normal; color: var(--red); }
+.honest { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; letter-spacing: .04em; color: var(--muted);
+  background: #fff; border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 14px; }
+.honest i { width: 8px; height: 8px; border-radius: 50%; background: #D9A400; display: inline-block; }
+.honest.ok i { background: var(--ok); }
+
+/* camada técnica (tecla T) */
+.tech { opacity: 0; max-height: 0; overflow: hidden; transition: opacity .4s, max-height .5s var(--ease); }
+body.tech-on .tech { opacity: 1; max-height: 400px; }
+.techbox { font: 600 17px/1.5 "Cascadia Code", "Consolas", monospace; color: #4B4B52; background: #fff; border: 1.5px dashed #D8D2CE;
+  border-radius: 14px; padding: 14px 18px; }
+.techbox b { color: var(--red); font-weight: 700; }
+
+/* ---------- barra de progresso ---------- */
+#progress { position: absolute; left: 120px; right: 120px; top: 34px; display: flex; gap: 10px; z-index: 30; transition: opacity .4s; }
+#progress.hide { opacity: 0; }
+#progress button { flex: 1; border: 0; background: none; cursor: pointer; text-align: left; padding: 0; }
+#progress .bar { height: 4px; border-radius: 2px; background: rgba(128,128,128,.25); overflow: hidden; }
+#progress .bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .6s var(--ease); }
+#progress .lbl { margin-top: 7px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #A9A39F; transition: color .3s; }
+#progress button.done .bar span { width: 100%; }
+#progress button.on .bar span { width: 100%; }
+#progress button.on .lbl { color: var(--red); }
+
+/* ---------- 0 · capa ---------- */
+#s-capa .content { position: absolute; left: 120px; top: 318px; width: 1400px; }
+#s-capa h1 { font-size: 176px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+#s-capa h1 .dot { color: var(--red-2); }
+#s-capa .tag { margin-top: 38px; font-size: 44px; font-weight: 500; line-height: 1.32; color: #E9E6E4; max-width: 1240px; }
+#s-capa .tag b { color: #fff; font-weight: 700; }
+#s-capa .levels { margin-top: 42px; display: flex; gap: 16px; }
+#s-capa .levels span { font-size: 22px; font-weight: 600; padding: 10px 22px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,.22); color: #F2F0EE; }
+#s-capa .levels span:nth-child(2) { background: rgba(179,20,31,.35); border-color: rgba(255,90,99,.6); }
+#s-capa .levels span:nth-child(3) { background: var(--red); border-color: var(--red); }
+#s-capa .author { position: absolute; left: 120px; bottom: 96px; display: flex; align-items: center; gap: 22px; }
+#s-capa .author .bar { width: 6px; height: 64px; background: var(--red-2); border-radius: 3px; }
+#s-capa .author .name { font-size: 36px; font-weight: 700; }
+#s-capa .author .role { font-size: 22px; color: #A9A6A4; margin-top: 4px; }
+#s-capa .hint { position: absolute; right: 120px; bottom: 104px; font-size: 18px; color: #8C8986; font-weight: 600; }
+
+/* ---------- 1 · a notícia ---------- */
+#s-noticia .paper { position: absolute; left: 120px; top: 250px; width: 1060px; background: #fff; border-radius: 26px; padding: 46px 54px;
+  box-shadow: 0 30px 70px rgba(22,22,26,.10); border: 1.5px solid var(--line); }
+#s-noticia .src { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; color: var(--muted); }
+#s-noticia .src .av { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 13px; }
+#s-noticia .paper h3 { margin-top: 18px; font-size: 34px; font-weight: 800; line-height: 1.2; letter-spacing: -.01em; }
+#s-noticia .paper p { margin-top: 18px; font-size: 23px; line-height: 1.55; color: #33333A; }
+#s-noticia .j { border-radius: 6px; transition: background .5s, color .5s, box-shadow .5s; }
+#s-noticia[data-step="1"] .j { background: var(--red-soft); color: var(--red-dark); box-shadow: 0 0 0 3px var(--red-soft); font-weight: 700; }
+#s-noticia .ask { position: absolute; left: 1260px; top: 300px; width: 540px; opacity: 0; transform: translateY(20px); transition: all .7s var(--ease); }
+#s-noticia[data-step="1"] .ask { opacity: 1; transform: none; }
+#s-noticia .ask .big { font-size: 74px; font-weight: 800; line-height: 1.02; letter-spacing: -.03em; }
+#s-noticia .ask .big em { font-style: normal; color: var(--red); }
+#s-noticia .ask .count { margin-top: 34px; display: flex; align-items: baseline; gap: 18px; }
+#s-noticia .ask .count b { font-size: 120px; font-weight: 800; color: var(--red); letter-spacing: -.04em; line-height: 1; }
+#s-noticia .ask .count span { font-size: 25px; font-weight: 600; color: var(--muted); line-height: 1.3; }
+#s-noticia .ask p { margin-top: 30px; font-size: 25px; line-height: 1.45; font-weight: 500; color: #3A3A40; }
+
+/* ---------- 2 · transformação (controle deslizante) ---------- */
+#s-nivel .left { position: absolute; left: 120px; top: 300px; width: 560px; }
+.slider-wrap { background: #fff; border: 1.5px solid var(--line); border-radius: 24px; padding: 30px 32px 26px; }
+.slider-wrap .lbl { font-size: 15px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.range { position: relative; margin: 30px 10px 6px; height: 44px; }
+.range .track { position: absolute; left: 0; right: 0; top: 18px; height: 8px; border-radius: 4px;
+  background: linear-gradient(90deg, #F2C9CC, var(--red) 55%, var(--red-dark)); }
+.range input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: grab; }
+.range .knob { position: absolute; top: 4px; width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; background: #fff;
+  border: 4px solid var(--red); box-shadow: 0 6px 18px rgba(179,20,31,.35); pointer-events: none; transition: left .35s var(--ease); }
+.range.drag .knob { transition: none; }
+.stops { display: flex; justify-content: space-between; margin-top: 10px; }
+.stops button { border: 0; background: none; font-size: 20px; font-weight: 700; color: #A9A39F; cursor: pointer; padding: 4px 2px; transition: color .3s; }
+.stops button.on { color: var(--red); }
+.gauges { margin-top: 22px; display: flex; flex-direction: column; gap: 18px; }
+.gauge { background: #fff; border: 1.5px solid var(--line); border-radius: 20px; padding: 20px 24px; }
+.gauge .top { display: flex; justify-content: space-between; align-items: baseline; }
+.gauge .name { font-size: 17px; font-weight: 700; color: var(--muted); }
+.gauge .val { font-size: 34px; font-weight: 800; letter-spacing: -.02em; transition: color .3s; }
+.gauge .scale { position: relative; height: 14px; margin-top: 12px; border-radius: 7px; overflow: hidden; display: flex; }
+.gauge .scale i { display: block; height: 100%; }
+.gauge .scale i.on { outline: 3px solid var(--ink); outline-offset: -3px; }
+.gauge .pin { position: absolute; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; background: #fff; border: 5px solid var(--ink); border-radius: 50%; transition: left .5s var(--ease); }
+.gauge .scale { overflow: visible; }
+.gauge .scale i:first-child { border-radius: 7px 0 0 7px; } .gauge .scale i:nth-child(3) { border-radius: 0 7px 7px 0; }
+.gauge .scale i.on { outline: none; box-shadow: inset 0 0 0 3px rgba(22,22,26,.55); }
+.gauge .legend { display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px; font-weight: 600; color: #A9A39F; }
+.verdict { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; }
+.verdict .b { padding: 8px 16px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); transition: all .3s; }
+.verdict .b.bad { background: var(--red-soft); color: var(--red); }
+.toggle { margin-top: 20px; display: flex; background: #fff; border: 1.5px solid var(--line); border-radius: 999px; padding: 5px; }
+.toggle button { flex: 1; border: 0; background: none; border-radius: 999px; padding: 12px 10px; font-size: 17px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .3s; }
+.toggle button.on { background: var(--ink); color: #fff; }
+#s-nivel .doc { position: absolute; left: 740px; top: 300px; width: 1060px; height: 700px; background: #fff; border-radius: 26px;
+  border: 1.5px solid var(--line); box-shadow: 0 30px 70px rgba(22,22,26,.09); padding: 44px 54px; overflow: hidden; }
+#s-nivel .doc .meta { display: flex; justify-content: space-between; align-items: center; }
+#s-nivel .doc .lvl { font-size: 16px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+#s-nivel .doc .body { transition: opacity .28s, transform .35s var(--ease); }
+#s-nivel .doc .body.out { opacity: 0; transform: translateY(12px); }
+#s-nivel .doc h3 { margin-top: 20px; font-size: 40px; font-weight: 800; line-height: 1.15; letter-spacing: -.015em; }
+#s-nivel .doc p { margin-top: 22px; font-size: 24px; line-height: 1.6; color: #2E2E34; }
+#s-nivel .doc .t { background: var(--red-soft); color: var(--red-dark); border-radius: 5px; padding: 0 3px; font-weight: 600; }
+#s-nivel .doc .x { background: var(--ok-soft); color: #14563A; border-radius: 5px; padding: 0 3px; }
+#s-nivel .doc .fails { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+#s-nivel .doc .fails span { font-size: 16px; font-weight: 700; color: var(--red); background: var(--red-soft); border-radius: 999px; padding: 7px 14px; }
+#s-nivel .doc .key { position: absolute; left: 54px; right: 54px; bottom: 30px; display: flex; gap: 22px; font-size: 15px; font-weight: 600; color: var(--muted); }
+#s-nivel .doc .key i { display: inline-block; width: 26px; height: 14px; border-radius: 4px; vertical-align: -1px; margin-right: 8px; }
+
+/* ---------- 3 · formatos ---------- */
+#s-formatos .tabs { position: absolute; right: 120px; top: 132px; display: flex; gap: 8px; background: #fff; border: 1.5px solid var(--line); border-radius: 999px; padding: 5px; }
+#s-formatos .tabs button { border: 0; background: none; border-radius: 999px; padding: 11px 22px; font-size: 17px; font-weight: 700; color: var(--muted); cursor: pointer; }
+#s-formatos .tabs button.on { background: var(--red); color: #fff; }
+.fcol { position: absolute; top: 236px; }
+.fcol .ft { font-size: 15px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; height: 74px; }
+.fcol .ft .honest { letter-spacing: .02em; text-transform: none; }
+.phone { width: 470px; height: 740px; border-radius: 52px; background: #111; padding: 16px; box-shadow: 0 30px 70px rgba(22,22,26,.25); position: relative; }
+.phone .screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden; background: #fff; position: relative; }
+.ig-top { height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 18px; font-size: 16px; font-weight: 700; border-bottom: 1px solid #eee; }
+.ig-top .av { width: 34px; height: 34px; border-radius: 50%; background: var(--side); display: grid; place-items: center; }
+.ig-top .av img { width: 26px; }
+.ig-slides { position: relative; width: 438px; height: 547px; overflow: hidden; }
+.ig-slides .rail { display: flex; height: 100%; transition: transform .7s var(--ease); }
+.ig-slides img { width: 438px; height: 547px; flex: none; display: block; }
+.ig-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+.ig-dots i { width: 7px; height: 7px; border-radius: 50%; background: #D6D2CF; transition: background .3s; }
+.ig-dots i.on { background: #2E7CF6; }
+.ig-cap { padding: 12px 18px; font-size: 15px; line-height: 1.4; color: #333; }
+.reel { width: 470px; height: 740px; border-radius: 52px; background: #111; padding: 16px; box-shadow: 0 30px 70px rgba(22,22,26,.25); }
+.reel .screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden; position: relative;
+  background: radial-gradient(circle at 70% 20%, rgba(212,32,44,.55), transparent 55%), linear-gradient(160deg, #1B1B20, #0B0B0D); color: #fff; }
+.reel .onscreen { position: absolute; left: 32px; right: 32px; top: 190px; font-size: 40px; font-weight: 800; line-height: 1.15; letter-spacing: -.01em; transition: opacity .35s; }
+.reel .speech { position: absolute; left: 32px; right: 32px; bottom: 120px; font-size: 20px; line-height: 1.45; font-weight: 500; color: #E9E6E4; transition: opacity .35s; }
+.reel .time { position: absolute; left: 32px; top: 34px; font: 700 16px "Jakarta"; letter-spacing: .1em; color: #FF8A90; }
+.reel .seg { position: absolute; left: 32px; right: 32px; bottom: 50px; display: flex; gap: 6px; }
+.reel .seg i { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,.25); overflow: hidden; }
+.reel .seg i b { display: block; height: 100%; width: 0; background: #fff; }
+.reel .seg i.done b { width: 100%; }
+.reel .seg i.on b { animation: fill var(--dur, 3s) linear forwards; }
+@keyframes fill { to { width: 100%; } }
+.reel .role { position: absolute; left: 32px; top: 120px; font-size: 15px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #FF8A90; }
+.txtcard { width: 600px; height: 740px; background: #fff; border-radius: 30px; border: 1.5px solid var(--line); box-shadow: 0 30px 70px rgba(22,22,26,.09); padding: 40px 44px; overflow: hidden; position: relative; }
+.txtcard h3 { font-size: 32px; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; }
+.txtcard p { margin-top: 18px; font-size: 19px; line-height: 1.6; color: #34343A; }
+.txtcard::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; background: linear-gradient(transparent, #fff); }
+
+/* ---------- 4 · bastidores ---------- */
+#s-bast .trail { position: absolute; left: 120px; right: 120px; top: 262px; height: 60px; }
+#s-bast .trail .line { position: absolute; left: 0; right: 0; top: 18px; height: 4px; background: #E4DFDB; border-radius: 2px; }
+#s-bast .trail .fill { position: absolute; left: 0; top: 18px; height: 4px; background: var(--red); border-radius: 2px; transition: width .8s var(--ease); }
+#s-bast .trail .st { position: absolute; top: 0; transform: translateX(-50%); text-align: center; cursor: pointer; }
+#s-bast .trail .st i { display: block; margin: 0 auto; width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 4px solid #E4DFDB;
+  transition: all .5s var(--ease); font: 800 16px/32px "Jakarta"; color: #A9A39F; font-style: normal; }
+#s-bast .trail .st span { display: block; margin-top: 8px; font-size: 17px; font-weight: 800; color: #A9A39F; letter-spacing: .02em; transition: color .4s; white-space: nowrap; }
+#s-bast .trail .st.on i, #s-bast .trail .st.done i { border-color: var(--red); background: var(--red); color: #fff; }
+#s-bast .trail .st.on i { transform: scale(1.25); box-shadow: 0 0 0 10px var(--red-soft); }
+#s-bast .trail .st.on span, #s-bast .trail .st.done span { color: var(--ink); }
+#s-bast .stage2 { position: absolute; left: 120px; right: 120px; top: 380px; bottom: 70px; }
+#s-bast .stop { position: absolute; inset: 0; display: flex; gap: 56px; opacity: 0; pointer-events: none; transform: translateX(40px);
+  transition: opacity .55s var(--ease), transform .7s var(--ease); }
+#s-bast .stop.on { opacity: 1; pointer-events: auto; transform: none; }
+#s-bast .stop.gone { transform: translateX(-40px); }
+#s-bast .clip { flex: 0 0 1000px; height: 625px; border-radius: 24px; overflow: hidden; background: #111; box-shadow: 0 30px 70px rgba(22,22,26,.16); }
+#s-bast .clip video { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+#s-bast .info { flex: 1; display: flex; flex-direction: column; }
+#s-bast .info .n { font-size: 18px; font-weight: 800; color: var(--red); letter-spacing: .14em; }
+#s-bast .info h3 { margin-top: 10px; font-size: 54px; font-weight: 800; letter-spacing: -.025em; line-height: 1.05; }
+#s-bast .info p { margin-top: 20px; font-size: 27px; line-height: 1.42; font-weight: 500; color: #34343A; }
+#s-bast .info .chips { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+#s-bast .info .chips span { font-size: 18px; font-weight: 700; padding: 9px 16px; border-radius: 999px; background: #fff; border: 1.5px solid var(--line); }
+#s-bast .info .tech { margin-top: 22px; }
+
+/* ---------- 5 · qualidade ---------- */
+#s-qual .col { position: absolute; top: 290px; }
+.attempt { width: 760px; background: #fff; border: 1.5px solid var(--line); border-radius: 26px; padding: 28px 32px; box-shadow: 0 30px 70px rgba(22,22,26,.08); }
+.attempt .ah { display: flex; justify-content: space-between; align-items: center; }
+.attempt .ah b { font-size: 26px; font-weight: 800; }
+.gate { display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 13px 0; border-top: 1.5px solid var(--line); opacity: 0; transform: translateX(-16px); transition: all .5s var(--ease); }
+.scene.active .gate { opacity: 1; transform: none; transition-delay: calc(var(--d) * 140ms + 300ms); }
+.gate:first-of-type { border-top: 0; }
+.gate .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 18px; color: #fff; background: var(--ok); }
+.gate.bad .ic { background: var(--red); }
+.gate .gn { font-size: 21px; font-weight: 700; }
+.gate .gn small { display: block; font-size: 16px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+.gate .gv { font-size: 20px; font-weight: 800; color: var(--ok); white-space: nowrap; }
+.gate.bad .gv { color: var(--red); }
+.qstep { position: absolute; left: 960px; top: 290px; width: 840px; opacity: 0; pointer-events: none; transform: translateY(24px); transition: all .7s var(--ease); }
+#s-qual[data-step="1"] .qstep.s1, #s-qual[data-step="2"] .qstep.s2 { opacity: 1; transform: none; pointer-events: auto; }
+.fb { font: 600 18px/1.55 "Cascadia Code", "Consolas", monospace; background: var(--side); color: #E9E6E4; border-radius: 22px; padding: 26px 30px; }
+.fb .k { color: #FF8A90; }
+.fb .c { color: #8C8986; }
+.tries { margin-top: 26px; display: flex; gap: 22px; align-items: flex-end; height: 250px; }
+.try { flex: 1; text-align: center; }
+.try .barv { margin: 0 auto; width: 100%; border-radius: 14px 14px 6px 6px; background: var(--red); display: grid; place-items: start center; color: #fff;
+  font-size: 30px; font-weight: 800; padding-top: 12px; height: 0; transition: height .9s var(--ease); }
+.try .barv.ok { background: var(--ok); }
+#s-qual[data-step="1"] .try .barv, #s-qual[data-step="2"] .try .barv { height: var(--h); }
+.try .tl { margin-top: 10px; font-size: 17px; font-weight: 700; color: var(--muted); }
+.qnote { margin-top: 22px; font-size: 23px; line-height: 1.45; font-weight: 600; }
+.qnote em { font-style: normal; color: var(--red); }
+.human { background: #fff; border: 2px solid var(--ok); border-radius: 26px; padding: 30px 34px; box-shadow: 0 30px 70px rgba(30,122,76,.12); }
+.human .hh { display: flex; align-items: center; gap: 14px; font-size: 26px; font-weight: 800; color: var(--ok); }
+.human .hh i { width: 40px; height: 40px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; font-style: normal; }
+.human .row { display: flex; gap: 18px; margin-top: 22px; }
+.human .m { flex: 1; background: var(--ok-soft); border-radius: 18px; padding: 16px 18px; }
+.human .m b { display: block; font-size: 38px; font-weight: 800; color: var(--ok); letter-spacing: -.02em; }
+.human .m span { font-size: 16px; font-weight: 700; color: #2F6B4E; }
+.human .vs { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 10px; align-items: center; margin-top: 8px; }
+.human .vs .lb { font-size: 15px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 18px; }
+.human .before { background: var(--red-soft); border-radius: 18px; padding: 16px 18px; }
+.human .before b { display: block; font-size: 38px; font-weight: 800; color: var(--red); letter-spacing: -.02em; }
+.human .before span { font-size: 16px; font-weight: 700; color: var(--red-dark); }
+.human .arrow { font-size: 34px; font-weight: 800; color: var(--muted); text-align: center; }
+.human blockquote { margin-top: 24px; font-size: 21px; line-height: 1.5; color: #2E2E34; border-left: 5px solid var(--ok); padding: 4px 0 4px 18px; }
+.human blockquote .x { background: var(--ok-soft); color: #14563A; border-radius: 5px; padding: 0 3px; }
+.try .cap { font-size: 15px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- 6 · aprendizados ---------- */
+.lgrid { position: absolute; left: 120px; right: 120px; top: 268px; bottom: 96px; display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.lcard { background: #fff; border: 1.5px solid var(--line); border-radius: 26px; padding: 32px 38px; display: flex; flex-direction: column; }
+.lcard .n { font-size: 17px; font-weight: 800; color: var(--red); letter-spacing: .12em; }
+.lcard h4 { margin-top: 10px; font-size: 33px; font-weight: 800; letter-spacing: -.015em; line-height: 1.15; }
+.lcard .ev { margin-top: 12px; font-size: 21px; color: var(--muted); line-height: 1.45; font-weight: 500; }
+.lcard .ev b { color: var(--ink); }
+.lcard .fix { margin-top: auto; padding-top: 16px; display: flex; gap: 14px; font-size: 21px; font-weight: 600; line-height: 1.4; border-top: 1.5px solid var(--line); }
+.lcard .fix .tag { flex: none; font-size: 13px; font-weight: 800; letter-spacing: .1em; color: #fff; background: var(--red); border-radius: 999px; padding: 6px 11px; height: fit-content; margin-top: 2px; }
+
+/* ---------- 7 · próximos passos ---------- */
+.steps { position: absolute; left: 120px; right: 120px; top: 268px; bottom: 96px; display: flex; flex-direction: column; gap: 20px; }
+.step { flex: 1; display: grid; grid-template-columns: 96px 1fr 400px; align-items: center; gap: 28px; background: #fff; border: 1.5px solid var(--line); border-radius: 24px; padding: 18px 34px; }
+.step .i { font-size: 54px; font-weight: 800; color: var(--red); letter-spacing: -.03em; }
+.step h4 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; }
+.step p { margin-top: 6px; font-size: 20px; color: var(--muted); font-weight: 500; line-height: 1.4; }
+.step .why { font-size: 18px; font-weight: 600; color: var(--red-dark); background: var(--red-soft); border-radius: 14px; padding: 12px 18px; line-height: 1.4; }
+
+/* ---------- 8 · fim ---------- */
+#s-fim .content { position: absolute; left: 120px; top: 300px; }
+#s-fim h2 { font-size: 120px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+#s-fim h2 .dot { color: var(--red-2); }
+#s-fim .name { margin-top: 44px; font-size: 44px; font-weight: 700; }
+#s-fim .proj { margin-top: 10px; font-size: 26px; color: #A9A6A4; font-weight: 500; }
+#s-fim .qrs { position: absolute; right: 120px; top: 50%; transform: translateY(-50%); display: flex; gap: 48px; }
+.qr { background: #fff; border-radius: 26px; padding: 26px 26px 20px; text-align: center; color: var(--ink); width: 330px; }
+.qr img { width: 278px; height: 278px; display: block; }
+.qr .l { margin-top: 16px; font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.qr .l svg { width: 26px; height: 26px; color: var(--red); }
+.qr .u { margin-top: 4px; font-size: 16px; color: var(--muted); font-weight: 600; }
+
+/* ---------- HUD ---------- */
+#hud { position: fixed; left: 18px; bottom: 12px; display: flex; gap: 14px; align-items: center; z-index: 40; font-size: 13px; font-weight: 700; color: rgba(128,128,128,.85); }
+#hud button { border: 1.5px solid rgba(128,128,128,.4); background: transparent; color: inherit; border-radius: 999px; padding: 4px 11px; font: inherit; cursor: pointer; }
+#hud button.on { border-color: var(--red); color: var(--red); }
+#timer { position: fixed; right: 18px; bottom: 12px; font-size: 14px; font-weight: 700; color: rgba(128,128,128,.85); cursor: pointer; font-variant-numeric: tabular-nums; z-index: 40; }
+#timer.warn { color: var(--red); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="progress" class="hide"></div>
+
+  <!-- 0 · capa -->
+  <section class="scene dark" id="s-capa" data-label="">
+    <div class="glow"></div><div class="arcs"></div>
+    <img class="logo-top rise" src="img/logo_escuro.png" alt="Suno Asset">
+    <div class="content">
+      <div class="kicker rise" style="--d:1">Apresentação técnica · Case Suno</div>
+      <h1 class="rise" style="--d:2;margin-top:22px">Perspecta<span class="dot">.</span></h1>
+      <p class="tag rise" style="--d:3">Pipeline de IA que transforma informações do mundo financeiro em <b>conteúdo para cada nível de entendimento</b>.</p>
+      <div class="levels rise" style="--d:4"><span>Iniciante</span><span>Intermediário</span><span>Avançado</span></div>
+    </div>
+    <div class="author rise" style="--d:5"><div class="bar"></div><div><div class="name">Julia Khristina</div><div class="role">Outubro de 2026</div></div></div>
+    <div class="hint rise" style="--d:6"><kbd>→</kbd> para começar</div>
+  </section>
+
+  <!-- 1 · a notícia como ela chega -->
+  <section class="scene" id="s-noticia" data-label="A notícia" data-steps="2">
+    <div class="head rise"><div class="kicker">Uma notícia real, coletada pelo sistema</div><h2>É assim que ela chega.</h2></div>
+    <div class="paper rise" style="--d:1">
+      <div class="src"><span class="av">SD</span>Seu Dinheiro · 17/10/2026 · também na Money Times</div>
+      <h3>Tem ações da Braskem? Nova oferta da controladora permite venda dos papéis, mas nem todo acionista pode participar</h3>
+      <p>Após concluir a <span class="j">Oferta Pública de Aquisição de ações (OPA)</span> relacionada à compra da <span class="j">petroquímica</span> pelo <span class="j">FIP Shine</span>, a companhia anunciou […] que alguns acionistas terão mais uma chance de vender seus papéis nas mesmas condições oferecidas na operação.</p>
+      <p>O novo prazo foi aberto apenas para os detentores de <span class="j">ações ordinárias</span> (<span class="j">BRKM3</span>) que não participaram do <span class="j">leilão</span> da OPA. […] Quem possui <span class="j">ações preferenciais</span> […] ficou de fora.</p>
+      <p>A <span class="j">contraprestação</span> será feita por meio de <span class="j">debêntures</span> da NSP Investimentos […]. Após a OPA, o fundo Shine passará a deter […] o equivalente a 50,11% do <span class="j">capital votante</span>.</p>
+    </div>
+    <div class="ask">
+      <div class="big">Quem entende <em>isso</em>?</div>
+      <div class="count"><b>10</b><span>termos técnicos<br>em três parágrafos</span></div>
+      <p>Quem já investe lê em segundos. Quem está começando trava na primeira linha. O mesmo fato precisa chegar de três jeitos.</p>
+    </div>
+  </section>
+
+  <!-- 2 · a transformação -->
+  <section class="scene" id="s-nivel" data-label="Transformação">
+    <div class="head rise"><div class="kicker">O output</div><h2>A mesma notícia, <em>no seu nível</em>.</h2></div>
+    <div class="left rise" style="--d:1">
+      <div class="slider-wrap">
+        <div class="lbl">Nível de entendimento</div>
+        <div class="range" id="range"><div class="track"></div><div class="knob" id="knob"></div><input type="range" id="lvl" min="0" max="2" step="0.001" value="0" aria-label="Nível de entendimento"></div>
+        <div class="stops" id="stops"><button data-v="0">Iniciante</button><button data-v="1">Intermediário</button><button data-v="2">Avançado</button></div>
+      </div>
+      <div class="gauges">
+        <div class="gauge"><div class="top"><span class="name">Legibilidade (Flesch PT-BR)</span><span class="val" id="gFlesch">—</span></div>
+          <div class="scale" id="sFlesch"></div><div class="legend"><span style="width:40%">Avançado ≤ 40</span><span style="width:15%;text-align:center">40–55</span><span style="width:45%;text-align:right">Iniciante ≥ 55</span></div></div>
+        <div class="gauge"><div class="top"><span class="name">Termos técnicos a cada 100 palavras</span><span class="val" id="gDens">—</span></div>
+          <div class="scale" id="sDens"></div><div class="legend"><span style="width:25%">Iniciante ≤ 3</span><span style="width:41.7%;text-align:center">Intermediário 3–8</span><span style="width:33.3%;text-align:right">Avançado ≥ 8</span></div></div>
+        <div class="verdict"><span class="name" style="font-size:17px;color:var(--muted)">O avaliador classificou como</span><span class="b" id="gClass">—</span></div>
+      </div>
+      <div class="toggle" id="ver"><button data-v="modelo">Saída do modelo</button><button data-v="revisao" class="on">Após revisão humana</button></div>
+    </div>
+    <div class="doc rise" style="--d:2">
+      <div class="meta"><span class="lvl" id="docLvl">Iniciante</span><span class="honest ok" id="docTag"><i></i>texto revisado</span></div>
+      <div class="body" id="docBody"></div>
+      <div class="key"><span><i style="background:var(--red-soft)"></i>termo técnico</span><span><i style="background:var(--ok-soft)"></i>explicação em linguagem simples</span></div>
+    </div>
+  </section>
+
+  <!-- 3 · três formatos -->
+  <section class="scene" id="s-formatos" data-label="Formatos">
+    <div class="head rise"><div class="kicker">O output</div><h2>Três formatos, da mesma notícia.</h2></div>
+    <div class="tabs rise" style="--d:1" id="ftabs"><button data-v="0">Iniciante</button><button data-v="1">Intermediário</button><button data-v="2">Avançado</button></div>
+    <div class="fcol rise" style="--d:2;left:120px">
+      <div class="ft">Carrossel · Instagram <span class="honest"><i></i>gerado · aguarda revisão</span></div>
+      <div class="phone"><div class="screen">
+        <div class="ig-top"><span class="av"><img src="img/logo_escuro.png" alt=""></span>sunoasset</div>
+        <div class="ig-slides"><div class="rail" id="rail"></div></div>
+        <div class="ig-dots" id="igdots"></div>
+        <div class="ig-cap"><b>sunoasset</b> Braskem abre nova janela para acionistas de BRKM3…</div>
+      </div></div>
+    </div>
+    <div class="fcol rise" style="--d:3;left:700px">
+      <div class="ft">Roteiro · vídeo de até 60 s <span class="honest"><i></i>gerado · aguarda revisão</span></div>
+      <div class="reel"><div class="screen">
+        <div class="time" id="rtime">00:00</div><div class="role" id="rrole">Gancho</div>
+        <div class="onscreen" id="rtela"></div><div class="speech" id="rfala"></div>
+        <div class="seg" id="rseg"></div>
+      </div></div>
+    </div>
+    <div class="fcol rise" style="--d:4;left:1240px">
+      <div class="ft">Texto analítico <span class="honest ok"><i></i>revisado</span></div>
+      <div class="txtcard" id="ftxt"></div>
+    </div>
+  </section>
+
+  <!-- 4 · bastidores -->
+  <section class="scene" id="s-bast" data-label="Bastidores" data-steps="3">
+    <div class="head rise"><div class="kicker">Como chega lá</div><h2>Os bastidores, em quatro paradas.</h2></div>
+    <div class="trail rise" style="--d:1">
+      <div class="line"></div><div class="fill" id="tfill"></div>
+      <div class="st" data-i="0" style="left:0%"><i>1</i><span>Coletar</span></div>
+      <div class="st" data-i="1" style="left:33.3%"><i>2</i><span>Entender</span></div>
+      <div class="st" data-i="2" style="left:66.6%"><i>3</i><span>Criar</span></div>
+      <div class="st" data-i="3" style="left:100%"><i>4</i><span>Garantir qualidade</span></div>
+    </div>
+    <div class="stage2 rise" style="--d:2">
+      <div class="stop" data-i="0">
+        <div class="clip"><video src="clips/pautas.mp4" poster="clips/pautas.jpg" muted loop playsinline></video></div>
+        <div class="info"><div class="n">PARADA 1</div><h3>Coletar</h3>
+          <p>A cada 3 horas o sistema lê os feeds financeiros e junta a mesma notícia de fontes diferentes numa <b>pauta</b>. A Braskem chegou assim: Seu Dinheiro + Money Times.</p>
+          <div class="chips"><span>7 feeds · 6 fontes</span><span>só notícia completa</span><span>sem IA, sem custo</span></div>
+          <div class="tech"><div class="techbox">agrupamento: <b>TF-IDF + entidade em comum</b><br>limiar 0,40 · pares reais 0,66–0,77 vs falso 0,37<br>admissão: ≥ 200 palavras, PT-BR, sem paywall</div></div>
+        </div>
+      </div>
+      <div class="stop" data-i="1">
+        <div class="clip"><video src="clips/extracao.mp4" poster="clips/extracao.jpg" muted loop playsinline></video></div>
+        <div class="info"><div class="n">PARADA 2</div><h3>Entender</h3>
+          <p>Antes de escrever uma linha, a IA extrai os fatos da notícia e <b>prende cada um ao trecho da fonte</b>. Nenhuma frase gerada fica sem origem.</p>
+          <div class="chips"><span>pontos centrais</span><span>números e datas</span><span>rastreio por frase</span></div>
+          <div class="tech"><div class="techbox">extração ancorada: afirmação → trecho<br>grafo em <b>nos_grafo / arestas_grafo</b><br>1× por documento, reaproveitada nas 9 combinações</div></div>
+        </div>
+      </div>
+      <div class="stop" data-i="2">
+        <div class="clip"><video src="clips/geracao.mp4" poster="clips/geracao.jpg" muted loop playsinline></video></div>
+        <div class="info"><div class="n">PARADA 3</div><h3>Criar</h3>
+          <p>Para cada nível, a IA escreve os três formatos com regras próprias de vocabulário, profundidade e tamanho. Partes como fonte e legenda são montadas por código.</p>
+          <div class="chips"><span>3 níveis × 3 formatos</span><span>9 materiais por notícia</span></div>
+          <div class="tech"><div class="techbox">LangGraph + estado Pydantic · gerador <b>gpt-oss-20b</b><br>Braskem: <b>27 tentativas · 88.481 tokens</b><br>≈ 3,3 mil tokens por tentativa</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · qualidade -->
+  <section class="scene" id="s-qual" data-label="Qualidade" data-steps="3">
+    <div class="head rise"><div class="kicker">Parada 4 · Garantir qualidade</div><h2>O avaliador <em>não deixou passar</em>.</h2></div>
+    <div class="col rise" style="--d:1;left:120px">
+      <div class="attempt">
+        <div class="ah"><b>Texto Iniciante · tentativa 1</b><span class="honest"><i></i>saída real do modelo</span></div>
+        <div class="gate" style="--d:0"><span class="ic">✓</span><span class="gn">Documento admitido<small>texto completo, português, ≥ 200 palavras</small></span><span class="gv">ok</span></div>
+        <div class="gate" style="--d:1"><span class="ic">✓</span><span class="gn">Números e datas<small>todos encontrados na fonte</small></span><span class="gv">ok</span></div>
+        <div class="gate" style="--d:2"><span class="ic">✓</span><span class="gn">Sem recomendação de compra ou venda</span><span class="gv">ok</span></div>
+        <div class="gate bad" style="--d:3"><span class="ic">✕</span><span class="gn">Legibilidade<small>faixa do Iniciante: ≥ 55</small></span><span class="gv">51,4</span></div>
+        <div class="gate bad" style="--d:4"><span class="ic">✕</span><span class="gn">Termos técnicos por 100 palavras<small>faixa do Iniciante: ≤ 3</small></span><span class="gv">6,3</span></div>
+        <div class="gate bad" style="--d:5"><span class="ic">✕</span><span class="gn">Termos explicados<small>ações, debêntures, fundo de investimento</small></span><span class="gv">0 de 3</span></div>
+        <div class="gate bad" style="--d:6"><span class="ic">✕</span><span class="gn">Tamanho<small>faixa: 350 a 500 palavras</small></span><span class="gv">239</span></div>
+      </div>
+    </div>
+    <div class="qstep s1">
+      <div class="fb"><span class="c"># feedback enviado de volta à IA (trecho real)</span><br>
+        <span class="k">legibilidade_fora_da_faixa</span>: flesch=51.40 | limiar &gt;= 55<br>
+        <span class="k">densidade_fora_da_faixa</span>: termos=6.28 | limiar &lt;= 3<br>
+        <span class="k">termo_tecnico_sem_explicacao</span>: ações; debêntures;<br>&nbsp;&nbsp;fundo de investimento (explique em até 20 palavras)</div>
+      <div class="try" style="margin-top:24px;text-align:left"><span class="cap">Falhas apontadas pelo avaliador, por tentativa</span></div>
+      <div class="tries" style="margin-top:12px">
+        <div class="try"><div class="barv" style="--h:150px">5</div><div class="tl">tentativa 1</div></div>
+        <div class="try"><div class="barv" style="--h:210px">7</div><div class="tl">tentativa 2</div></div>
+        <div class="try"><div class="barv" style="--h:120px">4</div><div class="tl">tentativa 3</div></div>
+      </div>
+      <p class="qnote">Três tentativas e o texto continuou no nível errado. O sistema parou, <em>avisou o motivo</em> e mandou para uma pessoa revisar — sem marcar como aprovado.</p>
+      <div class="tech" style="margin-top:14px"><div class="techbox">falhas por tentativa · teto de <b>2 reescritas</b> · para se 97% igual<br>juiz LLM (<b>gpt-oss-120b</b>) só roda depois das métricas: <b>0 chamadas</b> aqui</div></div>
+    </div>
+    <div class="qstep s2">
+      <div class="human">
+        <div class="hh"><i>✓</i>Depois da revisão humana</div>
+        <div class="vs"><div class="lb">IA · tentativa 3</div><div></div><div class="lb">Revisão humana</div></div>
+        <div class="vs"><div class="before"><b>52,4</b><span>legibilidade</span></div><div class="arrow">→</div><div class="m"><b>69,9</b><span>legibilidade (≥ 55)</span></div></div>
+        <div class="vs"><div class="before"><b>6,6</b><span>termos / 100</span></div><div class="arrow">→</div><div class="m"><b>2,2</b><span>termos / 100 (≤ 3)</span></div></div>
+        <div class="vs"><div class="before"><b>Interm.</b><span>nível classificado</span></div><div class="arrow">→</div><div class="m"><b>Iniciante</b><span>nível classificado</span></div></div>
+        <blockquote>“Vai receber debêntures, <span class="x">que são títulos de dívida, como um empréstimo que a pessoa faz a uma empresa</span>.”</blockquote>
+      </div>
+      <p class="qnote">O mesmo avaliador mede a versão editada. <em>Nenhum material sai sem uma pessoa aprovar.</em></p>
+    </div>
+  </section>
+
+  <!-- 6 · aprendizados -->
+  <section class="scene" id="s-aprend" data-label="Aprendizados">
+    <div class="head rise"><div class="kicker">Aprendizados</div><h2>Decisões que tomei, e por quê.</h2></div>
+    <div class="lgrid">
+      <div class="lcard rise" style="--d:1"><div class="n">01 · NÍVEL</div><h4>A IA sozinha não diferencia os níveis</h4>
+        <p class="ev">Em duas notícias reais, nenhum material passou nas métricas de nível. Na Braskem, <b>9 de 9</b> voltaram com o motivo anotado.</p>
+        <div class="fix"><span class="tag">DECISÃO</span>Medir o nível com números, avisar quando falha e deixar a pessoa fechar o texto.</div></div>
+      <div class="lcard rise" style="--d:2"><div class="n">02 · FIDELIDADE</div><h4>A IA inventa números</h4>
+        <p class="ev"><b>13 números ou datas sem origem</b> em 27 tentativas medidas na primeira notícia.</p>
+        <div class="fix"><span class="tag">DECISÃO</span>Extrair os fatos antes de escrever e conferir cada número por código, não pela IA.</div></div>
+      <div class="lcard rise" style="--d:3"><div class="n">03 · AVALIAÇÃO</div><h4>O avaliador também precisa ser avaliado</h4>
+        <p class="ev">"Venda" foi lida como recomendação. O glossário tem 83 termos técnicos, quase todos de macroeconomia: em notícia de empresa, o Avançado fica quase inalcançável.</p>
+        <div class="fix"><span class="tag">DECISÃO</span>Limiares marcados como provisórios, calibrados com saídas reais — não com intuição.</div></div>
+      <div class="lcard rise" style="--d:4"><div class="n">04 · ROBUSTEZ</div><h4>Falhar com segurança</h4>
+        <p class="ev">Com o modelo real, o alinhamento entre as duas fontes devolveu JSON inválido.</p>
+        <div class="fix"><span class="tag">DECISÃO</span>O sistema seguiu com fonte única e registrou o aviso. Nada reprovado aparece como aprovado.</div></div>
+    </div>
+  </section>
+
+  <!-- 7 · próximos passos -->
+  <section class="scene" id="s-prox" data-label="Próximos passos">
+    <div class="head rise"><div class="kicker">Próximos passos</div><h2>Do protótipo para a produção.</h2></div>
+    <div class="steps">
+      <div class="step rise" style="--d:1"><div class="i">01</div><div><h4>Calibrar os níveis com mais notícias</h4><p>Reforçar os prompts de cada nível e testar um modelo maior para gerar, medindo o custo.</p></div><div class="why">Hoje são 2 notícias reais medidas.</div></div>
+      <div class="step rise" style="--d:2"><div class="i">02</div><div><h4>Glossário de mercado de capitais</h4><p>OPA, debêntures, capital votante… e corrigir o falso positivo de "venda".</p></div><div class="why">O avaliador precisa conhecer o vocabulário da notícia.</div></div>
+      <div class="step rise" style="--d:3"><div class="i">03</div><div><h4>Medir o juiz LLM</h4><p>Notas reais e concordância entre juiz e revisão humana (o código já está pronto).</p></div><div class="why">Até agora nenhum material chegou ao juiz.</div></div>
+      <div class="step rise" style="--d:4"><div class="i">04</div><div><h4>Robustez da comparação de fontes</h4><p>JSON do alinhamento entre fontes e atualização dos selos depois da edição humana.</p></div><div class="why">Achados desta própria execução.</div></div>
+    </div>
+  </section>
+
+  <!-- 8 · encerramento -->
+  <section class="scene dark" id="s-fim" data-label="">
+    <div class="glow"></div><div class="arcs"></div>
+    <img class="logo-top rise" src="img/logo_escuro.png" alt="Suno Asset">
+    <div class="content">
+      <div class="kicker rise" style="--d:1">Perspecta</div>
+      <h2 class="rise" style="--d:2;margin-top:22px">Agradeço a<br>atenção<span class="dot">.</span></h2>
+      <div class="name rise" style="--d:3">Julia Khristina</div>
+      <div class="proj rise" style="--d:4">Perguntas são bem-vindas.</div>
+    </div>
+    <div class="qrs rise" style="--d:4">
+      <div class="qr"><img src="img/qr_linkedin.svg" alt="QR code do LinkedIn">
+        <div class="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.6h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1v5.35h-4v-4.75c0-1.13-.02-2.6-1.58-2.6-1.6 0-1.84 1.24-1.84 2.52v4.83h-4z"/></svg>LinkedIn</div>
+        <div class="u">in/julia-khristina</div></div>
+      <div class="qr"><img src="img/qr_github.svg" alt="QR code do repositório no GitHub">
+        <div class="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>GitHub</div>
+        <div class="u">Julia-Khristina/Case_Suno</div></div>
+    </div>
+  </section>
+</div>
+
+<div id="hud"><button id="techBtn" title="Mostra os detalhes técnicos (tecla T)">Camada técnica · T</button></div>
+<div id="timer" title="Clique para zerar">0:00</div>
+
+<script src="dados.js"></script>
+<script>
+const D = window.DADOS;
+const LV = ["iniciante", "intermediario", "avancado"];
+const LVL = { iniciante: "Iniciante", intermediario: "Intermediário", avancado: "Avançado", indistinto: "Indistinto" };
+
+// Trechos para o controle deslizante: [[termo técnico]] e {{explicação}}. Textos revisados = conteúdo editado gravado no banco;
+// saída do modelo = última tentativa gerada (conteudo_gerado), com as métricas da tentativa 3.
+const TXT = {
+  revisao: {
+    iniciante: { t: "Braskem dá mais um prazo a parte dos seus sócios", p: [
+      "A troca de controle da Braskem ganhou um novo capítulo para os investidores. A Braskem é uma petroquímica, {{ou seja, uma empresa que faz produtos químicos}}. O novo controlador é o fundo Shine. Na sexta-feira (16), a companhia anunciou que alguns acionistas terão mais uma chance de vender seus papéis nas mesmas condições oferecidas na operação.",
+      "Mas atenção, porque há um detalhe. Quem optar pela venda de seus papéis não receberá dinheiro. Vai receber [[debêntures]], {{que são títulos de dívida, como um empréstimo que a pessoa faz a uma empresa}}." ] },
+    intermediario: { t: "Braskem abre nova janela para acionistas de BRKM3", p: [
+      "A troca de controle da Braskem ganhou um novo capítulo. Após concluir a Oferta Pública de Aquisição de [[ações]] (OPA) ligada à compra da petroquímica pelo FIP Shine, a companhia anunciou na sexta-feira (16) que alguns acionistas terão mais uma chance de vender seus papéis nas mesmas condições da operação.",
+      "O pagamento não será feito em dinheiro. Em troca de cada [[ação]] ordinária vendida, o investidor receberá duas [[debêntures]] da série OSPI12 e uma [[debênture]] da série OSPI22. As [[debêntures]] são títulos de dívida emitidos pela NSP Investimentos, empresa que participou da transferência de controle ao lado da Novonor." ] },
+    avancado: { t: "Braskem: OPA troca ações ordinárias por debêntures da NSP", p: [
+      "Concluído o leilão da Oferta Pública de Aquisição de [[ações]] (OPA) lançada pelo Shine I [[Fundo de Investimento]] em Participações, ligado à IG4 e novo controlador da petroquímica, a Braskem comunicou que os detentores de [[ações]] ordinárias que não aderiram ao leilão poderão trocar essas [[ações]] por [[debêntures]] nas mesmas condições da operação original.",
+      "Na prática, quem troca [[ações]] por [[debêntures]] deixa de ser acionista da Braskem e passa a ser credor da NSP Investimentos, substituindo a exposição às [[ações]] da petroquímica pelo risco de crédito do emissor dessas [[debêntures]]." ] },
+  },
+  modelo: {
+    iniciante: { t: "Braskem abre nova janela de venda de ações", p: [
+      "A Braskem abriu uma nova janela de adesão para acionistas que não participaram da OPA. A janela permite vender [[ações]] ordinárias BRKM3 e receber [[debêntures]] em vez de dinheiro. Isso acontece depois da conclusão da OPA do Shine I [[Fundo de Investimento]] em Participações.",
+      "Os acionistas que aderirem receberão duas [[debêntures]] OSPI12 e uma [[debênture]] OSPI22 por [[ação]] vendida. As [[debêntures]] são títulos de dívida que pagam juros ao investidor." ] },
+    intermediario: { t: "Braskem: nova janela de adesão e debêntures", p: [
+      "A Braskem concluiu recentemente o leilão da OPA lançada pelo Shine I [[Fundo de Investimento]] em Participações, que resultou em uma nova janela de adesão para acionistas ordinários BRKM3 que não participaram do leilão.",
+      "A abertura dessa janela permite que esses acionistas vendam suas [[ações]] sob as mesmas condições da operação original, mas em troca de [[debêntures]] em vez de dinheiro. Essa medida altera a composição de ativos dos investidores e a liquidez das [[ações]]." ] },
+    avancado: { t: "Oferta de venda de ações BRKM3 por debêntures", p: [
+      "A Braskem abriu uma nova janela de adesão para acionistas ordinários BRKM3 que não participaram do leilão da OPA, permitindo a venda de suas [[ações]] em condições equivalentes à operação original. Essa medida visa garantir a liquidez e a continuidade da negociação das [[ações]] da companhia.",
+      "Os acionistas que aderirem receberão duas [[debêntures]] OSPI12 e uma [[debênture]] OSPI22 em vez de dinheiro." ] },
+  },
+};
+// métricas: revisão = avaliador sobre o texto editado; modelo = tentativa 3 gravada em `tentativas`
+const MET = {
+  revisao: { iniciante: [69.9, 2.2, "iniciante", []], intermediario: [54.1, 3.7, "intermediario", []], avancado: [29.4, 8.2, "avancado", []] },
+  modelo: Object.fromEntries(LV.map(l => { const t = D.tentativas[l][D.tentativas[l].length - 1];
+    return [l, [t.flesch, t.dens, t.nivel, t.falhas]]; })),
+};
+const FAIL = { legibilidade_fora_da_faixa: "legibilidade fora da faixa", densidade_fora_da_faixa: "termos técnicos fora da faixa",
+  tamanho_fora_do_intervalo: "tamanho fora da faixa", termo_tecnico_sem_explicacao: "termo sem explicação",
+  numero_ou_data_sem_origem: "número sem origem na fonte", frases_sem_respaldo_na_fonte: "frase sem respaldo na fonte",
+  linguagem_de_recomendacao: "linguagem de recomendação", trigramas_repetidos: "repetição", proporcao_de_secoes_fora_do_padrao: "seções desproporcionais" };
+
+// ---------- controle deslizante ----------
+let level = 0, version = "revisao";
+const fmt = s => s.replace(/\[\[(.+?)\]\]/g, '<span class="t">$1</span>').replace(/\{\{(.+?)\}\}/g, '<span class="x">$1</span>');
+function bands(el, segs) { el.innerHTML = segs.map(([w, c, on]) => `<i style="width:${w}%;background:${c}" class="${on ? "on" : ""}"></i>`).join("") + '<span class="pin"></span>'; }
+function renderLevel(animate = true) {
+  const lv = LV[level], txt = TXT[version][lv], [fl, de, cl, fails] = MET[version][lv];
+  document.querySelectorAll("#stops button").forEach((b, i) => b.classList.toggle("on", i === level));
+  document.querySelectorAll("#ftabs button").forEach((b, i) => b.classList.toggle("on", i === level));
+  document.getElementById("knob").style.left = (level / 2 * 100) + "%";
+  document.getElementById("lvl").value = level;
+  // Flesch 0–100 (faixas: Avançado ≤ 40 · Intermediário 40–55 · Iniciante ≥ 55); densidade 0–12 (≤ 3 · 3–8 · ≥ 8)
+  bands(document.getElementById("sFlesch"), [[40, "#7E1C26", lv === "avancado"], [15, "#D4202C", lv === "intermediario"], [45, "#F2B8BC", lv === "iniciante"]]);
+  bands(document.getElementById("sDens"), [[25, "#F2B8BC", lv === "iniciante"], [41.7, "#D4202C", lv === "intermediario"], [33.3, "#7E1C26", lv === "avancado"]]);
+  document.querySelector("#sFlesch .pin").style.left = Math.min(99, fl) + "%";
+  document.querySelector("#sDens .pin").style.left = Math.min(99, de / 12 * 100) + "%";
+  const ok = cl === lv;
+  document.getElementById("gFlesch").textContent = fl.toFixed(1).replace(".", ",");
+  document.getElementById("gDens").textContent = de.toFixed(1).replace(".", ",");
+  const gc = document.getElementById("gClass"); gc.textContent = LVL[cl] + (ok ? " ✓" : " ✕"); gc.classList.toggle("bad", !ok);
+  document.getElementById("docLvl").textContent = "Nível " + LVL[lv];
+  const tag = document.getElementById("docTag");
+  tag.className = "honest" + (version === "revisao" ? " ok" : ""); tag.innerHTML = `<i></i>${version === "revisao" ? "texto revisado" : "saída do modelo · tentativa 3"}`;
+  const body = document.getElementById("docBody");
+  const html = `<h3>${txt.t}</h3>${txt.p.map(p => `<p>${fmt(p)}</p>`).join("")}` +
+    (fails.length ? `<div class="fails">${[...new Set(fails.map(f => FAIL[f] || f))].map(f => `<span>✕ ${f}</span>`).join("")}</div>` : "");
+  if (!animate) { body.innerHTML = html; return; }
+  body.classList.add("out");
+  setTimeout(() => { body.innerHTML = html; body.classList.remove("out"); }, 230);
+  renderFormats();
+}
+const range = document.getElementById("range"), input = document.getElementById("lvl");
+input.addEventListener("input", () => { range.classList.add("drag"); document.getElementById("knob").style.left = (input.value / 2 * 100) + "%";
+  const near = Math.round(+input.value); if (near !== level) { level = near; renderLevel(); } });
+input.addEventListener("change", () => { range.classList.remove("drag"); level = Math.round(+input.value); renderLevel(false); renderLevel(); });
+document.querySelectorAll("#stops button, #ftabs button").forEach(b => b.addEventListener("click", () => { level = +b.dataset.v; renderLevel(); }));
+document.querySelectorAll("#ver button").forEach(b => b.addEventListener("click", () => setVersion(b.dataset.v)));
+function setVersion(v) { version = v; document.querySelectorAll("#ver button").forEach(x => x.classList.toggle("on", x.dataset.v === v)); renderLevel(); }
+
+// ---------- formatos ----------
+let slideIx = 0, sceneIx = 0, fmtTimer = null, reelTimer = null;
+function renderFormats() {
+  const lv = LV[level];
+  document.getElementById("rail").innerHTML = D.carrossel[lv].map(p => `<img src="${p}" alt="">`).join("");
+  document.getElementById("igdots").innerHTML = D.carrossel[lv].map(() => "<i></i>").join("");
+  slideIx = 0; showSlide();
+  const r = TXT.revisao[lv], full = D.revisado[lv];
+  document.getElementById("ftxt").innerHTML = `<h3>${full.titulo}</h3>${full.paragrafos.slice(0, 4).map(p => `<p>${p}</p>`).join("")}`;
+  sceneIx = 0; startReel();
+}
+function showSlide() {
+  document.getElementById("rail").style.transform = `translateX(${-slideIx * 438}px)`;
+  [...document.getElementById("igdots").children].forEach((d, i) => d.classList.toggle("on", i === slideIx));
+}
+function startReel() {
+  const sc = D.roteiro[LV[level]], seg = document.getElementById("rseg");
+  seg.innerHTML = sc.map(() => "<i><b></b></i>").join("");
+  clearTimeout(reelTimer);
+  const play = () => {
+    const s = sc[sceneIx], dur = 3600;
+    [...seg.children].forEach((el, i) => { el.className = i < sceneIx ? "done" : i === sceneIx ? "on" : ""; el.style.setProperty("--dur", dur + "ms"); });
+    const tela = document.getElementById("rtela"), fala = document.getElementById("rfala");
+    tela.style.opacity = fala.style.opacity = 0;
+    setTimeout(() => { tela.textContent = s.tela; fala.textContent = "“" + s.fala + "”"; tela.style.opacity = fala.style.opacity = 1; }, 220);
+    document.getElementById("rrole").textContent = { gancho: "Gancho", corpo: "Corpo", conclusao: "Conclusão" }[s.papel] || s.papel;
+    document.getElementById("rtime").textContent = `00:${String(Math.round(s.ini)).padStart(2, "0")} – 00:${String(Math.round(s.fim)).padStart(2, "0")}`;
+    reelTimer = setTimeout(() => { sceneIx = (sceneIx + 1) % sc.length; play(); }, dur);
+  };
+  play();
+}
+setInterval(() => { if (scenes[idx] && scenes[idx].id === "s-formatos") { slideIx = (slideIx + 1) % 5; showSlide(); } }, 2600);
+
+// ---------- cenas, passos e navegação ----------
+const scenes = [...document.querySelectorAll(".scene")];
+let idx = 0; const step = scenes.map(() => 0);
+const progress = document.getElementById("progress");
+const labeled = scenes.map((s, i) => [s, i]).filter(([s]) => s.dataset.label);
+progress.innerHTML = labeled.map(([s, i]) => `<button data-i="${i}"><div class="bar"><span></span></div><div class="lbl">${s.dataset.label}</div></button>`).join("");
+progress.querySelectorAll("button").forEach(b => b.addEventListener("click", () => go(+b.dataset.i)));
+
+function applyStep(i) {
+  const s = scenes[i], k = step[i];
+  s.dataset.step = k;
+  if (s.id === "s-bast") {
+    const n = Math.min(k, 2);
+    s.querySelectorAll(".stop").forEach(el => { const j = +el.dataset.i; el.classList.toggle("on", j === n); el.classList.toggle("gone", j < n);
+      const v = el.querySelector("video"); if (v) { j === n && idx === i ? v.play() : v.pause(); } });
+    s.querySelectorAll(".trail .st").forEach(el => { const j = +el.dataset.i; el.classList.toggle("on", j === n); el.classList.toggle("done", j < n); });
+    document.getElementById("tfill").style.width = (n / 3 * 100) + "%";
+  }
+}
+function go(i, fromBack = false) {
+  idx = Math.max(0, Math.min(scenes.length - 1, i));
+  scenes.forEach((s, k) => { s.classList.toggle("active", k === idx); s.classList.toggle("past", k < idx); });
+  if (fromBack) step[idx] = Math.max(0, (+scenes[idx].dataset.steps || 1) - 1);
+  scenes.forEach((_, k) => applyStep(k));
+  progress.classList.toggle("hide", !scenes[idx].dataset.label);
+  progress.querySelectorAll("button").forEach(b => { const j = +b.dataset.i; b.classList.toggle("on", j === idx); b.classList.toggle("done", j < idx); });
+  document.querySelectorAll("video").forEach(v => { if (!v.closest(".scene.active")) v.pause(); });
+  if (scenes[idx].id === "s-formatos") startReel(); else clearTimeout(reelTimer);
+}
+function next() {
+  const n = +scenes[idx].dataset.steps || 1;
+  if (step[idx] < n - 1) { step[idx]++; applyStep(idx); return; }
+  go(idx + 1);
+}
+function prev() {
+  if (step[idx] > 0) { step[idx]--; applyStep(idx); return; }
+  go(idx - 1, true);
+}
+document.querySelectorAll("#s-bast .trail .st").forEach(el => el.addEventListener("click", () => {
+  const j = +el.dataset.i; if (j === 3) { step[idx] = 2; go(idx + 1); return; } step[idx] = j; applyStep(idx); }));
+
+document.addEventListener("keydown", e => {
+  const k = e.key;
+  if (["ArrowRight", "PageDown", " "].includes(k)) { next(); e.preventDefault(); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(k)) { prev(); e.preventDefault(); }
+  else if (["1", "2", "3"].includes(k)) { level = +k - 1; renderLevel(); }
+  else if (k.toLowerCase() === "v") setVersion(version === "revisao" ? "modelo" : "revisao");
+  else if (k.toLowerCase() === "t") toggleTech();
+  else if (k === "Home") go(0);
+  else if (k === "End") go(scenes.length - 1);
+  else if (k.toLowerCase() === "f") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+});
+function toggleTech() { document.body.classList.toggle("tech-on"); document.getElementById("techBtn").classList.toggle("on"); }
+document.getElementById("techBtn").addEventListener("click", toggleTech);
+
+function fit() { const s = Math.min(innerWidth / 1920, innerHeight / 1080); document.getElementById("stage").style.transform = `translate(-50%, -50%) scale(${s})`; }
+addEventListener("resize", fit); fit();
+
+const timer = document.getElementById("timer"); let t0 = null;
+setInterval(() => {
+  if (t0 === null && idx > 0) t0 = Date.now();
+  const s = t0 === null ? 0 : Math.floor((Date.now() - t0) / 1000);
+  timer.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; timer.classList.toggle("warn", s >= 270);
+}, 500);
+timer.addEventListener("click", () => { t0 = idx > 0 ? Date.now() : null; });
+
+renderLevel(false); renderFormats(); go(0);
+</script>
+</body>
+</html>
