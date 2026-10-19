@@ -1,0 +1,42 @@
+Tarefa: escrever um CARROSSEL de Instagram (5 slides) e a LEGENDA para o nível {nivel}.
+
+<dados>
+PONTOS CENTRAIS (ids entre colchetes) e AFIRMAÇÕES (ids entre parênteses), com o trecho de origem:
+{pontos_centrais}
+
+DADOS NUMÉRICOS DA FONTE:
+{dados_numericos}
+
+TERMOS DO GLOSSÁRIO PRESENTES:
+{glossario}
+
+EXPLICAÇÕES GERAIS DE IMPACTO APROVADAS (as únicas frases que podem usar o marcador "Em geral,"):
+{explicacoes_impacto}
+</dados>
+
+REGRAS DO NÍVEL:
+{regras_nivel}
+
+GUIA DE ESTILO: {guia_estilo}
+TERMOS PROIBIDOS: {termos_proibidos}
+
+SLIDES (exatamente 5, nesta ordem):
+1. role "gancho": título forte apoiado em um fato ou número da fonte, sem exagero que o distorça.
+2 a 4. role "corpo": um ponto central por slide, na ordem {ids_pontos}; informe o "ponto_id" do slide. Cada slide diz algo diferente.
+5. role "conclusao": síntese do que a fonte conclui. Não existe slide de chamada para ação.
+- title: até 60 caracteres. body: até 260 caracteres. highlight_data: um número da fonte ou null.
+- Soma de palavras dos 5 slides e da abertura e contexto da legenda: entre {palavras_min} e {palavras_max}.
+
+LEGENDA:
+- opening: abre com o ponto central principal, em uma ou duas frases.
+- short_context: contexto curto na linguagem do nível, sem fatos novos.
+- cta_verb: exatamente um destes verbos: {verbos_acao}.
+- cta_sentence: começa com o imperativo desse verbo (Compartilhe, Curta, Comente, Salve) e liga a ação ao conteúdo; sem números, sem fato novo, sem incentivo a comprar ou vender, até 140 caracteres.
+- A fonte, o aviso institucional e as hashtags são inseridos pelo sistema: não os escreva.
+
+RELATÓRIO DA TENTATIVA ANTERIOR (corrija cada item; não acrescente texto de preenchimento):
+{feedback}
+
+Responda com JSON neste formato:
+{{"slides": [{{"order": 1, "role": "gancho", "title": "...", "body": "...", "highlight_data": null, "ponto_id": null, "afirmacao_ids": ["..."]}}, ...],
+ "caption": {{"opening": "...", "short_context": "...", "cta_verb": "salvar", "cta_sentence": "Salve ..."}}}}

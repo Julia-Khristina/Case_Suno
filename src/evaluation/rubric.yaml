@@ -1,9 +1,74 @@
-versao: "0.1"
+versao: "2.0"
+# Rubrica do juiz (seção 4.7). Cobre só o que as métricas determinísticas NÃO medem.
+# Números, datas, emojis, termos proibidos, tamanho, estrutura, legibilidade e densidade já foram
+# verificados antes do juiz rodar e não entram aqui.
+# Aprovação calculada pelo código: média ponderada >= juiz_media_minima e nenhum critério abaixo de
+# juiz_nota_minima_criterio (config/limiares.yaml).
 criterios:
-  - coerencia
-  - fidelidade
-  - adequacao_nivel
-  - concisao
-prompt: >
-  Avalie o texto gerado conforme a rubrica. Retorne JSON com rubric_version,
-  judge_model_id, scores, justification, text_length e evidence. Use notas de 0 a 10.
+  - nome: fidelidade_semantica
+    peso: 1.5
+    descricao: "Toda afirmação do material é sustentada pelas afirmações fornecidas, sem acrescentar fato, causa, impacto ou comparação que a fonte não faz, e sem inverter a direção de uma variação."
+    ancoras:
+      "0": "Contém afirmação factual inventada ou contrária à fonte."
+      "5": "Sem invenção, mas com generalização que a fonte não autoriza."
+      "10": "Cada afirmação corresponde a uma afirmação fornecida."
+  - nome: nuance_e_grau_de_certeza
+    peso: 1.2
+    descricao: "Projeções e eventos futuros continuam projeções; ressalvas, condições e graus de certeza da fonte são preservados; nada omitido muda o sentido."
+    ancoras:
+      "0": "Apresenta projeção como fato ou apaga ressalva que muda o sentido."
+      "5": "Preserva o tipo das afirmações, mas perde alguma ressalva relevante."
+      "10": "Mantém tipo, condição e ressalva de cada afirmação."
+  - nome: adequacao_ao_nivel
+    peso: 1.0
+    descricao: "Vocabulário, explicações e foco adequados ao nível-alvo: Iniciante (sem jargão sem explicação, impacto prático), Intermediário (vocabulário de mercado, alocação e tendências), Avançado (jargão pleno, foco analítico e metodológico)."
+    ancoras:
+      "0": "Escrito para outro nível."
+      "5": "No nível certo, com trechos destoantes."
+      "10": "Consistente com o nível em todo o material."
+  - nome: profundidade_sem_trivializar
+    peso: 1.0
+    descricao: "Transmite os três pontos centrais com substância (o que aconteceu, por que importa e o que acompanhar, como a fonte declara), sem frases genéricas, repetição ou preenchimento."
+    ancoras:
+      "0": "Genérico ou com preenchimento evidente."
+      "5": "Cobre os pontos de forma superficial."
+      "10": "Cada ponto central tem conteúdo específico da fonte."
+  - nome: tom_e_guia_de_estilo
+    peso: 0.8
+    descricao: "Voz sóbria e factual em português do Brasil, sem sensacionalismo, sem opinião própria e sem linguagem que soe como recomendação de investimento."
+    ancoras:
+      "0": "Sensacionalista, opinativo ou com tom de recomendação."
+      "5": "Sóbrio, com deslizes pontuais."
+      "10": "Sóbrio e factual do começo ao fim."
+  - nome: analogias_e_explicacoes
+    peso: 0.8
+    descricao: "Explicações de termos são corretas e curtas; analogias só explicam termos técnicos, nunca narram o acontecimento. No Avançado, não há explicação trivial de jargão."
+    ancoras:
+      "0": "Explicação errada ou analogia narrativa."
+      "5": "Explicações corretas, mas longas ou fora de lugar."
+      "10": "Explicações corretas, curtas e no lugar certo."
+prompt: |
+  Você é o avaliador independente de materiais financeiros adaptados por nível. Você NÃO escreveu o material.
+  Avalie com a rubrica versão {rubric_version}. Seja rigoroso: nota alta exige evidência concreta.
+  Não premie tamanho: um texto mais longo não é melhor por ser longo.
+
+  Nível-alvo: {nivel_alvo}. Formato: {formato}.
+
+  <dados>
+  AFIRMAÇÕES DA FONTE (id, tipo, texto e trecho de origem):
+  {afirmacoes}
+
+  MÉTRICAS DETERMINÍSTICAS JÁ APROVADAS (contexto; não reavalie):
+  {metricas}
+
+  MATERIAL A AVALIAR:
+  {texto_gerado}
+  </dados>
+
+  CRITÉRIOS (nome, peso, descrição e âncoras de nota):
+  {criterios}
+
+  Para cada critério dê uma nota de 0 a 10, uma justificativa de até 40 palavras e pelo menos uma evidência:
+  um id de afirmação (ex.: "a3") ou um trecho literal curto do material entre aspas.
+  Responda apenas com JSON:
+  {{"criterios": [{{"nome": "...", "nota": 0, "justificativa": "...", "evidencias": ["..."]}}], "resumo": "..."}}

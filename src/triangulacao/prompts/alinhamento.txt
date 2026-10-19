@@ -1,0 +1,27 @@
+Você alinha o que FONTES DIFERENTES dizem sobre o mesmo assunto. Você não decide quem está certo.
+
+<dados>
+{fontes}
+</dados>
+
+Tarefa: agrupe em TÓPICOS as afirmações e os números que tratam do mesmo ponto em fontes diferentes.
+Regras:
+- Use somente ids que aparecem acima (ex.: "f1:a3", "f2:n1"). Cada item pertence à fonte do prefixo.
+- Tópico "numerico": cada fonte entra com o id do número que mede a MESMA coisa (mesmo indicador, mesma medida).
+  Se as fontes medem coisas diferentes (ex.: total versus por ano, períodos diferentes), não junte: crie tópicos separados.
+- Tópico "qualitativo": uma afirmação de referência neutra ("referencia") e, para cada fonte, a posição dela em relação
+  a essa referência: "apoia", "contesta" ou "neutra". "contesta" exige que a fonte diga o contrário, não só que omita.
+- Inclua também tópicos tratados por uma só fonte quando forem centrais para o assunto.
+- "resumo" diz o que a fonte afirma, com atribuição e sem julgamento ("A fonte X estima...").
+- Não crie comparação que nenhuma fonte faz e não calcule diferenças: o sistema calcula.
+- Entre 3 e 10 tópicos, do mais importante para o menos importante segundo as próprias fontes.
+
+Responda com UM objeto JSON:
+{{"assunto": "...", "topicos": [
+  {{"id": "t1", "titulo": "...", "tipo": "numerico", "referencia": null,
+   "itens": [{{"fonte": "f1", "ids": ["f1:n2"], "posicao": "neutra", "resumo": "..."}},
+             {{"fonte": "f2", "ids": ["f2:n1"], "posicao": "neutra", "resumo": "..."}}]}},
+  {{"id": "t2", "titulo": "...", "tipo": "qualitativo", "referencia": "afirmação neutra de referência",
+   "itens": [{{"fonte": "f1", "ids": ["f1:a4"], "posicao": "apoia", "resumo": "..."}},
+             {{"fonte": "f3", "ids": ["f3:a2"], "posicao": "contesta", "resumo": "..."}}]}}
+]}}

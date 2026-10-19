@@ -1,10 +1,29 @@
+# Tokens visuais do carrossel (seção 4.6: design system da Suno, paleta apenas vermelha e branca).
+# Cores e fonte iguais às da interface (src/app/theme.py); logo e fontes carregados dos arquivos do projeto.
 paleta:
   - vermelha
   - branca
+cores:
+  vermelho: "#B3141F"        # vermelho da marca (interface: --red)
+  vermelho_escuro: "#8F1722"
+  branco: "#FFFFFF"
+  tinta: "#16161A"           # texto sobre fundo branco
+  tinta_suave: "#55555B"
+  vermelho_suave: "#FBE6E6"
+fonte:
+  familia: "Plus Jakarta Sans"
+  arquivos:
+    400: asset/fonts/PlusJakartaSans-400.ttf
+    500: asset/fonts/PlusJakartaSans-500.ttf
+    600: asset/fonts/PlusJakartaSans-600.ttf
+    700: asset/fonts/PlusJakartaSans-700.ttf
+    800: asset/fonts/PlusJakartaSans-800.ttf
+logo: asset/logo.png
 slides:
   largura_px: 1080
   altura_px: 1350
   proporcao: "4:5"
+  margem_px: 96
 reels:
   proporcao: "9:16"
 linha_por_nivel:
@@ -12,3 +31,8 @@ linha_por_nivel:
   intermediario: "duas laterais"
   avancado: "embaixo"
 fundo_vermelho_linha: "branca"
+# Rótulo exibido no slide (separado do nome interno do nível)
+rotulo_nivel:
+  iniciante: "Para começar"
+  intermediario: "Para acompanhar o mercado"
+  avancado: "Análise avançada"

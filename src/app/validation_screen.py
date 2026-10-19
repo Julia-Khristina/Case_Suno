@@ -45,10 +45,7 @@ def render_validation_screen(material_id: str = "", db_connection=None, pending_
         initial_text = ""
         try:
             if isinstance(selected_content, dict):
-                a = AnalyticalText.model_validate(selected_content)
-                initial_text = "\\n\\n".join(
-                    [f"# {a.title}", a.subtitle, "## Introducao", a.introduction, "## Desenvolvimento", a.development, "## Analise", a.analysis, "## Conclusao", a.conclusion]
-                )
+                initial_text = to_markdown(AnalyticalText.model_validate(selected_content))
             else:
                 initial_text = str(selected_content or "")
         except Exception:

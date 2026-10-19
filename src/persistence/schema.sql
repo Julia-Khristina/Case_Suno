@@ -147,6 +147,47 @@ CREATE TABLE IF NOT EXISTS arestas_grafo (
     criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Decisões humanas (18/10/2026): além de aprovar/editar/rejeitar, "reabrir" um rejeitado e "regenerar" (nova
+-- versão gerada a partir do motivo da rejeição).
+ALTER TABLE decisoes_humanas DROP CONSTRAINT IF EXISTS decisoes_humanas_decisao_check;
+ALTER TABLE decisoes_humanas ADD CONSTRAINT decisoes_humanas_decisao_check
+    CHECK (decisao IN ('aprovar', 'editar', 'rejeitar', 'reabrir', 'regenerar'));
+
+-- Pautas (18/10/2026): notícias de fontes diferentes sobre o mesmo assunto, agrupadas na coleta.
+CREATE TABLE IF NOT EXISTS pautas (
+    id_pauta UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assunto TEXT NOT NULL,
+    fontes_independentes INTEGER NOT NULL DEFAULT 1,
+    criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE cards ADD COLUMN IF NOT EXISTS id_pauta UUID REFERENCES pautas(id_pauta);
+
+-- Acervo da coleta: tudo o que foi lido nos feeds (não só os cards escolhidos), para achar a mesma notícia
+-- em fontes diferentes ao longo da janela de horas. O texto completo fica no volume, pelo hash.
+CREATE TABLE IF NOT EXISTS itens_coletados (
+    id_item UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    url TEXT NOT NULL UNIQUE,
+    titulo TEXT NOT NULL,
+    descricao TEXT,
+    nome_fonte TEXT NOT NULL,
+    tipo_fonte TEXT NOT NULL DEFAULT 'secundaria',
+    prioridade INTEGER NOT NULL DEFAULT 99,
+    data_publicacao DATE,
+    hash_texto TEXT,
+    agencia TEXT,
+    aceito BOOLEAN NOT NULL DEFAULT FALSE,
+    motivo_exclusao TEXT,
+    selecao JSONB NOT NULL DEFAULT '{}'::jsonb,
+    id_pauta UUID REFERENCES pautas(id_pauta),
+    id_card UUID REFERENCES cards(id_card),
+    coletado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_itens_coletados_em ON itens_coletados (coletado_em);
+CREATE INDEX IF NOT EXISTS idx_cards_pauta ON cards (id_pauta);
+
 CREATE TABLE IF NOT EXISTS migracoes_schema (
     id SERIAL PRIMARY KEY,
     nome TEXT NOT NULL UNIQUE,
@@ -162,4 +203,24 @@ CREATE INDEX IF NOT EXISTS idx_arestas_tipo ON arestas_grafo (tipo_relacao);
 
 INSERT INTO migracoes_schema (nome)
 VALUES ('001_initial_portugues')
+ON CONFLICT (nome) DO NOTHING;
+-- 002: registros por tentativa e por avaliação do juiz (seções 4.7 e 4.10)
+ALTER TABLE materiais ADD COLUMN IF NOT EXISTS nivel_classificado TEXT;
+ALTER TABLE materiais ADD COLUMN IF NOT EXISTS status_avaliacao TEXT;
+ALTER TABLE materiais ADD COLUMN IF NOT EXISTS aviso TEXT;
+ALTER TABLE materiais ADD COLUMN IF NOT EXISTS complexidade_fonte JSONB;
+ALTER TABLE materiais ADD COLUMN IF NOT EXISTS versao_glossario TEXT;
+ALTER TABLE tentativas ADD COLUMN IF NOT EXISTS nivel_classificado TEXT;
+ALTER TABLE tentativas ADD COLUMN IF NOT EXISTS feedback_usado TEXT;
+ALTER TABLE tentativas ADD COLUMN IF NOT EXISTS tamanho_texto INTEGER;
+ALTER TABLE tentativas ADD COLUMN IF NOT EXISTS versao_prompt TEXT;
+ALTER TABLE tentativas ADD COLUMN IF NOT EXISTS mudanca_vs_anterior NUMERIC;
+ALTER TABLE avaliacoes_juiz ADD COLUMN IF NOT EXISTS media_ponderada NUMERIC;
+ALTER TABLE avaliacoes_juiz ADD COLUMN IF NOT EXISTS aprovado BOOLEAN;
+ALTER TABLE avaliacoes_juiz ADD COLUMN IF NOT EXISTS justificativas JSONB;
+ALTER TABLE avaliacoes_juiz ADD COLUMN IF NOT EXISTS tokens INTEGER;
+ALTER TABLE avaliacoes_juiz ADD COLUMN IF NOT EXISTS latencia NUMERIC;
+
+INSERT INTO migracoes_schema (nome)
+VALUES ('002_tentativas_juiz_rastreabilidade')
 ON CONFLICT (nome) DO NOTHING;

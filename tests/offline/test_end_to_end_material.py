@@ -1,67 +1,64 @@
-from unittest.mock import patch
+"""Suíte offline (seções 4.7 e 14): ponta a ponta nos 3 níveis com cliente falso, matriz de confusão e custo."""
+from __future__ import annotations
+
 import pytest
 
-from src.evaluation.judge import LLMJudge
+from src.evaluation.deterministic import EvaluationContext, evaluate
+from src.evaluation.offline_metrics import build_confusion_matrix
 from src.evaluation.thresholds import load_thresholds
-from src.extraction.models import ExtractionResult, MainPoint, SourceComplexity
-from src.generation.models import AnalyticalText
-from src.generation.text_analytical import AnalyticalTextGenerator
-from src.pipeline.reflection import run_analytical_reflection
+from src.generation import rules
+from src.glossary.reader import load_glossary
+from src.pipeline.deps import PipelineDeps
+from src.pipeline.graph import run_pipeline
+from src.pipeline.persistence import InMemoryPersistence
+from tests.fakes import content
+from tests.fakes.llm import FakeLLMClient
 
-CANNED = {
-    "title": "Titulo",
-    "subtitle": "Subtitulo",
-    "introduction": "sim. " * 90 + "Ponto central.",
-    "development": "sim. " * 120 + " 10,50%.",
-    "analysis": "sim. " * 110,
-    "conclusion": "sim. " * 80,
-    "covered_main_points": ["Ponto central"],
-    "word_count_total": 405,
-    "word_count_by_section": {},
-}
 
-EXTRACTION = ExtractionResult(
-    main_points=[MainPoint(id="mp1", order=1, title="Ponto central")],
-    source_complexity=SourceComplexity(word_count=100),
-)
-
-JUDGE_RESPONSE = {
-    "rubric_version": "0.1",
-    "judge_model_id": "judge-test",
-    "scores": {"coerencia": 8.0, "fidelidade": 9.0},
-    "justification": "Texto adequado.",
-    "text_length": 405,
-    "evidence": ["10,50%"],
-}
+def _syllable_soup(count: int) -> str:
+    vowels, consonants = "aeiou", "bcdfghjklmnpqrstvwxyz"
+    return " ".join(f"{vowels[i % 5]}{consonants[(i // 5) % 21]}." for i in range(count))
 
 
 @pytest.mark.offline
-def test_end_to_end_material_offline():
-    with patch("src.generation.text_analytical.LLMClient.generate", return_value=CANNED):
-        text, evaluation, attempts = run_analytical_reflection(
-            extraction=EXTRACTION,
-            level="iniciante",
-            source_text="Fonte com 10,50%. Ponto central.",
-            llm_client=None,
-            main_points=["Ponto central"],
-            glossary_terms=[],
-            forbidden_terms=[],
-            thresholds=load_thresholds(),
-            max_attempts=1,
-        )
-    assert isinstance(text, AnalyticalText)
-    assert evaluation.passed is True
-    assert attempts == 1
-
-    with patch("src.evaluation.judge.LLMClient.generate", return_value=JUDGE_RESPONSE):
-        judge = LLMJudge(model_id="judge-test")
-        result = judge.evaluate(text.introduction, source_text="Fonte")
-    assert result.scores["fidelidade"] == 9.0
+def test_meaningless_text_no_longer_passes_the_gates():
+    """Regressão: o teste antigo aprovava 400 'palavras' sem sentido ("ab. eb. ib.") como Iniciante."""
+    soup = {"title": "Titulo", "subtitle": "Subtitulo", "fonte_bloco": rules.source_block(content.ORIGIN),
+            "caixa_entenda_os_termos": None}
+    for name, n in (("introduction", 60), ("development", 140), ("analysis", 120), ("conclusion", 80)):
+        soup[name] = {"title": name, "content": _syllable_soup(n) + " Ponto central.", "ponto_ids": ["p1"]}
+    ctx = EvaluationContext(level="iniciante", fmt="texto_analitico", source_text=content.SOURCE,
+                            glossary=load_glossary(), thresholds=load_thresholds(),
+                            main_points=[{"id": "p1", "title": "Copom mantém a Selic em 10,50% ao ano", "assertions": []}],
+                            origin=content.ORIGIN)
+    report = evaluate(soup, ctx)
+    assert not report.passed
+    assert {"frases_repetidas", "cobertura_de_pontos_centrais_insuficiente"} & set(report.failure_codes)
 
 
 @pytest.mark.offline
-def test_generator_output_schema():
-    with patch("src.generation.text_analytical.LLMClient.generate", return_value=CANNED):
-        generator = AnalyticalTextGenerator()
-        result = generator.generate(EXTRACTION, "iniciante", "Fonte com 10,50%.")
-    assert result.word_count_total == 405
+def test_offline_suite_three_levels_confusion_matrix_and_cost():
+    client = FakeLLMClient(responses={
+        "intermediario:carrossel": [content.good_output("carrossel", "iniciante")],
+        "avancado:carrossel": [content.good_output("carrossel", "iniciante")],
+    })
+    persistence = InMemoryPersistence()
+    final = run_pipeline(content.SOURCE, ["iniciante", "intermediario", "avancado"], origin=content.ORIGIN,
+                         deps=PipelineDeps(llm_client=client, persistence=persistence))
+    outputs = final["generated_outputs"]
+    assert len(outputs) == 9
+
+    texts = {k: v for k, v in outputs.items() if v["formato"] == "texto_analitico"}
+    targets = [v["nivel"] for v in texts.values()]
+    predicted = [v["nivel_classificado"] for v in texts.values()]
+    matrix = build_confusion_matrix(targets, predicted, labels=["iniciante", "intermediario", "avancado", "indistinto"])
+    for level in ("iniciante", "intermediario", "avancado"):
+        assert matrix["matrix"][level][level] == 1  # textos bons classificados no nível-alvo
+
+    # carrossel Iniciante entregue como Avançado: nível não atendido, reescrito até o teto e marcado para revisão
+    assert outputs["avancado:carrossel"]["status"] == "reprovado_nas_metricas"
+    assert outputs["avancado:carrossel"]["aviso"]
+
+    # custo e latência por chamada registrados e somados
+    assert final["token_count"] == len(client.calls) * client.tokens_per_call
+    assert persistence.executions[final["execution_id"]]["total_tokens"] == final["token_count"]

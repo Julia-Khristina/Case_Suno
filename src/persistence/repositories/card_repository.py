@@ -31,7 +31,9 @@ class CardRepository:
         return dict(zip(columns, row))
 
     def list_recent(self, days: int = 7) -> list[dict]:
-        query = "SELECT * FROM cards WHERE data_card >= CURRENT_DATE - (%s * INTERVAL '1 day') ORDER BY data_card DESC"
+        query = ("SELECT c.*, p.fontes_independentes AS pauta_independentes FROM cards c "
+                 "LEFT JOIN pautas p ON p.id_pauta = c.id_pauta "
+                 "WHERE c.data_card >= CURRENT_DATE - (%s * INTERVAL '1 day') ORDER BY c.data_card DESC")
         with self.conn.cursor() as cur:
             cur.execute(query, (days,))
             rows = cur.fetchall()

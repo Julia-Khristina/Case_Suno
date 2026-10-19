@@ -14,6 +14,7 @@ class MainPoint(BaseModel):
     order: int
     title: str
     assertion_ids: list[str] = Field(default_factory=list)
+    justification: str | None = None
 
 
 class Assertion(BaseModel):
@@ -71,4 +72,5 @@ class ExtractionResult(BaseModel):
     events: list[Event] = Field(default_factory=list)
     detected_terms: list[str] = Field(default_factory=list)
     pending_terms: list[PendingTerm] = Field(default_factory=list)
-    source_complexity: SourceComplexity
+    source_complexity: SourceComplexity = Field(default_factory=lambda: SourceComplexity(word_count=0))
+    warnings: list[str] = Field(default_factory=list)

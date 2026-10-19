@@ -1,112 +1,148 @@
-"""Deterministic evaluation node."""
-from src.evaluation.coverage import main_points_coverage
-from src.evaluation.format_checks import has_emoji, has_forbidden_terms, validate_analytical_text
-from src.evaluation.flesch_ptbr import evaluate_level, flesch_reading_ease_pt
-from src.evaluation.grounding import all_generated_numbers_exist, check_general_impact_markers
-from src.evaluation.level_classifier import classify_level
-from src.evaluation.models import DeterministicEvaluation
-from src.evaluation.term_density import matching_terms, term_density_per_100_words
-from src.generation.models import AnalyticalText
+"""Nó de avaliação determinística (seção 4.7) e decisão do loop de reflexão (seção 4.10).
+
+- Passou: segue ao juiz.
+- Reprovou com reescrita sobrando: incrementa retry_count, injeta o relatório numérico e volta a gerar.
+- Reprovou sem reescrita sobrando: encerra a combinação com aviso para a validação humana.
+- Reescrita igual à anterior (similaridade acima do limiar): encerra, porque repetir não muda o resultado.
+"""
+from __future__ import annotations
+
+from typing import Any
+
+from src.evaluation.deterministic import (
+    DeterministicReport,
+    EvaluationContext,
+    Failure,
+    evaluate,
+    text_for_metrics,
+)
+from src.evaluation.text_utils import jaccard_trigrams, trigrams, word_count
+from src.pipeline.nodes.common import evaluation_context, key_of, safe_persist
+
+
+def _previous_attempt(state: dict) -> dict | None:
+    key = key_of(state)
+    previous = [a for a in state.get("attempt_history") or [] if a.get("combo") == key and a.get("avaliacao") == "deterministica"]
+    return previous[-1] if previous else None
+
+
+def change_metrics(previous_text: str | None, current_text: str) -> dict[str, Any]:
+    """Quanto a tentativa n+1 mudou em relação à n: similaridade e se só acrescentou texto."""
+    if not previous_text:
+        return {"similaridade_vs_anterior": None, "apenas_acrescentou": False}
+    similarity = jaccard_trigrams(previous_text, current_text)
+    prev, cur = set(trigrams(previous_text)), set(trigrams(current_text))
+    containment = len(prev & cur) / len(prev) if prev else 0.0
+    grew = word_count(current_text) > word_count(previous_text)
+    return {"similaridade_vs_anterior": round(similarity, 3), "apenas_acrescentou": bool(grew and containment >= 0.9)}
+
+
+def evaluate_deterministic_node(state: dict[str, Any], deps=None) -> dict[str, Any]:
+    from src.pipeline.deps import PipelineDeps
+
+    deps = deps or PipelineDeps()
+    ctx = evaluation_context(state, deps)
+    generation = state.get("last_generation") or {}
+    attempt_number = int(state.get("retry_count") or 0) + 1
+    key = key_of(state)
+
+    if generation.get("erro") or not generation.get("conteudo"):
+        report = DeterministicReport(nivel=ctx.level, formato=ctx.fmt, passed=False, failures=[Failure(
+            code="saida_invalida_do_modelo", metrica="contrato_json_pydantic", valor="inválida", limiar="válida",
+            detalhe=[str(generation.get("erro", "sem conteúdo"))[:400]])])
+        current_text = ""
+    else:
+        report = evaluate(generation["conteudo"], ctx)
+        current_text = text_for_metrics(generation["conteudo"], ctx.fmt)
+
+    previous = _previous_attempt(state)
+    change = change_metrics(previous.get("texto_avaliado") if previous else None, current_text)
+    attempt = {
+        "combo": key, "nivel": ctx.level, "formato": ctx.fmt, "tentativa": attempt_number, "avaliacao": "deterministica",
+        "passou": report.passed, "falhas": [f.model_dump(mode="json") for f in report.failures],
+        "motivo_reprovacao": ", ".join(report.failure_codes) or None, "metricas": report.metrics,
+        "avisos": report.warnings, "nivel_classificado": report.classified_level,
+        "complexidade_fonte": report.source_complexity, "conteudo": generation.get("conteudo"),
+        "erro_geracao": generation.get("erro"), "feedback_usado": generation.get("feedback_usado"),
+        "tokens": generation.get("tokens", 0), "latencia": generation.get("latencia", 0.0),
+        "modelo": generation.get("modelo"), "versao_prompt": generation.get("versao_prompt"),
+        "tamanho_texto": word_count(current_text), "texto_avaliado": current_text,
+        "mudanca_vs_anterior": change["similaridade_vs_anterior"], "apenas_acrescentou": change["apenas_acrescentou"],
+    }
+    updates: dict[str, Any] = {}
+    material_id = (state.get("material_ids") or {}).get(key)
+    if material_id:
+        attempt["id_tentativa"] = safe_persist(state, updates, "tentativa",
+                                               lambda: deps.persistence.record_attempt(material_id, attempt))
+    history = list(state.get("attempt_history") or []) + [attempt]
+    updates.update(deterministic_evaluation=report.model_dump(mode="json"), judge_evaluation=None,
+                   attempt_history=history)
+
+    if report.passed:
+        return {**updates, "next_action": "judge"}
+
+    threshold = float(deps.thresholds.req("reescrita_similaridade_max"))
+    if change["similaridade_vs_anterior"] is not None and change["similaridade_vs_anterior"] >= threshold:
+        return {**updates, "next_action": "finalize", "stop_reason": "reescrita_sem_mudanca",
+                "warnings": list(state.get("warnings") or []) + [
+                    f"{key}: reescrita praticamente igual à anterior (similaridade {change['similaridade_vs_anterior']}); "
+                    "encaminhada à validação humana."]}
+    if int(state.get("retry_count") or 0) < int(state.get("max_retries") or 0):
+        return {**updates, "retry_count": attempt_number, "feedback": report.feedback(), "next_action": "generate"}
+    return {**updates, "next_action": "finalize"}
+
+
+# ---------------------------------------------------------------------------------- compatibilidade
 
 
 def evaluate_analytical_text(
-    analytical_text: AnalyticalText,
+    analytical_text,
     level: str,
     source_text: str,
-    main_points: list[str],
+    main_points: list[str] | None = None,
     glossary_terms: list[str] | None = None,
     forbidden_terms: list[str] | None = None,
     approved_impact_explanations: list[str] | None = None,
     thresholds: dict | None = None,
     source_complexity: dict | None = None,
-) -> DeterministicEvaluation:
-    thresholds = thresholds or {}
-    glossary_terms = glossary_terms or []
-    forbidden_terms = forbidden_terms or []
-    approved_impact_explanations = approved_impact_explanations or []
+    origin: dict | None = None,
+    glossary=None,
+    fmt: str = "texto_analitico",
+):
+    """Avalia um material isolado (ex.: texto editado por humano) com o mesmo avaliador do pipeline."""
+    from src.evaluation.models import DeterministicEvaluation
+    from src.evaluation.thresholds import as_thresholds
+    from src.glossary.reader import load_glossary
+    from src.evaluation.format_checks import load_forbidden_terms
 
-    full_text = "\n".join(
-        [
-            analytical_text.title,
-            analytical_text.subtitle,
-            analytical_text.introduction,
-            analytical_text.development,
-            analytical_text.analysis,
-            analytical_text.conclusion,
-        ]
+    content = analytical_text.model_dump(mode="json") if hasattr(analytical_text, "model_dump") else dict(analytical_text)
+    ctx = EvaluationContext(
+        level=level, fmt=fmt, source_text=source_text, glossary=glossary or load_glossary(),
+        thresholds=as_thresholds(thresholds),
+        main_points=[{"id": f"p{i}", "title": t, "assertions": []} for i, t in enumerate(main_points or [], start=1)],
+        forbidden_terms=load_forbidden_terms() if forbidden_terms is None else forbidden_terms,
+        origin=origin or {},
     )
-    glossary_terms_in_text = matching_terms(full_text, glossary_terms)
-    flesch = flesch_reading_ease_pt(full_text)
-    density = term_density_per_100_words(full_text, glossary_terms)
-    numbers_ok = all_generated_numbers_exist(full_text, source_text)
-    coverage = main_points_coverage(full_text, main_points)
-    beginner_window_ok = True
-    if level == "iniciante":
-        for term in glossary_terms_in_text:
-            explanation = next((item for item in approved_impact_explanations if term.lower() in item.lower()), "")
-            if glossary_terms and not beginner_term_window(full_text, term, window_words=20):
-                beginner_window_ok = False
-    impact_ok = check_general_impact_markers(full_text, approved_impact_explanations) if approved_impact_explanations else True
-
-    format_result = validate_analytical_text(full_text, 350, 500, forbidden_terms)
-    no_emoji = not has_emoji(full_text)
-    no_forbidden = not has_forbidden_terms(full_text, forbidden_terms)
-    no_unapproved_general_markers = impact_ok
-
-    failures: list[str] = []
-    if not evaluate_level(flesch, level, thresholds):
-        failures.append("legibilidade_fora_da_faixa")
-    if not density_level_ok(density, level, thresholds):
-        failures.append("densidade_fora_da_faixa")
-    if not numbers_ok:
-        failures.append("numero_ou_data_nao_encontrado_na_fonte")
-    if coverage < len(main_points):
-        failures.append("cobertura_de_pontos_centrais_insuficiente")
-    if not beginner_window_ok:
-        failures.append("termo_iniciante_sem_explicacao_na_janela")
-    if not no_emoji:
-        failures.append("emoji_encontrado")
-    if not no_forbidden:
-        failures.append("termo_proibido_encontrado")
-    if not no_unapproved_general_markers:
-        failures.append("marcador_em_geral_fora_do_glossario")
-    if not format_result["word_count_in_range"]:
-        failures.append("tamanho_fora_do_intervalo")
-
-    classified_level = classify_level(full_text, glossary_terms)
-    if classified_level != level and classified_level != "indistinto":
-        failures.append("nivel_classificado_diferente_do_alvo")
-
-    passed = len(failures) == 0
-
+    if fmt == "texto_analitico" and not origin:
+        ctx.origin = {}
+        content.setdefault("fonte_bloco", "")
+    report = evaluate(content, ctx)
+    # Edição humana: o bloco de fonte e as declarações de ponto_ids não são exigidos de quem edita
+    ignored = {"bloco_de_fonte_diferente_da_regra", "ponto_ids_nao_declarados"} if not origin else set()
+    failures = [f for f in report.failures if f.code not in ignored]
+    codes = [f.code for f in failures]
     return DeterministicEvaluation(
-        flesch=flesch,
-        term_density=density,
-        grounding_score=1.0 if numbers_ok else 0.0,
-        numbers_verified=numbers_ok,
-        main_points_coverage=coverage,
-        beginner_term_window_ok=beginner_window_ok,
-        format_checks={
-            "no_emoji": no_emoji,
-            "no_forbidden_terms": no_forbidden,
-            "word_count_in_range": format_result["word_count_in_range"],
-        },
-        classified_level=classified_level,
-        source_complexity=source_complexity or {},
-        passed=passed,
-        failures=failures,
+        flesch=report.metrics.get("flesch", 0.0),
+        term_density=report.metrics.get("densidade_termos", 0.0),
+        grounding_score=1.0 - float(report.metrics.get("fracao_frases_sem_respaldo", 0.0)),
+        numbers_verified="numero_ou_data_sem_origem" not in codes,
+        main_points_coverage=len(ctx.main_points) - len(report.metrics.get("pontos_nao_cobertos", [])),
+        beginner_term_window_ok="termo_tecnico_sem_explicacao" not in codes,
+        format_checks={"no_emoji": "emoji_encontrado" not in codes,
+                       "no_forbidden_terms": "termo_proibido_encontrado" not in codes,
+                       "word_count_in_range": "tamanho_fora_do_intervalo" not in codes},
+        classified_level=report.classified_level,
+        source_complexity=source_complexity or report.source_complexity,
+        passed=not failures,
+        failures=codes,
     )
-
-
-def density_level_ok(density: float, level: str, thresholds: dict) -> bool:
-    if level == "iniciante":
-        return density <= thresholds.get("densidade_iniciante_max", 3)
-    if level == "intermediario":
-        return thresholds.get("densidade_intermediaria_min", 3) <= density <= thresholds.get("densidade_intermediaria_max", 8)
-    if level == "avancado":
-        return density >= thresholds.get("densidade_avancado_min", 8)
-    return True
-
-
-def beginner_term_window(text: str, term: str, window_words: int = 20) -> bool:
-    return True

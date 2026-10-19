@@ -1,0 +1,67 @@
+{
+  "experimento": "G4",
+  "descricao": "Auditoria contra a especificacao: legenda, verbo da lista, aviso padrao, fala falada, enquadramento, caixa Entenda os termos, marcador Em geral,, guia de estilo, termos proibidos",
+  "resultados": {
+    "legenda_boa": {
+      "ok": false,
+      "issues": [
+        "cta_sentence nao contem verbo da lista"
+      ]
+    },
+    "legenda_ruim_cta": {
+      "ok": false,
+      "issues": [
+        "cta_verb 'comprar' nao esta na lista de verbos de acao",
+        "cta_sentence nao contem verbo da lista"
+      ]
+    },
+    "carrossel_boa": {
+      "ok": true,
+      "issues": []
+    },
+    "roteiro_boa": {
+      "ok": true,
+      "issues": []
+    },
+    "emoji_ausente": {
+      "tem_emoji": false,
+      "ok": true
+    },
+    "emoji_presente": {
+      "tem_emoji": true,
+      "ok": false
+    },
+    "termos_proibidos_ausentes": {
+      "encontrados": [],
+      "ok": true
+    },
+    "termos_proibidos_presentes": {
+      "encontrados": [
+        "compre agora",
+        "garantia de lucro"
+      ],
+      "ok": false
+    },
+    "marcador_em_geral_ok": {
+      "em_geral_count": 1,
+      "issues": [
+        "marcador 'Em geral,' sem explicacao do glossario: 'Em geral, a taxa basica de juros afeta o bolso do cidadao...'"
+      ],
+      "ok": false
+    },
+    "guia_estilo_emoji": {
+      "ok": true
+    },
+    "guia_estilo_termo_proibido": {
+      "ok": true
+    },
+    "caixa_entenda_termos_iniciante": {
+      "presente": true,
+      "apenas_iniciante": true,
+      "termo": "Selic",
+      "explicacao": "taxa basica de juros da economia",
+      "ok": true
+    }
+  },
+  "executado_em": "2026-10-16T02:48:28.310034+00:00"
+}

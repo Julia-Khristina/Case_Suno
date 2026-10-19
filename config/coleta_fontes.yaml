@@ -1,29 +1,207 @@
-﻿limite_cards_diario_padrao: 8
+﻿# Fontes da coleta diária (seção 4.1). Verificadas em 17/10/2026 com scripts/verify_sources.py:
+# feed responde, traz itens e o texto completo, e o robots.txt permite o feed e as notícias.
+# Termos de uso NÃO são verificáveis automaticamente: confirmar em cada site antes da entrega.
+limite_cards_diario_padrao: 8     # pautas novas por dia (uma pauta com 3 fontes ocupa 1 vaga e gera 3 cards)
+horario_coleta_padrao: "08:00"    # legado: o agendador agora usa intervalo_coleta_horas + horario_coleta
+
+# Coleta em intervalos (decisão de 18/10/2026): cada feed só mostra as ~10 notícias mais recentes, então ler
+# várias vezes ao dia é o que permite achar a mesma notícia em fontes diferentes.
+intervalo_coleta_horas: 3
+horario_coleta:
+  inicio: "07:00"
+  fim: "22:00"
+
+# Seleção (decisão da autora em 17/10/2026): os cards do dia precisam ser de cunho financeiro e geráveis.
+selecao:
+  exigir_tema_financeiro: true     # título ou descrição com termo financeiro e nenhum termo de exclusão
+  exigir_texto_completo: true      # só entra card com texto completo (do feed ou da página) que passa na admissão
+  max_por_fonte: 3                 # diversidade: no máximo N pautas de uma fonte só por dia
+
+# Pautas (decisão de 18/10/2026): a mesma notícia em fontes diferentes vira uma pauta comparável.
+# PROVISÓRIO: limiares calibrados em 18/10/2026 com 47 notícias financeiras de 7 feeds (pares verdadeiros:
+# 0,77 e 0,66; maiores pares falsos: 0,37 sem entidade em comum e 0,34 com). Recalibrar com alguns dias de acervo.
+pautas:
+  janela_horas: 72                 # acervo considerado no agrupamento
+  limiar_similaridade: 0.40        # cosseno TF-IDF mínimo, com nome/sigla/ticker específico em comum
+  limiar_sem_entidade: 0.6         # cosseno mínimo quando não há entidade específica em comum
+  max_fontes: 5                    # mesmo máximo da triangulação
+  df_max_especifica: 0.15          # entidade "específica" aparece em até 15% das notícias do acervo
+
 fontes:
   - nome: Banco Central, notas à imprensa
     tipo: primaria
     prioridade: 1
-    ativa: false
+    ativa: true
     url: https://www.bcb.gov.br/api/feed/sitebcb/sitefeeds/notasImprensa?ano=2026
-    adapter: rss
+    adapter: atom
 
   - nome: Banco Central, notícias
     tipo: primaria
     prioridade: 2
-    ativa: false
+    ativa: true
     url: https://www.bcb.gov.br/api/feed/sitebcb/sitefeeds/noticias?ano=2026
-    adapter: rss
-
-  - nome: Agência Brasil, economia
-    tipo: secundaria
-    prioridade: 4
-    ativa: false
-    url: https://agenciabrasil.ebc.com.br/rss/economia/feed.xml
-    adapter: rss
+    adapter: atom
 
   - nome: InfoMoney
     tipo: secundaria
-    prioridade: 5
+    prioridade: 4
     ativa: true
     url: https://www.infomoney.com.br/feed/
     adapter: rss
+
+  - nome: Money Times
+    tipo: secundaria
+    prioridade: 4
+    ativa: true
+    url: https://www.moneytimes.com.br/feed/
+    adapter: rss
+
+  - nome: Seu Dinheiro
+    tipo: secundaria
+    prioridade: 4
+    ativa: true
+    url: https://www.seudinheiro.com/feed/
+    adapter: rss
+
+  - nome: E-Investidor (Estadão)
+    tipo: secundaria
+    prioridade: 4
+    ativa: true
+    url: https://einvestidor.estadao.com.br/feed/
+    adapter: rss
+
+  # Reativada em 18/10/2026: o feed não traz o texto, mas a página traz os parágrafos (testado: 629 palavras numa
+  # matéria) e o robots.txt permite /economia/noticia. O texto é lido da página só para notícias financeiras.
+  - nome: Agência Brasil, economia
+    tipo: secundaria
+    prioridade: 5
+    ativa: true
+    url: https://agenciabrasil.ebc.com.br/rss/economia/feed.xml
+    adapter: rss
+    texto_completo: pagina
+
+  # Inativa: o feed não traz o texto e a página responde 403 (testado em 18/10/2026); boa parte é Reuters traduzida.
+  - nome: Investing.com Brasil
+    tipo: secundaria
+    prioridade: 5
+    ativa: false
+    url: https://br.investing.com/rss/news.rss
+    adapter: rss
+
+  # Inativa: feed geral com muitos temas não financeiros e só ~50 palavras por item; a página monta o texto no
+  # navegador (HTTP simples não traz nenhum parágrafo, testado em 18/10/2026). Reativar exigiria Playwright por matéria.
+  - nome: Exame
+    tipo: secundaria
+    prioridade: 6
+    ativa: false
+    url: https://exame.com/feed/
+    adapter: rss
+
+# Termos de tema financeiro procurados no título e na descrição (além dos termos técnicos do glossário).
+tema_financeiro:
+  - ações
+  - bolsa
+  - ibovespa
+  - b3
+  - dólar
+  - câmbio
+  - juros
+  - selic
+  - copom
+  - inflação
+  - ipca
+  - igp-m
+  - pib
+  - banco central
+  - tesouro
+  - renda fixa
+  - cdb
+  - cdi
+  - fii
+  - fiis
+  - fundo
+  - fundos
+  - dividendos
+  - proventos
+  - lucro
+  - prejuízo
+  - balanço
+  - resultado
+  - receita
+  - ebitda
+  - guidance
+  - ipo
+  - debêntures
+  - crédito
+  - banco
+  - bancos
+  - fiscal
+  - arcabouço
+  - arrecadação
+  - dívida
+  - déficit
+  - superávit
+  - petróleo
+  - brent
+  - commodities
+  - minério
+  - investimento
+  - investimentos
+  - investidor
+  - investidores
+  - mercado
+  - economia
+  - econômico
+  - econômica
+  - emprego
+  - desemprego
+  - imposto
+  - tributária
+  - tarifa
+  - tarifas
+  - exportações
+  - importações
+  - varejo
+  - safra
+  - agronegócio
+  - bitcoin
+  - criptomoedas
+  - cvm
+  - fusão
+  - aquisição
+  - recuperação judicial
+  - rating
+  - payroll
+  - fed
+  - treasuries
+  - ibc-br
+  - poupança
+  - previdência
+  - fiscais
+  - monetária
+  - monetárias
+  - monetário
+  - setor externo
+  - ic-br
+  - swap
+  - cambial
+  - pix
+  - liquidação extrajudicial
+  - cooperativa de crédito
+  - meios de pagamento
+
+# Termos que excluem o item quando aparecem no TÍTULO (temas fora do escopo do produto).
+excluir_titulo:
+  - futebol
+  - campeonato
+  - brasileirão
+  - flamengo
+  - palmeiras
+  - corinthians
+  - novela
+  - bbb
+  - horóscopo
+  - receita de bolo
+  - celebridade
+  - pesquisa eleitoral
+  - intenção de voto

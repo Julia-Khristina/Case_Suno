@@ -55,6 +55,7 @@ def admit_text(
         language=language,
         origin=origin,
         status=status,
+        text=normalized,
     )
 
 

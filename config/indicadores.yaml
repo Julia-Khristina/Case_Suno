@@ -1,0 +1,53 @@
+versao: "1.0"
+descricao: "Indicadores canônicos para normalização e comparação na triangulação de fontes."
+indicadores:
+  - nome: "Selic"
+    apelidos: ["taxa selic", "taxa básica de juros", "selic"]
+    unidade_canonica: "percentual ao ano"
+    escala: "unidade"  # unidade, mil, milhao, bilhao
+    tolerancia_absoluta: 0.25  # pontos percentuais
+    tolerancia_relativa: 0.02  # 2%
+    periodo_tipico: "atual"
+  - nome: "IPCA"
+    apelidos: ["ipca", "inflacao oficial", "indice de precos ao consumidor amplo"]
+    unidade_canonica: "percentual em 12 meses"
+    escala: "unidade"
+    tolerancia_absoluta: 0.1
+    tolerancia_relativa: 0.015
+    periodo_tipico: "12 meses"
+  - nome: "PIB"
+    apelidos: ["pib", "produto interno bruto", "atividade economica"]
+    unidade_canonica: "percentual anual"
+    escala: "unidade"
+    tolerancia_absoluta: 0.3
+    tolerancia_relativa: 0.02
+    periodo_tipico: "trimestral"
+  - nome: "cambio"
+    apelidos: ["dolar", "dolar americano", "taxa de cambio", "brl usd"]
+    unidade_canonica: "reais por dolar"
+    escala: "unidade"
+    tolerancia_absoluta: 0.05
+    tolerancia_relativa: 0.01
+    periodo_tipico: "atual"
+  - nome: "divida_publica"
+    apelidos: ["divida bruta", "divida publica bruta"]
+    unidade_canonica: "percentual do PIB"
+    escala: "unidade"
+    tolerancia_absoluta: 0.5
+    tolerancia_relativa: 0.01
+    periodo_tipico: "atual"
+
+# Escalas de conversão permitidas (multiplicador para unidade canonica)
+escalas:
+  unidade: 1
+  mil: 1000
+  milhao: 1000000
+  bilhao: 1000000000
+
+# Regras de comparabilidade
+regras:
+  mesma_unidade_obrigatoria: true
+  mesmo_periodo_obrigatorio: true
+  diferenca_unidade_percentual_ponto_percentual: "nao_comparavel"
+  diferenca_periodo: "nao_comparavel"
+  indicador_nao_normalizado: "somente_coincidencia_exata"

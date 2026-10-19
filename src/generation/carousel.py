@@ -1,59 +1,58 @@
-"""Carousel and caption generation."""
-from pathlib import Path
-from typing import Any
+"""Carrossel e legenda: LLM sobre entrada estruturada + partes montadas por regra (linha do nível, fonte,
+aviso configurado, hashtags e texto final da legenda)."""
+from __future__ import annotations
 
 from pydantic import ValidationError
 
-from src.shared.llm_client import LLMClient
 from src.extraction.models import ExtractionResult
+from src.generation import rules
+from src.generation.base import StructuredGenerator
 from src.generation.models import Caption, Carousel
+from src.shared.llm_client import InvalidLLMOutput
 
-PROMPT_TEMPLATE = (Path(__file__).resolve().parent / "prompts" / "carousel" / "carousel.txt").read_text(encoding="utf-8")
 
-
-class CarouselGenerator:
-    def __init__(self, llm_client: LLMClient | None = None, model_id: str | None = None) -> None:
-        self.llm_client = llm_client or LLMClient()
-        self.model_id = model_id
+class CarouselGenerator(StructuredGenerator):
+    fmt = "carrossel"
+    schema_name = "carousel_with_caption"
 
     def generate(
         self,
         extraction: ExtractionResult,
         level: str,
         source_text: str,
-        glossary_terms: list[str] | None = None,
+        feedback: str | None = None,
+        glossary=None,
         forbidden_terms: list[str] | None = None,
+        origin: dict | None = None,
+        thresholds: dict | None = None,
+        **_compat,
     ) -> tuple[Carousel, Caption]:
-        main_points = "\n".join(f"- {point.title}" for point in extraction.main_points)
-        numeric_data = "\n".join(f"- {item.indicator}: {item.value}" for item in extraction.numeric_data)
-        prompt = PROMPT_TEMPLATE.format(
-            level=level,
-            main_points=main_points or "- (sem pontos centrais)",
-            numeric_data=numeric_data or "- (sem dados)",
-            glossary_terms=", ".join(glossary_terms or []),
-            forbidden_terms=", ".join(forbidden_terms or []),
-        )
-        response = self.llm_client.generate(
-            prompt + f"\n\nTexto fonte:\n{source_text}",
-            schema_name="carousel_with_caption",
-            model_id=self.model_id,
-            cache_parts={"level": level, "prompt_version": "block5"},
-        )
-        try:
-            # Response may contain { "carousel": {...}, "caption": {...} }.
-            if isinstance(response, dict) and "carousel" in response and "caption" in response:
-                carousel = Carousel.model_validate(response["carousel"])
-                caption = Caption.model_validate(response["caption"])
-                return carousel, caption
-            # Fallback: carousel only or malformed wrapper.
-            carousel = Carousel.model_validate(response)
-        except ValidationError as exc:
-            raise ValueError(f"Resposta invalida de carrossel: {exc}") from exc
+        gen_input = self.build_input(extraction, level, source_text, feedback, glossary, forbidden_terms, origin, thresholds)
+        response = self.call(gen_input)
+        carousel = finalize_carousel(response, level, origin or {}, [e.model_dump() for e in extraction.entities],
+                                     gen_input.prompt_version())
+        return carousel, carousel.legenda
+
+
+def finalize_carousel(response: dict, level: str, origin: dict, entities: list[dict], prompt_version: str) -> Carousel:
+    slides = response.get("slides") or (response.get("carousel") or {}).get("slides")
+    caption_raw = dict(response.get("caption") or (response.get("carousel") or {}).get("caption") or {})
+    if not slides or not caption_raw:
+        raise InvalidLLMOutput("Carrossel sem 'slides' ou sem 'caption'")
+    source = rules.source_block(origin)
+    notice = rules.institutional_notice()
+    hashtags = rules.hashtags_from_entities(entities)
+    opening, context = caption_raw.get("opening", ""), caption_raw.get("short_context", "")
+    cta = caption_raw.get("cta_sentence", "")
+    try:
         caption = Caption(
-            opening=carousel.slides[0].title,
-            short_context=carousel.slides[1].body,
-            source_block="Fonte: documento original",
-            cta_verb="salvar",
-            cta_sentence="Salve este conteudo para consultar depois.",
+            opening=opening, short_context=context, source_block=source,
+            cta_verb=str(caption_raw.get("cta_verb", "")).lower(), cta_sentence=cta,
+            institutional_notice=notice, hashtags=hashtags,
+            texto_final=rules.caption_final_text(opening, context, source, cta, notice, hashtags),
+            versao_prompt=prompt_version,
         )
-        return carousel, caption
+        return Carousel(slides=slides, linha_vermelha_nivel=rules.level_line(level), legenda=caption,
+                        versao_prompt=prompt_version)
+    except ValidationError as exc:
+        raise InvalidLLMOutput(f"Carrossel fora do contrato: {exc}") from exc

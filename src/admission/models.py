@@ -39,3 +39,4 @@ class AdmissionResult(BaseModel):
     language: str
     origin: OriginMetadata
     status: str  # admitido | bloqueado | aviso
+    text: str = ""  # texto limpo admitido (link e PDF: o conteúdo lido da página ou do arquivo)

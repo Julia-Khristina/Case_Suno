@@ -1,0 +1,40 @@
+Tarefa: escrever um ROTEIRO de vídeo para Instagram Reels (vertical 9:16, até 60 segundos) para o nível {nivel}.
+
+<dados>
+PONTOS CENTRAIS (ids entre colchetes) e AFIRMAÇÕES (ids entre parênteses), com o trecho de origem:
+{pontos_centrais}
+
+DADOS NUMÉRICOS DA FONTE:
+{dados_numericos}
+
+TERMOS DO GLOSSÁRIO PRESENTES:
+{glossario}
+
+EXPLICAÇÕES GERAIS DE IMPACTO APROVADAS (as únicas frases que podem usar o marcador "Em geral,"):
+{explicacoes_impacto}
+</dados>
+
+REGRAS DO NÍVEL:
+{regras_nivel}
+
+GUIA DE ESTILO: {guia_estilo}
+TERMOS PROIBIDOS: {termos_proibidos}
+
+CENAS (exatamente 5, nesta ordem):
+1. role "gancho": um fato ou número da fonte.
+2 a 4. role "corpo": um ponto central por cena, na ordem {ids_pontos}; informe o "ponto_id".
+5. role "conclusao": síntese do que a fonte conclui.
+- start_sec e end_sec contínuos, a primeira cena começa em 0, sem sobreposição; total_duration_sec = end_sec da última cena, até 60.
+- fala_escrita: o texto narrado, com números como na fonte (ex.: "10,50%"). Ritmo de 2 a 3 palavras por segundo de cena; frases de até 22 palavras. A fala falada (por extenso) é gerada pelo sistema: não a escreva.
+- texto_na_tela: até 70 caracteres, só números e fatos da fonte.
+- visual: descrição do que mostrar (elementos na tela, movimento). Nunca pessoas reais identificáveis, logotipos de terceiros ou gráficos com números que não estão na fonte.
+- enquadramento: "close", "plano_medio" ou "plano_aberto". direcao: observação curta para quem grava.
+- Soma de palavras das falas: entre {palavras_min} e {palavras_max}.
+- Não inclua instruções de validação ("verifique na fonte") nas falas.
+
+RELATÓRIO DA TENTATIVA ANTERIOR (corrija cada item; não acrescente texto de preenchimento):
+{feedback}
+
+Responda com JSON neste formato:
+{{"scenes": [{{"order": 1, "role": "gancho", "start_sec": 0, "end_sec": 10, "fala_escrita": "...", "texto_na_tela": "...", "visual": "...", "enquadramento": "close", "direcao": "...", "ponto_id": null, "afirmacao_ids": ["..."]}}, ...],
+ "total_duration_sec": 55}}

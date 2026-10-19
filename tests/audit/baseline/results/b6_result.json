@@ -1,0 +1,569 @@
+{
+  "experimento": "B6",
+  "descricao": "12 saidas ruins e 3 boas contra metricas determinísticas; tabela esperado x obtido",
+  "total_casos": 15,
+  "todos_corretos": false,
+  "resultados": {
+    "b1_padding": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente"
+      ],
+      "falha_esperada": "tamanho_fora_do_intervalo",
+      "correto": false,
+      "metricas": {
+        "word_count": 400,
+        "flesch": -368.365,
+        "level_flesch_ok": false,
+        "term_density": 0.0,
+        "density_ok": true,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "0/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.9975,
+        "size_ok": true,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente"
+        ],
+        "passed": false
+      }
+    },
+    "b2_repeticao_frase": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "redundancia_excessiva",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "redundancia_excessiva",
+      "correto": true,
+      "metricas": {
+        "word_count": 600,
+        "flesch": 31.545,
+        "level_flesch_ok": false,
+        "term_density": 0.333,
+        "density_ok": true,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "1/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.99,
+        "trigram_repetition": 0.99,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "redundancia_excessiva",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b3_numero_sem_origem": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "numero_ou_data_nao_encontrado_na_fonte",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "numero_ou_data_nao_encontrado_na_fonte",
+      "correto": true,
+      "metricas": {
+        "word_count": 12,
+        "flesch": 46.605,
+        "level_flesch_ok": false,
+        "term_density": 8.333,
+        "density_ok": false,
+        "numbers": [
+          "99,99%"
+        ],
+        "numbers_ok": false,
+        "coverage": "1/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "numero_ou_data_nao_encontrado_na_fonte",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b4_emoji": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "emoji_encontrado",
+        "tamanho_fora_do_intervalo",
+        "nivel_classificado_diferente_do_alvo"
+      ],
+      "falha_esperada": "emoji_encontrado",
+      "correto": true,
+      "metricas": {
+        "word_count": 13,
+        "flesch": 31.038,
+        "level_flesch_ok": false,
+        "term_density": 23.077,
+        "density_ok": false,
+        "numbers": [
+          "10,50%"
+        ],
+        "numbers_ok": true,
+        "coverage": "1/3",
+        "emoji": true,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "avancado",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "emoji_encontrado",
+          "tamanho_fora_do_intervalo",
+          "nivel_classificado_diferente_do_alvo"
+        ],
+        "passed": false
+      }
+    },
+    "b5_termo_proibido": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "termo_proibido_encontrado",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "termo_proibido_encontrado",
+      "correto": true,
+      "metricas": {
+        "word_count": 9,
+        "flesch": 9.7,
+        "level_flesch_ok": false,
+        "term_density": 0.0,
+        "density_ok": true,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "0/3",
+        "emoji": false,
+        "forbidden_terms": true,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "termo_proibido_encontrado",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b6_sem_cobertura": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "cobertura_de_pontos_centrais_insuficiente",
+      "correto": true,
+      "metricas": {
+        "word_count": 9,
+        "flesch": -27.9,
+        "level_flesch_ok": false,
+        "term_density": 0.0,
+        "density_ok": true,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "0/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b7_flesch_baixo_iniciante": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "legibilidade_fora_da_faixa",
+      "correto": true,
+      "metricas": {
+        "word_count": 66,
+        "flesch": -45.851,
+        "level_flesch_ok": false,
+        "term_density": 3.03,
+        "density_ok": false,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "0/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b8_flesch_alto_avancado": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo",
+        "nivel_classificado_diferente_do_alvo"
+      ],
+      "falha_esperada": "legibilidade_fora_da_faixa",
+      "correto": true,
+      "metricas": {
+        "word_count": 16,
+        "flesch": 13.237,
+        "level_flesch_ok": false,
+        "term_density": 25.0,
+        "density_ok": false,
+        "numbers": [
+          "45"
+        ],
+        "numbers_ok": true,
+        "coverage": "1/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "avancado",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo",
+          "nivel_classificado_diferente_do_alvo"
+        ],
+        "passed": false
+      }
+    },
+    "b9_saida_muito_curta": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "tamanho_fora_do_intervalo",
+      "correto": true,
+      "metricas": {
+        "word_count": 5,
+        "flesch": 49.48,
+        "level_flesch_ok": false,
+        "term_density": 40.0,
+        "density_ok": false,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "1/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b10_marcador_em_geral_fora_glossario": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "marcador_em_geral_fora_do_glossario",
+      "correto": false,
+      "metricas": {
+        "word_count": 12,
+        "flesch": -9.795,
+        "level_flesch_ok": false,
+        "term_density": 0.0,
+        "density_ok": true,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "1/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b11_densidade_alta_iniciante": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "densidade_fora_da_faixa",
+      "correto": false,
+      "metricas": {
+        "word_count": 200,
+        "flesch": -165.365,
+        "level_flesch_ok": false,
+        "term_density": 2.0,
+        "density_ok": true,
+        "numbers": [],
+        "numbers_ok": true,
+        "coverage": "2/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.9747,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "b12_nivel_classificado_diferente": {
+      "tipo": "ruim",
+      "esperado_passed": false,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": "nivel_classificado_diferente_do_alvo",
+      "correto": false,
+      "metricas": {
+        "word_count": 99,
+        "flesch": -22.011,
+        "level_flesch_ok": false,
+        "term_density": 5.051,
+        "density_ok": false,
+        "numbers": [
+          "10,50%",
+          "4,5%",
+          "45",
+          "3%"
+        ],
+        "numbers_ok": true,
+        "coverage": "3/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "g1_iniciante": {
+      "tipo": "boa",
+      "esperado_passed": true,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "densidade_fora_da_faixa",
+        "cobertura_de_pontos_centrais_insuficiente",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": null,
+      "correto": false,
+      "metricas": {
+        "word_count": 112,
+        "flesch": -5.21,
+        "level_flesch_ok": false,
+        "term_density": 3.571,
+        "density_ok": false,
+        "numbers": [
+          "10,50%",
+          "4,5%",
+          "45",
+          "10,50%",
+          "45"
+        ],
+        "numbers_ok": true,
+        "coverage": "2/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0545,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "densidade_fora_da_faixa",
+          "cobertura_de_pontos_centrais_insuficiente",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "g2_intermediario": {
+      "tipo": "boa",
+      "esperado_passed": true,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "legibilidade_fora_da_faixa",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": null,
+      "correto": false,
+      "metricas": {
+        "word_count": 132,
+        "flesch": -15.065,
+        "level_flesch_ok": false,
+        "term_density": 4.545,
+        "density_ok": true,
+        "numbers": [
+          "10,50%",
+          "4,5%",
+          "3%",
+          "3%",
+          "45"
+        ],
+        "numbers_ok": true,
+        "coverage": "3/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0154,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "legibilidade_fora_da_faixa",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    },
+    "g3_avancado": {
+      "tipo": "boa",
+      "esperado_passed": true,
+      "obtido_passed": false,
+      "obtido_failures": [
+        "densidade_fora_da_faixa",
+        "numero_ou_data_nao_encontrado_na_fonte",
+        "tamanho_fora_do_intervalo"
+      ],
+      "falha_esperada": null,
+      "correto": false,
+      "metricas": {
+        "word_count": 147,
+        "flesch": -10.665,
+        "level_flesch_ok": true,
+        "term_density": 3.401,
+        "density_ok": false,
+        "numbers": [
+          "10,50%",
+          "4,5%",
+          "12",
+          "3%",
+          "45",
+          "7,8%"
+        ],
+        "numbers_ok": false,
+        "coverage": "3/3",
+        "emoji": false,
+        "forbidden_terms": false,
+        "sentence_repetition": 0.0,
+        "trigram_repetition": 0.0,
+        "size_ok": false,
+        "classified_level": "indistinto",
+        "failures": [
+          "densidade_fora_da_faixa",
+          "numero_ou_data_nao_encontrado_na_fonte",
+          "tamanho_fora_do_intervalo"
+        ],
+        "passed": false
+      }
+    }
+  },
+  "executado_em": "2026-10-16T02:48:10.842842+00:00"
+}

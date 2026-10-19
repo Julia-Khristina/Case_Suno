@@ -1,0 +1,56 @@
+versao: "1.0"
+descricao: "Configuracao de triangulacao de fontes."
+
+# Fonte unica: minimo e maximo de fontes para triangulacao
+fontes:
+  minimo: 2
+  maximo: 5
+
+# Janela de dias para sugestao automatica de candidatos
+sugestao:
+  janela_datas_dias: 3
+  limiar_similaridade_titulo: 0.3
+  peso_entidades_comum: 0.4
+  peso_proximidade_data: 0.3
+  peso_similaridade_lexica: 0.3
+
+# Origem comum - limiar de sobreposição literal de trechos (0.0 a 1.0)
+origem_comum:
+  limiar_sobreposicao_literal: 0.6
+  mesma_pagina_primaria: true
+  mesmo_identificador: true
+
+# Comparacao numerica - tolerancias default (sobrepostas por indicador se existir)
+comparacao_numerica:
+  tolerancia_absoluta_default: 0.5
+  tolerancia_relativa_default: 0.02
+  escala_permitida_conversao: ["unidade", "mil", "milhao", "bilhao"]
+
+# Ranking dos 3 pontos centrais (pesos)
+ranking_pontos_centrais:
+  divergencia_numerica_relevante: 0.5
+  divergencia_qualitativa: 0.3
+  convergencia_importante: 0.2
+
+# Maximo de graficos por nivel
+graficos_por_nivel:
+  iniciante: 2
+  intermediario: 3
+  avancado: 4
+
+# Padrões proibidos de veredito (frases que o texto nunca deve conter)
+padroes_veredito_proibido:
+  - "na verdade"
+  - "o correto e"
+  - "quem esta certo"
+  - "esta errado"
+  - "erro da fonte"
+  - "a versao verdadeira"
+
+# Limiar de origem comum (agrupamento)
+limiar_origem_comum: 0.6
+
+# Contagem de fontes independentes (mesma origem nao conta)
+contagem_independente:
+  mesma_origem_nao_conta: true
+  proibido_confirmado_por_n_fontes: true

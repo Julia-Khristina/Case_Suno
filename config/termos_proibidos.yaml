@@ -1,6 +1,25 @@
+# Termos proibidos (seção 4.5): expressões sensacionalistas e promessas.
+# "termos": expressões literais (sem diferenciar maiúsculas).
+# "padroes_recomendacao": expressões regulares de linguagem de recomendação de compra/venda/investimento.
 termos:
   - "compre agora"
   - "venda agora"
   - "garantia de lucro"
+  - "lucro garantido"
   - "recomendo comprar"
   - "recomendo vender"
+  - "oportunidade imperdível"
+  - "imperdível"
+  - "dinheiro fácil"
+  - "fique rico"
+  - "despencou"
+  - "disparou"
+  - "urgente"
+padroes_recomendacao:
+  - "\\b(vale|valeria) a pena (investir|comprar|vender|aplicar)\\b"
+  - "\\b(invista|compre|venda|aplique)\\b(?! de\\b)"
+  - "\\b(recomend|aconselh|sugeri)\\w* (a )?(compra|venda|comprar|vender|investir|aplicar)"
+  - "\\bé (hora|momento) de (comprar|vender|investir|aplicar|sair)\\b"
+  - "\\baproveite (para|a)\\b"
+  - "\\b(melhor|bom) investimento\\b"
+  - "\\bvoc[eê] deve (comprar|vender|investir|aplicar)\\b"

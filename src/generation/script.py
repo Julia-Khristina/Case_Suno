@@ -1,36 +1,47 @@
-"""Short video script generation."""
-from pathlib import Path
+"""Roteiro de vídeo: LLM sobre entrada estruturada + fala falada derivada por regra."""
+from __future__ import annotations
 
 from pydantic import ValidationError
 
-from src.shared.llm_client import LLMClient
 from src.extraction.models import ExtractionResult
+from src.generation import rules
+from src.generation.base import StructuredGenerator
 from src.generation.models import Script
+from src.shared.llm_client import InvalidLLMOutput
 
 
-PROMPT_TEMPLATE = (Path(__file__).resolve().parent / "prompts" / "script" / "script.txt").read_text(encoding="utf-8")
+class ScriptGenerator(StructuredGenerator):
+    fmt = "roteiro_video"
+    schema_name = "script"
+
+    def generate(
+        self,
+        extraction: ExtractionResult,
+        level: str,
+        source_text: str,
+        feedback: str | None = None,
+        glossary=None,
+        forbidden_terms: list[str] | None = None,
+        origin: dict | None = None,
+        thresholds: dict | None = None,
+        **_compat,
+    ) -> Script:
+        gen_input = self.build_input(extraction, level, source_text, feedback, glossary, forbidden_terms, origin, thresholds)
+        response = self.call(gen_input)
+        return finalize_script(response, gen_input.glossary, gen_input.prompt_version())
 
 
-class ScriptGenerator:
-    def __init__(self, llm_client: LLMClient | None = None, model_id: str | None = None) -> None:
-        self.llm_client = llm_client or LLMClient()
-        self.model_id = model_id
-
-    def generate(self, extraction: ExtractionResult, level: str, source_text: str) -> Script:
-        main_points = "\n".join(f"- {point.title}" for point in extraction.main_points)
-        numeric_data = "\n".join(f"- {item.indicator}: {item.value}" for item in extraction.numeric_data)
-        prompt = PROMPT_TEMPLATE.format(
-            level=level,
-            main_points=main_points or "- (sem pontos centrais)",
-            numeric_data=numeric_data or "- (sem dados)",
-        )
-        response = self.llm_client.generate(
-            prompt + f"\n\nTexto fonte:\n{source_text}",
-            schema_name="script",
-            model_id=self.model_id,
-            cache_parts={"level": level, "prompt_version": "block5"},
-        )
-        try:
-            return Script.model_validate(response)
-        except ValidationError as exc:
-            raise ValueError(f"Resposta invalida de roteiro: {exc}") from exc
+def finalize_script(response: dict, glossary, prompt_version: str) -> Script:
+    scenes = []
+    for scene in response.get("scenes") or []:
+        scene = dict(scene)
+        scene["fala_falada"] = rules.spoken_text(scene.get("fala_escrita", ""), glossary)
+        scene.setdefault("versao_prompt", prompt_version)
+        scenes.append(scene)
+    total = response.get("total_duration_sec")
+    if total is None and scenes:
+        total = scenes[-1].get("end_sec", 0)
+    try:
+        return Script(scenes=scenes, total_duration_sec=float(total or 0), versao_prompt=prompt_version)
+    except (ValidationError, TypeError, ValueError) as exc:
+        raise InvalidLLMOutput(f"Roteiro fora do contrato: {exc}") from exc

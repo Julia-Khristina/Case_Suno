@@ -1,0 +1,12 @@
+versao: "1.1-triangulacao"
+# Critérios específicos da triangulação de fontes (separados da rubrica do juiz de fonte única).
+criterios:
+  - nome: fidelidade_atribuicao
+    descricao: "Toda frase sobre uma linha da matriz cita o id da linha. Frases de divergência citam pelo menos duas fontes pelo nome. Toda afirmação tem atribuição de fonte clara."
+    peso: 1.2
+  - nome: neutralidade
+    descricao: "O texto não emite veredito. Não usa padrões proibidos ('na verdade', 'o correto é', 'quem está certo', 'está errado', 'erro da fonte', 'a versão verdadeira'). Apresenta cada lado de forma justa sem decidir quem está correto."
+    peso: 1.0
+  - nome: representacao_justa
+    descricao: "Cada lado da divergência é representado com base em evidência de suas respectivas fontes. Não há viés para um lado específico. Divergências qualitativas exigem evidência para as duas pontas."
+    peso: 1.0

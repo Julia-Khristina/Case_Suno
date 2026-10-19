@@ -1,0 +1,77 @@
+{
+  "experimento": "A5",
+  "descricao": "Diferenca entre niveis: Flesch, densidade de termos, tamanho de frase, sobreposicao de trigramas, distancia de edicao",
+  "documentos": {
+    "curto": {
+      "word_count": 143,
+      "flesch": -19.554,
+      "term_density_per_100": 4.196,
+      "terms_found": [
+        "selic",
+        "copom",
+        "ipca",
+        "juros",
+        "banco central",
+        "meta"
+      ],
+      "sentence_stats": {
+        "count": 8,
+        "avg_words": 17.62,
+        "max_words": 28
+      }
+    },
+    "medio": {
+      "word_count": 376,
+      "flesch": -21.714,
+      "term_density_per_100": 1.862,
+      "terms_found": [
+        "selic",
+        "copom",
+        "ipca",
+        "juros",
+        "banco central",
+        "meta",
+        "pib"
+      ],
+      "sentence_stats": {
+        "count": 17,
+        "avg_words": 21.88,
+        "max_words": 39
+      }
+    },
+    "longo": {
+      "word_count": 972,
+      "flesch": -16.357,
+      "term_density_per_100": 0.72,
+      "terms_found": [
+        "selic",
+        "copom",
+        "ipca",
+        "juros",
+        "banco central",
+        "meta",
+        "pib"
+      ],
+      "sentence_stats": {
+        "count": 49,
+        "avg_words": 19.41,
+        "max_words": 84
+      }
+    }
+  },
+  "comparacoes": {
+    "curto_vs_medio": {
+      "trigram_overlap": 0.1032,
+      "edit_distance": 296
+    },
+    "curto_vs_longo": {
+      "trigram_overlap": 0.0484,
+      "edit_distance": 877
+    },
+    "medio_vs_longo": {
+      "trigram_overlap": 0.0785,
+      "edit_distance": 823
+    }
+  },
+  "executado_em": "2026-10-16T02:42:37.441110+00:00"
+}

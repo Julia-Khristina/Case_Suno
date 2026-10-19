@@ -4,8 +4,10 @@ from unittest.mock import patch
 import psycopg
 
 from src.extraction.extractor import Extractor
+from tests.fakes.llm import FakeLLMClient
 from src.persistence.database import get_database_url
 from src.persistence.repositories.document_repository import DocumentRepository
+from tests.integration.graph_cleanup import delete_component
 
 CANNED_RESPONSE = {
     "main_points": [{"id": "mp1", "order": 1, "title": "Ponto central", "assertion_ids": []}],
@@ -42,9 +44,8 @@ def test_extraction_persists_document_and_graph_nodes():
     text = "A taxa Selic subiu. A Selic está em 10,50% hoje."
     conn = psycopg.connect(get_database_url(), connect_timeout=5)
     try:
-        with patch("src.extraction.extractor.LLMClient.generate", return_value=CANNED_RESPONSE):
-            extractor = Extractor(glossary_terms=[])
-            result = extractor.extract(text, document_hash=document_hash, persistence_conn=conn)
+        extractor = Extractor(llm_client=FakeLLMClient(responses={"extraction": [CANNED_RESPONSE]}), glossary_terms=[])
+        result = extractor.extract(text, document_hash=document_hash, persistence_conn=conn)
 
         assert len(result.assertions) == 1
         document = DocumentRepository(conn).get(document_hash)
@@ -58,12 +59,13 @@ def test_extraction_persists_document_and_graph_nodes():
         assert document_nodes == 1
         assert assertion_nodes >= 1
     finally:
+        conn.rollback()
         with conn.cursor() as cur:
-            cur.execute("SELECT id_no FROM nos_grafo WHERE propriedades->>'hash' = %s", (document_hash,))
-            node_ids = [row[0] for row in cur.fetchall()]
-            if node_ids:
-                cur.execute("DELETE FROM arestas_grafo WHERE id_no_origem = ANY(%s) OR id_no_destino = ANY(%s)", (node_ids, node_ids))
-                cur.execute("DELETE FROM nos_grafo WHERE id_no = ANY(%s)", (node_ids,))
+            cur.execute("SELECT id_no, criado_em FROM nos_grafo WHERE propriedades->>'hash' = %s", (document_hash,))
+            rows = cur.fetchall()
+        # o documento e tudo o que a extração ligou a ele (trechos, afirmações, pontos, dados, entidades, eventos)
+        delete_component(conn, [r[0] for r in rows], since=min((r[1] for r in rows), default=None))
+        with conn.cursor() as cur:
             cur.execute("DELETE FROM documentos WHERE hash = %s", (document_hash,))
         conn.commit()
         conn.close()

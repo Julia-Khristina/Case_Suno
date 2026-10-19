@@ -1,0 +1,916 @@
+{
+  "gerado_em": "17/10/2026 22:02",
+  "benchmark": {
+    "casos": [
+      {
+        "id": "g1_iniciante",
+        "tipo": "boa",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.6,
+        "densidade": 2.71,
+        "caso_de_nivel": true
+      },
+      {
+        "id": "g2_intermediario",
+        "tipo": "boa",
+        "esperado": "intermediario",
+        "classificado": "intermediario",
+        "flesch": 44.6,
+        "densidade": 5.85,
+        "caso_de_nivel": true
+      },
+      {
+        "id": "g3_avancado",
+        "tipo": "boa",
+        "esperado": "avancado",
+        "classificado": "avancado",
+        "flesch": 32.3,
+        "densidade": 8.51,
+        "caso_de_nivel": true
+      },
+      {
+        "id": "b01_padding_repetido",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 76.5,
+        "densidade": 2.36,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b02_numero_inventado",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.6,
+        "densidade": 2.71,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b03_data_inventada",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.6,
+        "densidade": 2.71,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b04_comparacao_entre_documentos",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.3,
+        "densidade": 2.7,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b05_recomendacao_de_compra",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "indistinto",
+        "flesch": 73.3,
+        "densidade": 3.09,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b06a_emoji_coberto",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.6,
+        "densidade": 2.71,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b06b_emoji_fora_da_regex",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.6,
+        "densidade": 2.71,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b07_termo_proibido",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 73.4,
+        "densidade": 2.66,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b08_iniciante_jargao_sem_explicacao",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "indistinto",
+        "flesch": 65.8,
+        "densidade": 5.16,
+        "caso_de_nivel": true
+      },
+      {
+        "id": "b09_avancado_sem_jargao",
+        "tipo": "ruim",
+        "esperado": "avancado",
+        "classificado": "indistinto",
+        "flesch": 73.9,
+        "densidade": 3.21,
+        "caso_de_nivel": true
+      },
+      {
+        "id": "b10_ponto_central_ausente",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 72.4,
+        "densidade": 2.17,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b11_excesso_de_palavras",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 61.2,
+        "densidade": 2.68,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b13_em_geral_fora_do_glossario",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "iniciante",
+        "flesch": 74.8,
+        "densidade": 2.93,
+        "caso_de_nivel": false
+      },
+      {
+        "id": "b14_padding_contra_os_gates",
+        "tipo": "ruim",
+        "esperado": "iniciante",
+        "classificado": "indistinto",
+        "flesch": 114.2,
+        "densidade": 10.11,
+        "caso_de_nivel": false
+      }
+    ],
+    "resumo_casos_de_nivel": {
+      "n": 5,
+      "acerto": 0.6,
+      "indistinto": 2,
+      "matriz": {
+        "iniciante": {
+          "iniciante": 1,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 1
+        },
+        "intermediario": {
+          "iniciante": 0,
+          "intermediario": 1,
+          "avancado": 0,
+          "indistinto": 0
+        },
+        "avancado": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 1,
+          "indistinto": 1
+        },
+        "indistinto": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 0
+        }
+      },
+      "por_nivel": {
+        "iniciante": {
+          "precisao": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "intermediario": {
+          "precisao": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "avancado": {
+          "precisao": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        }
+      }
+    },
+    "resumo_todos": {
+      "n": 17,
+      "acerto": 0.765,
+      "indistinto": 4,
+      "matriz": {
+        "iniciante": {
+          "iniciante": 11,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 3
+        },
+        "intermediario": {
+          "iniciante": 0,
+          "intermediario": 1,
+          "avancado": 0,
+          "indistinto": 0
+        },
+        "avancado": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 1,
+          "indistinto": 1
+        },
+        "indistinto": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 0
+        }
+      },
+      "por_nivel": {
+        "iniciante": {
+          "precisao": 1.0,
+          "recall": 0.786,
+          "f1": 0.88
+        },
+        "intermediario": {
+          "precisao": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "avancado": {
+          "precisao": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        }
+      }
+    }
+  },
+  "execucoes_reais": {
+    "execucoes": [
+      {
+        "id": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "criado_em": "2026-10-17T14:47:02.633684-03:00",
+        "tokens": 107371,
+        "latencia": 49.6435267925262,
+        "modelos": "openai/gpt-oss-20b|openai/gpt-oss-120b",
+        "titulo": "‘Prospera MEI’ tem saldo positivo, mas acende alerta fiscal e eleitoral, dizem especialistas",
+        "tokens_extracao_estimados": 10903
+      }
+    ],
+    "tentativas": [
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "iniciante",
+        "tokens": 3617,
+        "latencia": 1.78272747993469,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "iniciante",
+        "tokens": 3484,
+        "latencia": 1.66168189048767,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 5,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 4017,
+        "latencia": 2.12152314186096,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 1,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "iniciante",
+        "tokens": 3379,
+        "latencia": 1.50617790222168,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 4,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "indistinto",
+        "tokens": 3379,
+        "latencia": 1.71473598480225,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 3545,
+        "latencia": 1.71856737136841,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "indistinto",
+        "tokens": 3472,
+        "latencia": 1.44340991973877,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 6,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "indistinto",
+        "tokens": 3984,
+        "latencia": 1.44428658485413,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "avancado",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 3493,
+        "latencia": 1.42798185348511,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "iniciante",
+        "tokens": 3073,
+        "latencia": 1.36914491653442,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "iniciante",
+        "tokens": 3212,
+        "latencia": 1.23204517364502,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 3284,
+        "latencia": 1.08550119400024,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 1,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "indistinto",
+        "tokens": 4341,
+        "latencia": 2.61458945274353,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 4,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "indistinto",
+        "tokens": 3575,
+        "latencia": 1.16858386993408,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 4,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "iniciante",
+        "tokens": 3389,
+        "latencia": 1.30822539329529,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "indistinto",
+        "tokens": 3405,
+        "latencia": 1.20042109489441,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "indistinto",
+        "tokens": 3512,
+        "latencia": 1.27093029022217,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 4,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "iniciante",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 3557,
+        "latencia": 1.39743876457214,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 5,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "indistinto",
+        "tokens": 3315,
+        "latencia": 1.73740911483765,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "iniciante",
+        "tokens": 3152,
+        "latencia": 1.08518433570862,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 4,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "iniciante"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "carrossel",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 3196,
+        "latencia": 1.12570977210999,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "indistinto",
+        "tokens": 4369,
+        "latencia": 3.03210926055908,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 5,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "indistinto",
+        "tokens": 3706,
+        "latencia": 2.25565958023071,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "roteiro_video",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 4426,
+        "latencia": 2.61477732658386,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 2,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 1,
+        "classificado_gravado": "indistinto",
+        "tokens": 3372,
+        "latencia": 1.34076046943665,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 2,
+        "classificado_gravado": "indistinto",
+        "tokens": 3565,
+        "latencia": 1.53055334091187,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 3,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      },
+      {
+        "execucao": "7f0e607b-eeaf-47ea-907f-965846249220",
+        "nivel": "intermediario",
+        "formato": "texto_analitico",
+        "status": "reprovado_nas_metricas",
+        "tentativa": 3,
+        "classificado_gravado": "indistinto",
+        "tokens": 3649,
+        "latencia": 1.49626660346985,
+        "modelo": "openai/gpt-oss-20b",
+        "n_falhas": 4,
+        "tokens_juiz": null,
+        "latencia_juiz": null,
+        "nota_juiz": null,
+        "classificado_atual": "indistinto"
+      }
+    ],
+    "matriz_tentativas_gravada": {
+      "n": 27,
+      "acerto": 0.111,
+      "indistinto": 20,
+      "matriz": {
+        "iniciante": {
+          "iniciante": 3,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 6
+        },
+        "intermediario": {
+          "iniciante": 1,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 8
+        },
+        "avancado": {
+          "iniciante": 3,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 6
+        },
+        "indistinto": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 0
+        }
+      },
+      "por_nivel": {
+        "iniciante": {
+          "precisao": 0.429,
+          "recall": 0.333,
+          "f1": 0.375
+        },
+        "intermediario": {
+          "precisao": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "avancado": {
+          "precisao": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    "matriz_tentativas_codigo_atual": {
+      "n": 27,
+      "acerto": 0.111,
+      "indistinto": 20,
+      "matriz": {
+        "iniciante": {
+          "iniciante": 3,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 6
+        },
+        "intermediario": {
+          "iniciante": 1,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 8
+        },
+        "avancado": {
+          "iniciante": 3,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 6
+        },
+        "indistinto": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 0
+        }
+      },
+      "por_nivel": {
+        "iniciante": {
+          "precisao": 0.429,
+          "recall": 0.333,
+          "f1": 0.375
+        },
+        "intermediario": {
+          "precisao": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "avancado": {
+          "precisao": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    "matriz_versao_final_gravada": {
+      "n": 9,
+      "acerto": 0.111,
+      "indistinto": 8,
+      "matriz": {
+        "iniciante": {
+          "iniciante": 1,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 2
+        },
+        "intermediario": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 3
+        },
+        "avancado": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 3
+        },
+        "indistinto": {
+          "iniciante": 0,
+          "intermediario": 0,
+          "avancado": 0,
+          "indistinto": 0
+        }
+      },
+      "por_nivel": {
+        "iniciante": {
+          "precisao": 1.0,
+          "recall": 0.333,
+          "f1": 0.5
+        },
+        "intermediario": {
+          "precisao": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "avancado": {
+          "precisao": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    "custo": {
+      "carrossel": {
+        "tentativas": 9,
+        "tokens": 30350,
+        "latencia": 13.200927019119261,
+        "tokens_medios": 3372,
+        "latencia_media_s": 1.47
+      },
+      "nivel:avancado": {
+        "tentativas": 9,
+        "tokens": 32370,
+        "latencia": 14.82109212875367,
+        "tokens_medios": 3597,
+        "latencia_media_s": 1.65
+      },
+      "geracao": {
+        "tentativas": 27,
+        "tokens": 96468,
+        "latencia": 43.68640208244326,
+        "tokens_medios": 3573,
+        "latencia_media_s": 1.62
+      },
+      "roteiro_video": {
+        "tentativas": 9,
+        "tokens": 34109,
+        "latencia": 17.933426141738888,
+        "tokens_medios": 3790,
+        "latencia_media_s": 1.99
+      },
+      "texto_analitico": {
+        "tentativas": 9,
+        "tokens": 32009,
+        "latencia": 12.5520489215851,
+        "tokens_medios": 3557,
+        "latencia_media_s": 1.39
+      },
+      "nivel:iniciante": {
+        "tentativas": 9,
+        "tokens": 31348,
+        "latencia": 12.6468801498413,
+        "tokens_medios": 3483,
+        "latencia_media_s": 1.41
+      },
+      "nivel:intermediario": {
+        "tentativas": 9,
+        "tokens": 32750,
+        "latencia": 16.21842980384828,
+        "tokens_medios": 3639,
+        "latencia_media_s": 1.8
+      }
+    },
+    "status_finais": {
+      "reprovado_nas_metricas": 9
+    },
+    "falhas_por_codigo": {
+      "densidade_fora_da_faixa": 17,
+      "legibilidade_fora_da_faixa": 15,
+      "numero_ou_data_sem_origem": 13,
+      "trigramas_repetidos": 7,
+      "variacao_nao_declarada_pela_fonte": 7,
+      "frase_longa_no_roteiro": 5,
+      "frases_sem_respaldo_na_fonte": 5,
+      "tamanho_fora_do_intervalo": 5,
+      "slides_de_corpo_sem_um_ponto_cada": 5,
+      "emoji_encontrado": 3,
+      "saida_invalida_do_modelo": 2,
+      "titulo_longo": 1
+    },
+    "tentativas_por_material": 3.0
+  }
+}

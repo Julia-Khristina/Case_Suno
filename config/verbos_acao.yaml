@@ -1,5 +1,11 @@
+# Verbos de ação da legenda (seção 4.5, Decidido), com as formas do imperativo aceitas na chamada.
 verbos:
   - compartilhar
   - curtir
   - comentar
   - salvar
+imperativos:
+  compartilhar: ["compartilhe", "compartilhem", "compartilha"]
+  curtir: ["curta", "curtam", "curte"]
+  comentar: ["comente", "comentem", "comenta"]
+  salvar: ["salve", "salvem", "salva"]

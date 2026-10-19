@@ -1,0 +1,45 @@
+Tarefa: escrever um TEXTO ANALÍTICO para o nível {nivel}.
+
+<dados>
+PONTOS CENTRAIS (ids entre colchetes) e AFIRMAÇÕES (ids entre parênteses), com o trecho de origem:
+{pontos_centrais}
+
+DADOS NUMÉRICOS DA FONTE:
+{dados_numericos}
+
+TERMOS DO GLOSSÁRIO PRESENTES:
+{glossario}
+
+EXPLICAÇÕES GERAIS DE IMPACTO APROVADAS (as únicas frases que podem usar o marcador "Em geral,"):
+{explicacoes_impacto}
+</dados>
+
+REGRAS DO NÍVEL:
+{regras_nivel}
+
+GUIA DE ESTILO: {guia_estilo}
+TERMOS PROIBIDOS: {termos_proibidos}
+
+ESTRUTURA (títulos e subtítulos internos são papéis; escreva intertítulos curtos e informativos):
+- title: até 60 caracteres, sem número que não esteja nos dados.
+- subtitle: até 100 caracteres.
+- introduction (cerca de 15% das palavras): apresenta o tema, por que importa (segundo a fonte) e a questão central.
+- development (cerca de 35%): dados, indicadores e acontecimentos que ajudam a entender o cenário.
+- analysis (cerca de 30%): causas, impactos e riscos SÓ como a fonte declara; se a fonte não detalha, a seção fica curta e diz isso.
+- conclusion (cerca de 20%): retoma a questão central, resume o que a fonte conclui e indica o que acompanhar segundo a fonte. Sem opinião própria e sem chamada para ação.
+- Os pontos centrais {ids_pontos} precisam aparecer no texto; cada seção registra em "ponto_ids" os pontos que cobre e em "afirmacao_ids" as afirmações que usa.
+
+TAMANHO: entre {palavras_min} e {palavras_max} palavras somando as quatro seções (o mesmo intervalo vale para os três níveis). Um parágrafo por ideia; parágrafos separados por linha em branco.
+
+ANTES DE RESPONDER, confira em silêncio: (a) cada frase factual corresponde a uma afirmação listada; (b) todo número e data está nos dados; (c) nenhuma frase se repete; (d) as regras do nível foram seguidas.
+
+RELATÓRIO DA TENTATIVA ANTERIOR (corrija cada item; não acrescente texto de preenchimento):
+{feedback}
+
+Responda com JSON neste formato:
+{{"title": "...", "subtitle": "...",
+ "introduction": {{"title": "...", "content": "...", "ponto_ids": ["..."], "afirmacao_ids": ["..."]}},
+ "development": {{"title": "...", "content": "...", "ponto_ids": ["..."], "afirmacao_ids": ["..."]}},
+ "analysis": {{"title": "...", "content": "...", "ponto_ids": ["..."], "afirmacao_ids": ["..."]}},
+ "conclusion": {{"title": "...", "content": "...", "ponto_ids": ["..."], "afirmacao_ids": ["..."]}},
+ "aviso_fonte_insuficiente": null}}

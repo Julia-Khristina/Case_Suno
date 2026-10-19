@@ -1,0 +1,57 @@
+Tarefa: escrever um TEXTO ANALÍTICO TRIANGULADO para o nível {nivel}, comparando o que {n_fontes} fontes dizem sobre o mesmo assunto.
+
+<dados>
+FONTES (grupos de mesma origem contam como UMA fonte independente):
+{fontes}
+
+MATRIZ DE TRIANGULAÇÃO (o status de cada linha foi calculado pelo sistema; não o altere):
+{matriz}
+
+PONTOS CENTRAIS (linhas que precisam aparecer): {ids_pontos}
+
+GRÁFICOS DISPONÍVEIS (inseridos pelo sistema; você só os cita pelo id quando o parágrafo tratar do mesmo ponto):
+{graficos}
+
+TERMOS DO GLOSSÁRIO PRESENTES:
+{glossario}
+
+EXPLICAÇÕES GERAIS DE IMPACTO APROVADAS (as únicas frases que podem usar o marcador "Em geral,"):
+{explicacoes_impacto}
+</dados>
+
+REGRAS DO NÍVEL:
+{regras_nivel}
+
+GUIA DE ESTILO: {guia_estilo}
+TERMOS PROIBIDOS: {termos_proibidos}
+
+REGRAS DA TRIANGULAÇÃO (obrigatórias):
+1. Atribua tudo: cada número e cada afirmação diz de qual fonte veio ("segundo a Agência Gov", "a Fiscal Data calcula").
+2. Divergência: apresente os dois lados LADO A LADO, nomeando as duas fontes e o que cada uma diz, com o mesmo cuidado.
+3. Sem veredito: nunca diga qual fonte está certa, nunca use "na verdade", "o correto é", "erro da fonte", "mudou",
+   "aumentou em relação a" comparando fontes. Não calcule nem cite diferenças entre os números das fontes: elas
+   aparecem só nos gráficos e na matriz.
+4. Convergência: só diga que fontes concordam quando a linha for "convergência". Fontes de mesma origem não são
+   confirmação independente: nunca escreva "confirmado por N fontes".
+5. "Sem contraponto": diga que só uma fonte trata do ponto. "Não comparável": explique por que (período ou medida diferentes).
+6. Projeção continua projeção: estimativas e avaliações são apresentadas como tal.
+
+ESTRUTURA (títulos internos são papéis; escreva intertítulos curtos e informativos):
+- introduction (cerca de 15%): o assunto, por que importa e quais fontes foram comparadas (tipo de cada uma).
+- development (cerca de 35%): o que as fontes informam — dados e fatos, com as convergências.
+- analysis (cerca de 30%): onde as fontes divergem e os lados opostos, cada lado com sua fonte.
+- conclusion (cerca de 20%): o que permanece em aberto entre as fontes e o que acompanhar segundo elas. Sem opinião própria.
+- Cada seção registra em "ponto_ids" os pontos centrais que cobre e em "linha_ids" todas as linhas da matriz que usa.
+
+TAMANHO: entre {palavras_min} e {palavras_max} palavras somando as quatro seções (igual nos três níveis).
+
+RELATÓRIO DA TENTATIVA ANTERIOR (corrija cada item; não acrescente texto de preenchimento):
+{feedback}
+
+Responda com JSON neste formato:
+{{"title": "...", "subtitle": "...",
+ "introduction": {{"title": "...", "content": "...", "ponto_ids": ["L1"], "linha_ids": ["L1"]}},
+ "development": {{"title": "...", "content": "...", "ponto_ids": ["..."], "linha_ids": ["..."]}},
+ "analysis": {{"title": "...", "content": "...", "ponto_ids": ["..."], "linha_ids": ["..."]}},
+ "conclusion": {{"title": "...", "content": "...", "ponto_ids": ["..."], "linha_ids": ["..."]}},
+ "graficos_citados": ["..."], "aviso_fonte_insuficiente": null}}

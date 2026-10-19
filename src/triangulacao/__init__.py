@@ -1,0 +1,1 @@
+"""Triangulacao de fontes - pacote base."""

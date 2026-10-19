@@ -1,0 +1,43 @@
+assunto: Petróleo Brent acima de US$ 110
+fontes_esperadas: 3
+divergencias_esperadas:
+  - indicador: preco_brent
+    fonte_1: "InfoMoney - US$ 110,45"
+    fonte_2: "Valor Econômico - US$ 110,45"
+    fonte_3: "Reuters - $110.45"
+    status: convergencia
+  - indicador: variacao_percentual
+    fonte_1: "InfoMoney - 2,3% de alta"
+    fonte_2: "Valor Econômico - não especificado"
+    fonte_3: "Reuters - 2,3% de alta"
+    status: diferenca_qualitativa
+  - indicador: preco_wti
+    fonte_1: "InfoMoney - US$ 107,20, queda 0,5%"
+    fonte_2: "Valor Econômico - US$ 107,20, queda 0,5%"
+    fonte_3: "Reuters - $107.20, queda 0,5%"
+    status: convergencia
+convergencias_esperadas:
+  - "Brent acima de US$ 110"
+  - "Maior patamar desde 2014"
+  - "Tensões geopolíticas no Oriente Médio"
+  - "Opep+ com cortes na produção"
+divergencias_qualitativas_esperadas:
+  - "Informações sobre demanda chinesa: InfoMoney menciona recuperação, Valor menciona recuperação, Reuters menciona recuperação - convergência"
+  - "Informações sobre WTI: InfoMoney cita queda 0,5%, Valor cita queda 0,5%, Reuters cita queda 0,5% - convergência"
+pontos_centrais_esperados:
+  - "Brent fechado acima de US$ 110"
+  - "Variação percentual de 2,3%"
+  - "WTI em queda de 0,5%"
+frases_proibidas:
+  - "O material mantém"
+  - "devem ser verificados diretamente na origem"
+  - "Consulte a origem"
+  - "preservando dados, datas e números da fonte"
+  - "hipóteses não confirmadas são tratadas como projeções"
+  - "impactos prováveis"
+termos_proibidos:
+  - "compre agora"
+  - "venda agora"
+  - "garantia de lucro"
+  - "recomendo comprar"
+  - "recomendo vender"

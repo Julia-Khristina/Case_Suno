@@ -1,14 +1,25 @@
-Texto de origem:
+Extraia do trecho abaixo os pontos centrais, as afirmações e os dados numéricos.
+
+<documento>
 {chunk_text}
+</documento>
 
-Glossário de termos disponíveis:
-{glossary_terms}
+Termos do glossário (para "detected_terms" use também termos técnicos fora desta lista): {glossary_terms}
+Apelidos de entidades e eventos: {aliases}
 
-Apelidos de entidades/eventos:
-{aliases}
+Regras:
+- main_points: até 3, ordenados pela importância que a PRÓPRIA FONTE indica (título, resumo, ênfase, decisão principal). Cada um com id ("p1", "p2", "p3"), order (1 = mais importante), title (frase curta e factual), assertion_ids (ids das afirmações que o sustentam) e justification (por que a fonte o destaca).
+  Os três pontos são DISTINTOS e ESPECÍFICOS: cada um trata de um aspecto (uma medida, um número, uma posição), com o dado que a fonte dá para ele ("Perdão de R$ 12 bilhões em dívidas com a União"), nunca um rótulo genérico ("O programa", "Impactos"). Se a fonte trata de várias medidas, escolha as que ela mais destaca; não junte medidas diferentes num mesmo ponto. Cada ponto tem pelo menos uma afirmação.
+- assertions: afirmações verificáveis. Cada uma com id ("a1", "a2", ...), text (paráfrase fiel), type ("fato", "projecao" ou "evento_futuro"), role ("causa", "impacto", "risco", "acompanhar" ou "nenhum", só quando a fonte declara), variation_declared (true só se a fonte declara uma mudança) e source_span.text com o TRECHO EXATO copiado do documento, caractere por caractere.
+- numeric_data: cada número relevante com id ("n1", ...), indicator, value (como no texto, ex.: "10,50"), unit, reference_period e source_span.text exato.
+- Não infira causas, impactos ou comparações que a fonte não faz. Expectativa é "projecao", nunca "fato".
+- entities (name, canonical_name, type), events (name, canonical_name, reference_date), detected_terms.
 
-Retorne um objeto JSON com os campos main_points, assertions, numeric_data, entities, events, detected_terms e source_complexity.
-Cada assertion deve conter id, text, type, role, source_span.text e variation_declared.
-Cada numeric_data deve conter indicator, value, unit, reference_period e source_span.text.
-Cada entity deve conter name e canonical_name.
-Cada event deve conter name, canonical_name e reference_date quando existir.
+Responda com UM objeto JSON neste formato (cada lista contém só objetos; o id fica dentro do objeto):
+{{"main_points": [{{"id": "p1", "order": 1, "title": "...", "assertion_ids": ["a1", "a2"], "justification": "..."}}],
+ "assertions": [{{"id": "a1", "text": "...", "type": "fato", "role": "nenhum", "variation_declared": false, "source_span": {{"text": "trecho copiado do documento"}}}},
+                {{"id": "a2", "text": "...", "type": "projecao", "role": "risco", "variation_declared": false, "source_span": {{"text": "..."}}}}],
+ "numeric_data": [{{"id": "n1", "indicator": "...", "value": "10,50", "unit": "%", "reference_period": "...", "source_span": {{"text": "10,50%"}}}}],
+ "entities": [{{"name": "...", "canonical_name": "...", "type": "instituicao"}}],
+ "events": [{{"name": "...", "canonical_name": "...", "reference_date": null}}],
+ "detected_terms": ["..."]}}

@@ -1,0 +1,15 @@
+Com o objetivo de ampliar a transparência na divulgação de dados de atuação no mercado de câmbio​, o Banco Central (BC) passará a apresentar, na página de Política Cambial do seu site, o histórico de estoque e o cronograma de vencimentos das operações de Swap Cambial e de Linha com Recompra, dois dos instrumentos disponíveis para assegurar o regular funcionamento do mercado de câmbio. A medida não altera o formato de divulgação dos leilões de câmbio, somente reorganiza informações já presentes no Portal de Dados Abertos do BC, oferecendo ao público uma forma direta de visualização.
+
+Clique para acessar a página de Política Cambial.​
+
+O Swap Cambial funciona como uma proteção financeira no mercado futuro, trocando a rentabilidade em dólar pela taxa Selic, sem alterar as reservas internacionais. Já a Linha com Recompra fornece dólares físicos diretamente no mercado à vista com o compromisso de recomprá-los no futuro, restabelecendo temporariamente a liquidez em moeda estrangeira das reservas do país.
+
+A iniciativa traz avanços no acesso e na visualização dos dados e das informações. Se antes os usuários contavam com a tabela de vencimentos do Swap Cambial, agora, a Linha com Recompra passa a ter um espelho de tabela equivalente. As duas modalidades ganham cronogramas atualizados e uma ferramenta gráfica com histórico de estoques de dez anos, permitindo baixar dados e imagens em diferentes formatos.
+
+Novas séries
+
+Como suporte a essa modernização, a autoridade monetária incorporou ao Sistema Gerenciador de Séries Temporais (SGS) três novas séries de dados diários. Trata-se do acompanhamento de estoque de Linhas com Recompra (código 29722), valor nocional de Swap Cambial (código 29723) e número de contratos de Swap Cambial (código 29724).
+
+"Ao consolidar e divulgar novas séries temporais relacionadas à Política Cambial, o BC simplifica o acesso à informação e reafirma seu compromisso com a transparência e a estabilidade econômica", afirmou Nilton David, Diretor de Política Monetária.
+
+Com a modernização na apresentação de dados sobre atuação no mercado de câmbio​, o BC assegura maior acessibilidade a estas informações, conferindo maior transparência na condução da política cambial.

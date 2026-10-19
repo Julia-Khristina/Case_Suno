@@ -8,3 +8,6 @@ psycopg-pool>=3.2
 playwright>=1.49
 pytest>=9.1
 pymupdf>=1.25
+matplotlib>=3.8
+pillow>=10.0
+python-dotenv>=1.0

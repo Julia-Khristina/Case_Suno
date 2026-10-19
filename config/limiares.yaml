@@ -1,24 +1,82 @@
+# Limiares do avaliador determinístico e do loop de reflexão.
+# Valores marcados "spec" vêm da seção 4.6/4.7 da especificação (hipóteses a calibrar).
+# Valores marcados "provisório" não têm número na especificação: foram fixados na auditoria
+# para o pipeline funcionar e DEVEM ser calibrados nos documentos de referência.
+# Nenhum limiar é escrito no código: o avaliador falha se uma chave obrigatória faltar.
+
+# --- Legibilidade (Flesch adaptado ao português, Martins et al. 1996) — spec
 flesch_iniciante_min: 55
 flesch_intermediario_min: 40
 flesch_intermediario_max: 55
 flesch_avancado_max: 40
+
+# --- Densidade de termos técnicos (ocorrências de termos de nível intermediário/avançado
+#     do glossário por 100 palavras) — spec
 densidade_iniciante_max: 3
 densidade_intermediaria_min: 3
 densidade_intermediaria_max: 8
 densidade_avancado_min: 8
-tentativas_maximas: 2
-limite_cards_diario_padrao: 8
-profundidade_recursao_max: 5
-janela_contexto_termo_palavras: 20
-palavras_por_segundo_roteiro_min: 2
-palavras_por_segundo_roteiro_max: 3
-limite_caracteres_legenda_instagram: 2000
-slides_maximos: 5
-cenas_maximas: 5
-duracao_video_max_segundos: 60
+
+# --- Loop de reflexão — spec: duas reescritas (até 3 tentativas por nível e formato)
+reescritas_maximas: 2
+tentativas_maximas: 2  # legado; não usado (ambíguo). Use reescritas_maximas.
+# Similaridade (Jaccard de trigramas) acima da qual a reescrita é considerada "sem mudança" — provisório
+reescrita_similaridade_max: 0.97
+
+# --- Juiz — provisório (spec não fixa)
+juiz_media_minima: 7.0
+juiz_nota_minima_criterio: 5.0
+
+# --- Texto analítico — spec (350–500, proporção 15/35/30/20)
 tamanho_texto_min_palavras: 350
 tamanho_texto_max_palavras: 500
 proporcao_introducao: 0.15
 proporcao_desenvolvimento: 0.35
 proporcao_analise: 0.30
 proporcao_conclusao: 0.20
+proporcao_tolerancia: 0.08          # provisório
+titulo_max_caracteres: 60           # provisório
+subtitulo_max_caracteres: 100       # provisório
+paragrafo_max_palavras: 180         # provisório (a seção de desenvolvimento chega a ~175 palavras)
+
+# --- Texto analítico TRIANGULADO (2+ fontes independentes) — decisão da autora em 17/10/2026,
+#     igual nos três níveis; matriz, gráficos e caixa de termos ficam fora da contagem
+texto_triangulado_min_palavras: 600
+texto_triangulado_max_palavras: 900
+
+# Fonte curta (fonte com menos palavras que o mínimo do formato): o intervalo passa a depender
+# da fonte, igual para os três níveis, para não forçar padding — provisório
+fonte_curta_fator_min: 0.6
+fonte_curta_fator_max: 1.5
+fonte_curta_piso_palavras: 80
+
+# --- Carrossel — provisório (spec: limites próprios, iguais entre níveis)
+slides_maximos: 5
+carrossel_min_palavras: 60
+carrossel_max_palavras: 220
+slide_titulo_max_caracteres: 60
+slide_corpo_max_caracteres: 260
+slides_sobreposicao_max: 0.5        # Jaccard de trigramas entre dois slides
+limite_caracteres_legenda_instagram: 2000   # spec
+cta_max_caracteres: 140             # provisório
+
+# --- Roteiro — spec (60 s, 2 a 3 palavras por segundo), demais provisórios
+cenas_maximas: 5
+duracao_video_max_segundos: 60
+palavras_por_segundo_roteiro_min: 2
+palavras_por_segundo_roteiro_max: 3
+roteiro_tolerancia_ritmo: 0.25      # provisório: folga por cena sobre o máximo
+frase_max_palavras_roteiro: 22      # provisório
+texto_tela_max_caracteres: 70       # provisório
+
+# --- Fidelidade e qualidade — provisório
+janela_contexto_termo_palavras: 20  # spec ("janela curta"), valor provisório
+frases_sem_respaldo_max: 0.25       # fração de frases sem respaldo na fonte/afirmações
+respaldo_sobreposicao_min: 0.5      # fração de palavras de conteúdo da frase presentes na fonte
+repeticao_frases_max: 0.05          # fração de frases repetidas
+repeticao_trigramas_max: 0.08       # fração de trigramas repetidos dentro do texto
+cobertura_sobreposicao_min: 0.5     # fração das palavras de conteúdo do ponto central presentes
+
+# --- Outros
+limite_cards_diario_padrao: 8
+profundidade_recursao_max: 5

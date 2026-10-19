@@ -1,0 +1,12 @@
+O documento foi dividido em partes, e cada parte propôs pontos centrais. Escolha os 3 pontos centrais do DOCUMENTO INTEIRO, pela importância que a própria fonte indica. Pontos repetidos entre partes devem ser fundidos.
+
+<documento>
+Pontos candidatos (id, título, afirmações que os sustentam):
+{candidates}
+</documento>
+
+Regras:
+- Use apenas ids de afirmações que aparecem nos candidatos.
+- Cada ponto final: id ("p1", "p2", "p3"), order, title (frase curta e factual), assertion_ids e justification.
+
+Responda com JSON: {{"main_points": [...]}}

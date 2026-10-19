@@ -1,7 +1,17 @@
-voz: "sobria e factual"
-idioma: "portugues do Brasil"
-uma_linha_por_nivel: true
+# Guia de estilo do projeto (seção 4.5). Escrito como ponto de partida; revisar antes da suíte offline.
+voz: "sóbria e factual"
+idioma: "português do Brasil"
 sem_emojis: true
 sem_recomendacao_compra_venda: true
 analogia_apenas_termo_tecnico: true
 informacoes_futuras_como_projecao: true
+# Uma linha por nível
+niveis:
+  iniciante: "Frases curtas e diretas; todo termo técnico explicado logo após o uso; foco no efeito prático no bolso, sem prever nada."
+  intermediario: "Vocabulário padrão de mercado (CDI, Selic, IPCA, dividendos) usado sem rodeios; foco em alocação e tendências declaradas pela fonte."
+  avancado: "Jargão pleno e precisão metodológica; sem explicar o óbvio; foco nos mecanismos, condicionantes e riscos que a fonte declara."
+# Aviso institucional da legenda: a Suno não forneceu texto obrigatório. Deixe null para não exibir,
+# ou preencha com um texto provisório (por exemplo "Conteúdo educativo. Não é recomendação de investimento.").
+aviso_institucional: null
+# Hashtags derivadas das entidades reconhecidas (opcional)
+legenda_hashtags: false

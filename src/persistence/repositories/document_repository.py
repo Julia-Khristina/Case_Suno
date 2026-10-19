@@ -11,7 +11,7 @@ class DocumentRepository:
         values = [document_hash, origin_type] + list(kwargs.values())
         placeholders = ", ".join(["%s"] * len(fields))
         columns = ", ".join(fields)
-        query = f"INSERT INTO documentos ({columns}) VALUES ({placeholders}) ON CONFLICT (hash) DO UPDATE SET tipo_origem = EXCLUDED.tipo_origem RETURNING hash"
+        query = f"INSERT INTO documentos ({columns}) VALUES ({placeholders}) ON CONFLICT (hash) DO UPDATE SET tipo_origem = EXCLUDED.tipo_origem, id_card = COALESCE(EXCLUDED.id_card, documentos.id_card) RETURNING hash"
         with self.conn.cursor() as cur:
             cur.execute(query, tuple(values))
             row = cur.fetchone()
